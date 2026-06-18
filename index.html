@@ -1455,10 +1455,38 @@ function _gerarPDF(nome, phaseFilter) {
     doc.text(`${pageNum}`, PW / 2, yf + 3, { align: 'center' });
   }
 
+  // ── minimum keep-together height of a card ──
+  // Header block + up to the first two rows + bottom padding, capped at the
+  // card's full height. Mirrors the page-break logic inside drawCard so the
+  // phase banner can avoid being stranded alone at the bottom of a page.
+  function cardMinKeep(card, cardIdx) {
+    const ITEM_FS    = 9.5;
+    const LINEHEIGHT = ITEM_FS * 0.45;
+    const CB         = 3.8;
+    const PAD        = 5;
+    const TITLE_H    = 12;
+    const DIVIDER    = 3;
+    const ROW_GAP    = 3;
+
+    const items = getActiveItems(tpl, cardIdx, card.items);
+    const rowHeights = items.map(item => {
+      const lines = splitLines(item.text, CW - 20, ITEM_FS);
+      return Math.max(CB + 1, lines.length * LINEHEIGHT) + ROW_GAP;
+    });
+    const headerH = PAD + TITLE_H + DIVIDER;
+    const cardH   = headerH + rowHeights.reduce((a, b) => a + b, 0) + PAD;
+    const minKeep = headerH + (rowHeights[0] || 0) + (rowHeights[1] || 0) + PAD;
+    return Math.min(cardH, minKeep);
+  }
+
   // ── phase banner ──
-  function drawPhaseBanner(phaseName, phaseNum) {
+  // keepWith = minimum height of the phase's first card that must stay on the
+  // same page as the banner (BUG-03: never leave a banner alone on a page).
+  function drawPhaseBanner(phaseName, phaseNum, keepWith = 0) {
     const h = 8;
-    ensureSpace(h + 6);
+    // Banner advances y by (h + 5); ensure banner + start of the first card fit
+    // together, otherwise break to a new page before drawing the banner.
+    ensureSpace(Math.max(h + 6, (h + 5) + keepWith));
     const bgs  = [C.phase1bg, C.phase2bg, C.phase3bg];
     const lbs  = [C.phase1lb, C.phase2lb, C.phase3lb];
     const idx  = phaseNum - 1;
@@ -1716,7 +1744,9 @@ function _gerarPDF(nome, phaseFilter) {
   let globalCardIdx = 0;
   tmpl.phases.forEach((phase, pIdx) => {
     if (phaseFilter === null || pIdx + 1 === phaseFilter) {
-      drawPhaseBanner(phase.name, pIdx + 1);
+      // keep the banner together with the first card of the phase
+      const firstKeep = phase.cards[0] ? cardMinKeep(phase.cards[0], globalCardIdx) : 0;
+      drawPhaseBanner(phase.name, pIdx + 1, firstKeep);
       phase.cards.forEach(card => {
         drawCard(card, globalCardIdx, pIdx + 1);
         globalCardIdx++;
