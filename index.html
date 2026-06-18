@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checklist Interativa — Handover, Onboarding & Closure</title>
+  <link rel="icon" id="favicon" type="image/svg+xml" />
+  <script>
+    /* RF-FAVICON-01 — favicon SVG 32x32: quadrado escuro arredondado +
+       check claro + pequeno raio no canto inferior direito */
+    document.getElementById('favicon').href = 'data:image/svg+xml,' + encodeURIComponent(
+      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>" +
+        "<rect width='32' height='32' rx='4' fill='#0f0f0f'/>" +
+        "<path d='M7 16.5 L13 22.5 L24 9.5' fill='none' stroke='#f0f0f0' " +
+          "stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/>" +
+        "<path d='M26 22 L23 27 H25 L24 30.5 L29 25 H26.5 L28 22 Z' fill='#f0f0f0'/>" +
+      "</svg>"
+    );
+  </script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/open-dyslexic-regular.min.css" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #1E1E1E;
+      --surface:   #252525;
+      --surface2:  #2D2D2D;
+      --border:    #3A3A3A;
+      --text:      #E8E8E8;
+      --text-muted:#A0A0A0;
+      --accent:    #5B9CF6;
+      --accent-h:  #3B82F6;
+      --danger:    #F87171;
+      --success:   #34D399;
+      --warn:      #FBBF24;
+
+      --phase1-bg: #1E2535;
+      --phase2-bg: #1E2B24;
+      --phase3-bg: #261E35;
+
+      --phase1-border: #2A4070;
+      --phase2-border: #1E5040;
+      --phase3-border: #402A6A;
+
+      --phase1-label: #7EB8FF;
+      --phase2-label: #5DE8A8;
+      --phase3-label: #C084FC;
+
+      --font: 'OpenDyslexic', 'Comic Sans MS', 'Arial', sans-serif;
+
+      --sidebar-w: 260px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 16px 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    #sidebar h1 {
+      font-size: 15px;
+      font-weight: bold;
+      color: var(--accent);
+      line-height: 1.4;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    #sidebar .tagline {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    #sidebar h2 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .template-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      background: none;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      line-height: 1.4;
+    }
+
+    .template-btn:hover {
+      border-color: var(--accent);
+      background: rgba(91,156,246,0.08);
+    }
+
+    .template-btn.active {
+      border-color: var(--accent);
+      background: rgba(91,156,246,0.15);
+      color: #fff;
+    }
+
+    .template-btn .icon { font-size: 20px; flex-shrink: 0; }
+
+    .template-btn .meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .template-btn.active .meta { color: #93C5FD; }
+
+    #sidebar .spacer { flex: 1; }
+
+    #sidebar footer {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    /* ── Main ── */
+    #main {
+      flex: 1;
+      padding: 32px 28px;
+      overflow-y: auto;
+      max-width: 860px;
+    }
+
+    /* ── Header ── */
+    #header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    #header .row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .field-group label {
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .field-group input {
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.4;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field-group input:focus {
+      border-color: var(--accent);
+    }
+
+    .field-group input::placeholder { color: var(--text-muted); }
+
+    /* ── Progress bar ── */
+    #progress-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+
+    #progress-bar .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    #progress-bar .label {
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    #progress-bar .count {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 12px;
+      background: var(--surface2);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #34D399);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    /* ── PDF button ── */
+    #btn-pdf {
+      display: block;
+      width: 100%;
+      margin-bottom: 28px;
+      padding: 14px 20px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font);
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+      text-align: center;
+    }
+
+    #btn-pdf:hover { background: var(--accent-h); }
+    #btn-pdf:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+
+    /* ── Phase section ── */
+    .phase-section { margin-bottom: 32px; }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .phase-label {
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+
+    .phase-1 .phase-label { background: rgba(91,156,246,0.18); color: var(--phase1-label); }
+    .phase-2 .phase-label { background: rgba(52,211,153,0.18); color: var(--phase2-label); }
+    .phase-3 .phase-label { background: rgba(192,132,252,0.18); color: var(--phase3-label); }
+
+    .phase-divider {
+      flex: 1;
+      height: 2px;
+      border-radius: 2px;
+    }
+
+    .phase-1 .phase-divider { background: var(--phase1-border); }
+    .phase-2 .phase-divider { background: var(--phase2-border); }
+    .phase-3 .phase-divider { background: var(--phase3-border); }
+
+    /* ── Card ── */
+    .card {
+      border: 1px solid;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .phase-1 .card { background: var(--phase1-bg); border-color: var(--phase1-border); }
+    .phase-2 .card { background: var(--phase2-bg); border-color: var(--phase2-border); }
+    .phase-3 .card { background: var(--phase3-bg); border-color: var(--phase3-border); }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .card-num {
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 1.4;
+      color: #fff;
+      flex: 1;
+    }
+
+    .card-progress {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--surface2);
+      border-radius: 6px;
+      padding: 2px 8px;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    /* ── Checklist items ── */
+    .item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .item:last-child { border-bottom: none; }
+
+    .item input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      cursor: pointer;
+      accent-color: var(--success);
+      border-radius: 6px;
+      margin-top: 1px;
+    }
+
+    .item-text {
+      flex: 1;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      cursor: text;
+      word-break: break-word;
+    }
+
+    .item-text[contenteditable="true"] {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+      padding: 0 4px;
+    }
+
+    .item.done .item-text {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn-icon {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 7px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: color 0.12s, border-color 0.12s, background 0.12s;
+      line-height: 1;
+    }
+
+    .btn-icon:hover { color: var(--text); border-color: var(--text-muted); }
+    .btn-icon.del:hover { color: var(--danger); border-color: var(--danger); background: rgba(248,113,113,0.08); }
+    .btn-icon.edit:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ── Add item ── */
+    .add-item-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .add-item-input {
+      flex: 1;
+      background: rgba(0,0,0,0.2);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.5;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .add-item-input:focus { border-color: var(--accent); border-style: solid; }
+    .add-item-input::placeholder { color: var(--text-muted); }
+
+    .btn-add {
+      background: rgba(91,156,246,0.15);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: var(--accent);
+      font-family: var(--font);
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.12s;
+      white-space: nowrap;
+    }
+
+    .btn-add:hover { background: rgba(91,156,246,0.28); }
+
+    /* ── Empty state ── */
+    #empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-muted);
+    }
+
+    #empty-state .icon { font-size: 64px; margin-bottom: 20px; }
+    #empty-state h2 { font-size: 22px; margin-bottom: 10px; color: var(--text); }
+    #empty-state p { font-size: 16px; }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--success);
+      color: #1E1E1E;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      font-family: var(--font);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Mobile ── */
+    @media (max-width: 680px) {
+      body { flex-direction: column; }
+
+      #sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        flex-direction: column;
+        border-right: none;
+        border-bottom: 2px solid var(--border);
+        padding: 20px 16px;
+      }
+
+      .template-btn { display: inline-flex; width: auto; margin-right: 8px; margin-bottom: 0; }
+      #sidebar .side-btns { display: flex; overflow-x: auto; padding-bottom: 4px; }
+
+      #main { padding: 20px 16px; }
+    }
+
+    /* ── Print / PDF ── */
+    @media print {
+      #sidebar, #btn-pdf, .item-actions, .add-item-row, #toast { display: none !important; }
+      body { background: #fff; color: #000; font-size: 14px; }
+      .card { background: #f8f8f8 !important; border-color: #ccc !important; }
+      .card-title, .phase-label { color: #000 !important; }
+      .item-text { color: #000 !important; }
+      .item.done .item-text { color: #666 !important; }
+      #header { background: #fff !important; border-color: #ccc !important; }
+      .bar-fill { background: #333 !important; }
+      .bar-track { background: #eee !important; }
+      #progress-bar { background: #fff !important; border-color: #ccc !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <h1>✅ Checklist<br>Interativa</h1>
+  <p class="tagline">Handover · Onboarding · Closure<br>Acessível para TDAH</p>
+
+  <h2>Templates</h2>
+  <div class="side-btns">
+    <button class="template-btn" data-tpl="handover" onclick="selectTemplate('handover')">
+      <span class="icon">🔄</span>
+      <div>
+        <div>Handover</div>
+        <div class="meta">6 seções · Entrega de projeto</div>
+      </div>
+    </button>
+    <button class="template-btn" data-tpl="onboarding" onclick="selectTemplate('onboarding')">
+      <span class="icon">🚀</span>
+      <div>
+        <div>Onboarding</div>
+        <div class="meta">6 seções · Integração de membro</div>
+      </div>
+    </button>
+    <button class="template-btn" data-tpl="encerramento" onclick="selectTemplate('encerramento')">
+      <span class="icon">🏁</span>
+      <div>
+        <div>Closure</div>
+        <div class="meta">6 seções · Saída do projeto</div>
+      </div>
+    </button>
+  </div>
+
+  <div class="spacer"></div>
+
+  <footer>Desenvolvido com foco em acessibilidade</footer>
+</aside>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- Empty state -->
+  <div id="empty-state">
+    <div class="icon">👈</div>
+    <h2>Escolha um template</h2>
+    <p>Selecione Handover, Onboarding ou Closure no menu lateral para começar.</p>
+  </div>
+
+  <!-- Content (hidden until template selected) -->
+  <div id="content" style="display:none">
+
+    <div id="header">
+      <div class="row">
+        <div class="field-group">
+          <label for="projeto-nome">Nome do Projeto / Sistema *</label>
+          <input type="text" id="projeto-nome" placeholder="Ex: Sistema de Gestão PHD" oninput="saveState()" />
+        </div>
+        <div class="field-group" style="flex:0;min-width:160px">
+          <label>Data</label>
+          <input type="text" id="projeto-data" readonly style="color:var(--text-muted)" />
+        </div>
+      </div>
+    </div>
+
+    <div id="progress-bar">
+      <div class="top">
+        <span class="label" id="progress-label">Progresso</span>
+        <span class="count" id="progress-count">0 / 0 concluídos</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" id="bar-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <button id="btn-pdf" onclick="downloadPDF()">⬇ Exportar PDF</button>
+
+    <div id="checklist-body"></div>
+
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<!-- Phase picker modal -->
+<div id="phase-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:9998;align-items:center;justify-content:center;">
+  <div style="background:#252525;border:1px solid #3A3A3A;border-radius:16px;padding:28px 24px;width:340px;max-width:90vw;font-family:var(--font);">
+    <h3 style="font-size:16px;font-weight:bold;color:#E8E8E8;margin-bottom:6px;">Exportar PDF</h3>
+    <p style="font-size:13px;color:#A0A0A0;margin-bottom:20px;line-height:1.5;">Escolha quais fases incluir no arquivo.</p>
+    <div id="phase-options" style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closePhasePicker()" style="flex:1;padding:11px;background:none;border:1px solid #3A3A3A;border-radius:8px;color:#A0A0A0;font-family:var(--font);font-size:14px;cursor:pointer;">Cancelar</button>
+      <button id="phase-confirm" onclick="confirmPhasePicker()" style="flex:2;padding:11px;background:#5B9CF6;border:none;border-radius:8px;color:#fff;font-family:var(--font);font-size:14px;font-weight:bold;cursor:pointer;">Gerar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- PDF spinner overlay -->
+<div id="pdf-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <div style="width:52px;height:52px;border:5px solid #3A3A3A;border-top-color:#5B9CF6;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <p style="font-family:var(--font);color:#E8E8E8;font-size:16px;">Gerando PDF…</p>
+</div>
+<style>
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Phase picker option buttons */
+.phase-opt {
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;
+  border:2px solid #3A3A3A;border-radius:10px;
+  background:none;color:#E8E8E8;
+  font-family:var(--font);font-size:14px;
+  cursor:pointer;text-align:left;
+  transition:border-color .12s,background .12s;
+  width:100%;
+}
+.phase-opt:hover { border-color:#5B9CF6; background:rgba(91,156,246,.08); }
+.phase-opt.selected { border-color:#5B9CF6; background:rgba(91,156,246,.18); }
+.phase-opt .opt-badge {
+  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:bold;flex-shrink:0;
+}
+.phase-opt .opt-meta { font-size:11px;color:#A0A0A0;margin-top:2px; }
+.phase-opt.selected .opt-meta { color:#93C5FD; }
+</style>
+
+<script>
+/* ─── DATA ─── */
+const TEMPLATES = {
+  handover: {
+    name: 'Handover',
+    phases: [
+      {
+        name: 'PRÉ-PROJETO',
+        cards: [
+          {
+            num: '1️⃣',
+            title: 'DOCUMENTAÇÃO DE NEGÓCIO',
+            items: [
+              'Visão geral do projeto documentada',
+              'Escopo, objetivos e requisitos funcionais registrados',
+              'Fluxogramas de processos principais',
+              'Histórias de usuário / Casos de uso mapeados',
+              'Critérios de aceite',
+              'Backlog e roadmap registrados',
+            ]
+          },
+          {
+            num: '2️⃣',
+            title: 'DOCUMENTAÇÃO TÉCNICA',
+            items: [
+              'Arquitetura da solução',
+              'Componentes e integrações',
+              'Modelo de dados (DER)',
+              'Estrutura do código (padrões, convenções)',
+              'APIs e endpoints documentados',
+              'Dependências e bibliotecas listadas',
+              'Decisões arquiteturais registradas',
+              'Dívidas técnicas conhecidas',
+            ]
+          }
+        ]
+      },
+      {
+        name: 'ENTREGA',
+        cards: [
+          {
+            num: '3️⃣',
+            title: 'CÓDIGO E CONFIGURAÇÃO',
+            items: [
+              'Repositório organizado',
+              'Variáveis de ambiente configuradas',
+              'Build e deploy documentados',
+              'Instalação e execução local funcionando',
+              'Serviços externos utilizados documentados',
+              'Links de homologação e produção',
+            ]
+          },
+          {
+            num: '4️⃣',
+            title: 'INFRAESTRUTURA',
+            items: [
+              'Hospedagem e ambiente configurado',
+              'DNS e certificados',
+              'Acesso técnico provisionado',
+              'Pipeline CI/CD implementado',
+              'Ambientes (Dev/Homolog/Prod) separados',
+              'Backup e recuperação testados',
+            ]
+          }
+        ]
+      },
+      {
+        name: 'PÓS-ENTREGA',
+        cards: [
+          {
+            num: '5️⃣',
+            title: 'VALIDAÇÃO COM CLIENTE',
+            items: [
+              'Teste de aceitação realizado com cliente',
+              'Material de treinamento preparado',
+              'Sessão de treinamento conduzida',
+              'Avaliação de compreensão do time cliente',
+              'Feedback do cliente coletado',
+              'Ajustes baseados em feedback',
+              'Sign-off do cliente (aceite formal)',
+            ]
+          },
+          {
+            num: '6️⃣',
+            title: 'TRANSFERÊNCIA DE CONHECIMENTO',
+            items: [
+              'Documentação interna preparada',
+              'Sessão de knowledge transfer com time de suporte',
+              'Dúvidas técnicas resolvidas',
+              'Runbook de operação disponível',
+              'Contatos de suporte (fornecedores, docs) catalogados',
+              'Plano de manutenção definido',
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  onboarding: {
+    name: 'Onboarding',
+    phases: [
+      {
+        name: 'PREPARAÇÃO',
+        cards: [
+          {
+            num: '1️⃣',
+            title: 'PREPARAÇÃO DO AMBIENTE',
+            items: [
+              'Conta/acesso de usuário criado',
+              'Permissões de repositório concedidas',
+              'Ferramentas instaladas (IDE, dependências)',
+              'Máquina configurada (variáveis de ambiente)',
+              'VPN/acesso remoto ativo',
+              'Primeira execução local testada',
+            ]
+          },
+          {
+            num: '2️⃣',
+            title: 'DOCUMENTAÇÃO E CONTEXTO',
+            items: [
+              'Roadmap do projeto apresentado',
+              'Arquitetura técnica explicada',
+              'Padrões de código documentados',
+              'Fluxos principais mapeados',
+              'Decisões arquiteturais entendidas',
+              'Contatos técnicos e suporte identificados',
+            ]
+          }
+        ]
+      },
+      {
+        name: 'INTEGRAÇÃO',
+        cards: [
+          {
+            num: '3️⃣',
+            title: 'APRESENTAÇÕES E INTEGRAÇÃO',
+            items: [
+              'Apresentação ao time realizada',
+              'Papéis e responsabilidades clarificados',
+              'Canais de comunicação explicados (Slack, email, reuniões)',
+              'Processos de desenvolvimento apresentados',
+              'Horários e expectativas estabelecidos',
+              'Cultura da equipe transmitida',
+            ]
+          },
+          {
+            num: '4️⃣',
+            title: 'TREINAMENTO TÉCNICO',
+            items: [
+              'Sessão de code walkthrough realizada',
+              'Ferramentas de desenvolvimento apresentadas',
+              'Fluxo de git/versionamento explicado',
+              'Pipeline de testes demonstrado',
+              'Processo de deploy explicado',
+              'Dúvidas técnicas resolvidas',
+            ]
+          }
+        ]
+      },
+      {
+        name: 'CONSOLIDAÇÃO',
+        cards: [
+          {
+            num: '5️⃣',
+            title: 'PRIMEIRAS ATRIBUIÇÕES',
+            items: [
+              'Primeira tarefa/issue designada',
+              'Escopo e expectativas claros',
+              'Prazo realista combinado',
+              'Mentor/pair programming alocado',
+              'Código revisado e feedback fornecido',
+              'Tarefa concluída com sucesso',
+            ]
+          },
+          {
+            num: '6️⃣',
+            title: 'FEEDBACK E AJUSTES',
+            items: [
+              'Reunião de feedback realizada',
+              'Dificuldades identificadas',
+              'Suporte adicional oferecido se necessário',
+              'Documentação atualizada com dúvidas comuns',
+              'Próximas atribuições planejadas',
+              'Onboarding formal encerrado',
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  encerramento: {
+    name: 'Closure',
+    phases: [
+      {
+        name: 'PREPARAÇÃO PARA SAÍDA',
+        cards: [
+          {
+            num: '1️⃣',
+            title: 'DOCUMENTAÇÃO FINAL',
+            items: [
+              'Última atualização de documentação técnica',
+              'Estado final do código documentado',
+              'Problemas conhecidos registrados',
+              'Recomendações futuras formalizadas',
+              'Lições aprendidas compiladas',
+              'Status de pendências clarificado',
+            ]
+          },
+          {
+            num: '2️⃣',
+            title: 'CONHECIMENTO CONSOLIDADO',
+            items: [
+              'Runbook operacional completo',
+              'Guia de troubleshooting preparado',
+              'Contatos críticos documentados',
+              'Procedimentos emergenciais registrados',
+              'Histórico de decisões compilado',
+              'FAQ baseado em problemas resolvidos',
+            ]
+          }
+        ]
+      },
+      {
+        name: 'TRANSFERÊNCIA',
+        cards: [
+          {
+            num: '3️⃣',
+            title: 'PASSAGEM DE RESPONSABILIDADES',
+            items: [
+              'Sucessor identificado e designado',
+              'Acesso e permissões transferidos',
+              'Sistemas críticos apresentados',
+              'Fluxos de aprovação explicados',
+              'Stakeholders comunicados sobre transição',
+              'Período de overlapping definido',
+            ]
+          },
+          {
+            num: '4️⃣',
+            title: 'TREINAMENTO DO SUCESSOR',
+            items: [
+              'Sessão de knowledge transfer realizada',
+              'Documentação apresentada e explicada',
+              'Sistemas críticos demonstrados',
+              'Dúvidas técnicas resolvidas',
+              'Acessos e permissões testados',
+              'Sucessor se sente confiante',
+            ]
+          }
+        ]
+      },
+      {
+        name: 'CLOSURE',
+        cards: [
+          {
+            num: '5️⃣',
+            title: 'LIMPEZA E SEGURANÇA',
+            items: [
+              'Dados sensíveis removidos/arquivados',
+              'Acessos e credenciais revogados',
+              'Máquina/dispositivo devolvido e formatado',
+              'Backups finais realizados',
+              'Histórico de projeto arquivado',
+              'Conformidade e auditoria verificados',
+            ]
+          },
+          {
+            num: '6️⃣',
+            title: 'FECHAMENTO FORMAL',
+            items: [
+              'Reunião final com stakeholders realizada',
+              'Projeto marcado como concluído/encerrado',
+              'Relatório final entregue',
+              'Feedback do time coletado',
+              'Celebração ou reconhecimento documentado',
+              'Arquivo geral do projeto finalizado',
+            ]
+          }
+        ]
+      }
+    ]
+  }
+};
+
+/* ─── STATE ─── */
+let currentTpl = null;
+let state = {}; // { [tpl]: { items: { [cardIdx_itemIdx]: { text, checked } }, extra: { [cardIdx]: [{text,checked}] } } }
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem('checklist_v2') || '{}'); } catch { return {}; }
+}
+
+function saveState() {
+  if (!currentTpl) return;
+  if (!state[currentTpl]) state[currentTpl] = {};
+  // save project name per template
+  state[currentTpl].projetoNome = document.getElementById('projeto-nome').value;
+  localStorage.setItem('checklist_v2', JSON.stringify(state));
+  updateProgress();
+}
+
+/* ─── TEMPLATE SELECT ─── */
+function selectTemplate(tpl) {
+  currentTpl = tpl;
+
+  // update sidebar buttons
+  document.querySelectorAll('.template-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tpl === tpl);
+  });
+
+  // ensure state slot
+  if (!state[tpl]) {
+    state[tpl] = { items: {}, extra: {}, projetoNome: '' };
+  }
+
+  // show content
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+
+  // restore project name
+  document.getElementById('projeto-nome').value = state[tpl].projetoNome || '';
+
+  // set date
+  document.getElementById('projeto-data').value = todayStr();
+
+  // render
+  renderChecklist(tpl);
+  updateProgress();
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+/* ─── RENDER ─── */
+function renderChecklist(tpl) {
+  const tmpl = TEMPLATES[tpl];
+  const body = document.getElementById('checklist-body');
+  body.innerHTML = '';
+
+  const phases = tmpl.phases;
+  let globalCardIdx = 0;
+
+  phases.forEach((phase, pIdx) => {
+    const phaseClass = `phase-${pIdx + 1}`;
+    const sec = document.createElement('div');
+    sec.className = `phase-section ${phaseClass}`;
+
+    // phase header
+    sec.innerHTML = `
+      <div class="phase-header">
+        <span class="phase-label">FASE ${pIdx + 1} — ${phase.name}</span>
+        <div class="phase-divider"></div>
+      </div>
+    `;
+
+    phase.cards.forEach((card, cIdxLocal) => {
+      const cardIdx = globalCardIdx++;
+      const cardEl = buildCard(card, cardIdx, tpl);
+      sec.appendChild(cardEl);
+    });
+
+    body.appendChild(sec);
+  });
+}
+
+function buildCard(card, cardIdx, tpl) {
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.dataset.cardIdx = cardIdx;
+
+  const items = getActiveItems(tpl, cardIdx, card.items);
+  const done = items.filter(i => i.checked).length;
+
+  el.innerHTML = `
+    <div class="card-header">
+      <span class="card-num">${card.num}</span>
+      <span class="card-title">${card.title}</span>
+      <span class="card-progress" id="cprog-${cardIdx}">${done}/${items.length}</span>
+    </div>
+    <div class="items-list" id="items-${cardIdx}"></div>
+    <div class="add-item-row">
+      <input class="add-item-input" type="text" placeholder="+ Adicionar item..." id="add-input-${cardIdx}" onkeydown="addItemOnEnter(event, ${cardIdx})" />
+      <button class="btn-add" onclick="addItem(${cardIdx})">Adicionar</button>
+    </div>
+  `;
+
+  // render items
+  const list = el.querySelector(`#items-${cardIdx}`);
+  const activeItems = getActiveItems(tpl, cardIdx, card.items);
+  activeItems.forEach((item, iIdx) => {
+    list.appendChild(buildItemEl(cardIdx, iIdx, item));
+  });
+
+  return el;
+}
+
+function buildItemEl(cardIdx, iIdx, item) {
+  const div = document.createElement('div');
+  div.className = 'item' + (item.checked ? ' done' : '');
+  div.dataset.idx = iIdx;
+
+  const cbId = `cb-${cardIdx}-${iIdx}`;
+  div.innerHTML = `
+    <input type="checkbox" id="${cbId}" ${item.checked ? 'checked' : ''} onchange="toggleItem(${cardIdx}, ${iIdx}, this.checked)" />
+    <label class="item-text" for="${cbId}" id="txt-${cardIdx}-${iIdx}">${escHtml(item.text)}</label>
+    <div class="item-actions">
+      <button class="btn-icon edit" title="Editar" onclick="editItem(${cardIdx}, ${iIdx})">✏️</button>
+      <button class="btn-icon del" title="Remover" onclick="removeItem(${cardIdx}, ${iIdx})">🗑</button>
+    </div>
+  `;
+  return div;
+}
+
+/* ─── ITEMS STATE ─── */
+function getItems(tpl, cardIdx, defaultTexts) {
+  if (!state[tpl]) state[tpl] = { items: {}, extra: {} };
+  if (!state[tpl].items) state[tpl].items = {};
+  if (!state[tpl].extra) state[tpl].extra = {};
+
+  const key = String(cardIdx);
+
+  // build merged list: defaults + extra
+  // defaults
+  const defaults = defaultTexts.map((text, i) => {
+    const k = `${key}_${i}`;
+    const saved = state[tpl].items[k];
+    return saved !== undefined ? saved : { text, checked: false };
+  });
+
+  // extra (user-added)
+  const extra = state[tpl].extra[key] || [];
+
+  return [...defaults, ...extra];
+}
+
+function setItemState(cardIdx, iIdx, patch) {
+  const tpl = currentTpl;
+  const allCards = getAllDefaultCounts();
+  const defaultCount = allCards[cardIdx] || 0;
+  const key = String(cardIdx);
+
+  if (iIdx < defaultCount) {
+    const k = `${key}_${iIdx}`;
+    if (!state[tpl].items[k]) {
+      // init from default
+      const text = TEMPLATES[tpl].phases
+        .flatMap(p => p.cards)[cardIdx].items[iIdx];
+      state[tpl].items[k] = { text, checked: false };
+    }
+    Object.assign(state[tpl].items[k], patch);
+  } else {
+    const extraIdx = iIdx - defaultCount;
+    if (!state[tpl].extra[key]) state[tpl].extra[key] = [];
+    if (!state[tpl].extra[key][extraIdx]) state[tpl].extra[key][extraIdx] = { text: '', checked: false };
+    Object.assign(state[tpl].extra[key][extraIdx], patch);
+  }
+  saveState();
+}
+
+function removeItemState(cardIdx, iIdx) {
+  const tpl = currentTpl;
+  const allCards = getAllDefaultCounts();
+  const defaultCount = allCards[cardIdx] || 0;
+  const key = String(cardIdx);
+
+  if (iIdx < defaultCount) {
+    // mark as removed
+    const k = `${key}_${iIdx}`;
+    if (!state[tpl].items[k]) state[tpl].items[k] = { text: '', checked: false };
+    state[tpl].items[k]._removed = true;
+  } else {
+    const extraIdx = iIdx - defaultCount;
+    if (state[tpl].extra[key]) {
+      state[tpl].extra[key].splice(extraIdx, 1);
+    }
+  }
+  saveState();
+}
+
+function getAllDefaultCounts() {
+  const counts = [];
+  TEMPLATES[currentTpl].phases.forEach(p => {
+    p.cards.forEach(c => counts.push(c.items.length));
+  });
+  return counts;
+}
+
+/* ─── INTERACTIONS ─── */
+function toggleItem(cardIdx, iIdx, checked) {
+  setItemState(cardIdx, iIdx, { checked });
+  // update DOM class
+  const div = document.querySelector(`#items-${cardIdx} .item[data-idx="${iIdx}"]`);
+  if (div) div.classList.toggle('done', checked);
+  updateCardProgress(cardIdx);
+  updateProgress();
+}
+
+function editItem(cardIdx, iIdx) {
+  const lbl = document.getElementById(`txt-${cardIdx}-${iIdx}`);
+  if (!lbl) return;
+
+  const original = lbl.textContent;
+  lbl.contentEditable = 'true';
+  lbl.focus();
+  // move cursor to end
+  const range = document.createRange();
+  range.selectNodeContents(lbl);
+  range.collapse(false);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  function finish() {
+    lbl.contentEditable = 'false';
+    const newText = lbl.textContent.trim() || original;
+    lbl.textContent = newText;
+    setItemState(cardIdx, iIdx, { text: newText });
+    lbl.removeEventListener('blur', finish);
+    lbl.removeEventListener('keydown', onKey);
+  }
+
+  function onKey(e) {
+    if (e.key === 'Enter') { e.preventDefault(); finish(); }
+    if (e.key === 'Escape') { lbl.textContent = original; finish(); }
+  }
+
+  lbl.addEventListener('blur', finish);
+  lbl.addEventListener('keydown', onKey);
+}
+
+function removeItem(cardIdx, iIdx) {
+  removeItemState(cardIdx, iIdx);
+  // Re-render just the items list for this card
+  const tpl = currentTpl;
+  const cards = TEMPLATES[tpl].phases.flatMap(p => p.cards);
+  const card = cards[cardIdx];
+  const items = getActiveItems(tpl, cardIdx, card.items);
+  const list = document.getElementById(`items-${cardIdx}`);
+  if (!list) return;
+  list.innerHTML = '';
+  items.forEach((item, iIdx2) => {
+    list.appendChild(buildItemEl(cardIdx, iIdx2, item));
+  });
+  updateCardProgress(cardIdx);
+  updateProgress();
+}
+
+function getActiveItems(tpl, cardIdx, defaultTexts) {
+  const all = getItems(tpl, cardIdx, defaultTexts);
+  return all.filter(i => !i._removed);
+}
+
+function addItemOnEnter(e, cardIdx) {
+  if (e.key === 'Enter') addItem(cardIdx);
+}
+
+function addItem(cardIdx) {
+  const inp = document.getElementById(`add-input-${cardIdx}`);
+  const text = (inp.value || '').trim();
+  if (!text) return;
+
+  const tpl = currentTpl;
+  const key = String(cardIdx);
+  if (!state[tpl].extra[key]) state[tpl].extra[key] = [];
+  state[tpl].extra[key].push({ text, checked: false });
+  inp.value = '';
+  saveState();
+
+  // re-render items
+  const cards = TEMPLATES[tpl].phases.flatMap(p => p.cards);
+  const card = cards[cardIdx];
+  const items = getActiveItems(tpl, cardIdx, card.items);
+  const list = document.getElementById(`items-${cardIdx}`);
+  list.innerHTML = '';
+  items.forEach((item, iIdx) => {
+    list.appendChild(buildItemEl(cardIdx, iIdx, item));
+  });
+  updateCardProgress(cardIdx);
+  updateProgress();
+  toast('Item adicionado!');
+}
+
+/* ─── PROGRESS ─── */
+function updateProgress() {
+  const tpl = currentTpl;
+  if (!tpl) return;
+
+  const cards = TEMPLATES[tpl].phases.flatMap(p => p.cards);
+  let total = 0, done = 0;
+
+  cards.forEach((card, cardIdx) => {
+    const items = getActiveItems(tpl, cardIdx, card.items);
+    items.forEach(i => {
+      total++;
+      if (i.checked) done++;
+    });
+    updateCardProgress(cardIdx);
+  });
+
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progress-count').textContent = `${done} / ${total} concluídos`;
+  document.getElementById('progress-label').textContent = `Progresso — ${pct}%`;
+  document.getElementById('bar-fill').style.width = pct + '%';
+}
+
+function updateCardProgress(cardIdx) {
+  const tpl = currentTpl;
+  if (!tpl) return;
+  const cards = TEMPLATES[tpl].phases.flatMap(p => p.cards);
+  const card = cards[cardIdx];
+  if (!card) return;
+  const items = getActiveItems(tpl, cardIdx, card.items);
+  const done = items.filter(i => i.checked).length;
+  const el = document.getElementById(`cprog-${cardIdx}`);
+  if (el) el.textContent = `${done}/${items.length}`;
+}
+
+/* ─── PDF ─── */
+let _selectedPhase = null; // null = completo, 1/2/3 = fase específica
+
+function downloadPDF() {
+  const nome = document.getElementById('projeto-nome').value.trim();
+  if (!nome) {
+    document.getElementById('projeto-nome').focus();
+    document.getElementById('projeto-nome').style.borderColor = 'var(--danger)';
+    setTimeout(() => document.getElementById('projeto-nome').style.borderColor = '', 2000);
+    toast('Preencha o nome do projeto primeiro!', 'warn');
+    return;
+  }
+  // Skip modal when template has only one phase — go straight to full export
+  if (TEMPLATES[currentTpl].phases.length <= 1) {
+    _selectedPhase = null;
+    confirmPhasePicker();
+    return;
+  }
+  openPhasePicker();
+}
+
+function openPhasePicker() {
+  const tmpl = TEMPLATES[currentTpl];
+  const container = document.getElementById('phase-options');
+  container.innerHTML = '';
+
+  // "Completo" option
+  const opts = [
+    { value: null, label: 'Completo', meta: 'Todas as 3 fases', badge: '📄', badgeBg: '#1E4080' }
+  ];
+  tmpl.phases.forEach((p, i) => {
+    const colors = ['#1E3560','#1A3D2A','#2E1E50'];
+    opts.push({ value: i + 1, label: `Fase ${i + 1}`, meta: p.name, badge: `${i+1}`, badgeBg: colors[i] });
+  });
+
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'phase-opt' + (_selectedPhase === opt.value ? ' selected' : '');
+    btn.dataset.val = opt.value === null ? 'null' : opt.value;
+    btn.innerHTML = `
+      <span class="opt-badge" style="background:${opt.badgeBg}">${opt.badge}</span>
+      <div>
+        <div>${opt.label}</div>
+        <div class="opt-meta">${opt.meta}</div>
+      </div>`;
+    btn.onclick = () => {
+      document.querySelectorAll('.phase-opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      _selectedPhase = opt.value;
+    };
+    container.appendChild(btn);
+  });
+
+  // default to Completo
+  if (_selectedPhase === undefined) _selectedPhase = null;
+  container.querySelector(`[data-val="${_selectedPhase === null ? 'null' : _selectedPhase}"]`)?.classList.add('selected');
+
+  document.getElementById('phase-modal').style.display = 'flex';
+}
+
+function closePhasePicker() {
+  document.getElementById('phase-modal').style.display = 'none';
+}
+
+function confirmPhasePicker() {
+  closePhasePicker();
+  const nome = document.getElementById('projeto-nome').value.trim();
+  const overlay = document.getElementById('pdf-overlay');
+  overlay.style.display = 'flex';
+
+  requestAnimationFrame(() => setTimeout(() => {
+    try {
+      _gerarPDF(nome, _selectedPhase);
+    } finally {
+      overlay.style.display = 'none';
+    }
+  }, 60));
+}
+
+function _gerarPDF(nome, phaseFilter) {
+  // phaseFilter: null = all phases, 1/2/3 = specific phase index (1-based)
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+  // ── constants ──
+  const PW = 210, PH = 297;
+  const ML = 15, MR = 15, MT = 18, MB = 18;
+  const CW = PW - ML - MR;  // content width = 180mm
+  const FOOTER_H = 10;
+  const HEADER_H = 22;
+
+  // colours (light theme)
+  const C = {
+    bg:       [255, 255, 255],
+    text:     [30,  30,  30],
+    muted:    [110, 110, 110],
+    border:   [210, 210, 210],
+    accent:   [59,  130, 246],
+    success:  [16,  185, 129],
+    phase1bg: [240, 247, 255],
+    phase2bg: [240, 255, 247],
+    phase3bg: [245, 240, 255],
+    phase1bd: [180, 210, 255],
+    phase2bd: [160, 230, 200],
+    phase3bd: [200, 180, 255],
+    phase1lb: [37,  99,  235],
+    phase2lb: [5,   150, 105],
+    phase3lb: [124, 58,  237],
+    check:    [16,  185, 129],
+    striket:  [160, 160, 160],
+    cardtitl: [15,  23,  42],
+  };
+
+  const tpl = currentTpl;
+  const tmpl = TEMPLATES[tpl];
+  const data = document.getElementById('projeto-data').value;
+  const tplName = tmpl.name;
+
+  let pageNum = 1;
+  let y = MT + HEADER_H; // current y cursor
+
+  // ── helpers ──
+  function rgb(c) { return { r: c[0], g: c[1], b: c[2] }; }
+  function setFill(c)   { doc.setFillColor(c[0], c[1], c[2]); }
+  function setDraw(c)   { doc.setDrawColor(c[0], c[1], c[2]); }
+  function setTxt(c)    { doc.setTextColor(c[0], c[1], c[2]); }
+
+  function newPage() {
+    drawFooter();
+    doc.addPage();
+    pageNum++;
+    y = MT;
+    drawPageHeader();
+    y = MT + HEADER_H;
+  }
+
+  function ensureSpace(needed) {
+    if (y + needed > PH - MB - FOOTER_H) newPage();
+  }
+
+  // ── text wrapping ──
+  function splitLines(text, maxW, fs) {
+    doc.setFontSize(fs);
+    return doc.splitTextToSize(String(text), maxW);
+  }
+
+  // ── text normalization: jsPDF Helvetica uses Windows-1252 (Latin-1 superset).
+  // All Portuguese characters (ã á â à é ê í ó ô õ ú ç) are in that range.
+  // Characters outside 0x00-0xFF (e.g. emoji, CJK) are replaced with '?' as fallback.
+  function safeStr(str) {
+    return String(str).replace(/[^\x00-\xFF]/g, '?');
+  }
+
+  // ── page header (repeated on every page) ──
+  function drawPageHeader() {
+    // thin accent bar — 3mm, unobtrusive
+    setFill(C.accent);
+    doc.rect(0, 0, PW, 3, 'F');
+
+    // title row — starts below bar with comfortable gap
+    const yh = MT - 2;
+    setTxt(C.text);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text(safeStr(nome), ML, yh);
+
+    setTxt(C.muted);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.text(safeStr(`Template: ${tplName}  \xB7  ${data}`), ML, yh + 5);
+
+    // divider
+    setDraw(C.border);
+    doc.setLineWidth(0.3);
+    doc.line(ML, MT + 2, PW - MR, MT + 2);
+  }
+
+  function drawFooter() {
+    const yf = PH - MB + 4;
+    setDraw(C.border);
+    doc.setLineWidth(0.3);
+    doc.line(ML, yf - 2, PW - MR, yf - 2);
+
+    setTxt(C.muted);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    // only page number — clean, professional
+    doc.text(`${pageNum}`, PW / 2, yf + 3, { align: 'center' });
+  }
+
+  // ── phase banner ──
+  function drawPhaseBanner(phaseName, phaseNum) {
+    const h = 8;
+    ensureSpace(h + 6);
+    const bgs  = [C.phase1bg, C.phase2bg, C.phase3bg];
+    const lbs  = [C.phase1lb, C.phase2lb, C.phase3lb];
+    const idx  = phaseNum - 1;
+
+    setFill(bgs[idx]);
+    setDraw(bgs[idx]);
+    doc.roundedRect(ML, y, CW, h, 2, 2, 'FD');
+
+    setTxt(lbs[idx]);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.text(safeStr(`FASE ${phaseNum}  \x97  ${phaseName}`), ML + 5, y + 5.5);
+
+    y += h + 5;
+  }
+
+  // ── card ──
+  // Each card may span multiple pages. We draw items one by one; when a page
+  // boundary is hit we close the current segment rect, add a page, open a new
+  // segment rect, and continue. This guarantees every visible row has a
+  // correctly-sized coloured background on its own page.
+  function drawCard(card, cardIdx, phaseNum) {
+    const ITEM_FS    = 9.5;
+    const LINEHEIGHT = ITEM_FS * 0.45;
+    const CB         = 3.8;
+    const PAD        = 5;
+    const TITLE_H    = 12;
+    const DIVIDER    = 3;
+    const ROW_GAP    = 3;
+    const CONT_H     = 8;   // continuation banner height
+
+    const bds = [C.phase1bd, C.phase2bd, C.phase3bd];
+    const bgs = [C.phase1bg, C.phase2bg, C.phase3bg];
+    const idx = phaseNum - 1;
+
+    const items = getActiveItems(tpl, cardIdx, card.items);
+    const doneCount = items.filter(i => i.checked).length;
+    const cardNum = (cardIdx % 6) + 1;
+
+    // pre-compute row heights (re-used for rect sizing later)
+    const rowHeights = items.map(item => {
+      const lines = splitLines(item.text, CW - 20, ITEM_FS);
+      return Math.max(CB + 1, lines.length * LINEHEIGHT) + ROW_GAP;
+    });
+
+    const headerH = PAD + TITLE_H + DIVIDER; // title block height
+    const totalItemH = rowHeights.reduce((a, b) => a + b, 0);
+    const cardH = headerH + totalItemH + PAD;
+    const maxContentH = PH - MB - FOOTER_H; // bottom boundary
+
+    // ── page break before card ──
+    // Try to keep the card header + at least 2 rows on the same page
+    const minKeepH = headerH + (rowHeights[0] || 0) + (rowHeights[1] || 0) + PAD;
+    if (y + Math.min(cardH, minKeepH) > maxContentH) {
+      newPage();
+    }
+
+    // ── helper: open a card segment rect ──
+    // We open the rect "lazily": record the start Y, then after drawing all
+    // items in this segment we retroactively know the height and close it.
+    // jsPDF draws in order, so we use a save/restore trick:
+    // We push a deferred rect by storing (startY, height) and drawing it
+    // BEFORE the text via doc.internal page context manipulation — but that
+    // is complex. Simpler: draw a rect covering the segment, then redraw text.
+    // For our use case (few items per segment) this is fine.
+
+    // We collect segments: { startY, rows: [item indices] }
+    let segments = [];
+    let curSegStart = y;
+    let curSegRows  = [];
+    let cy = y + headerH;
+
+    items.forEach((item, iIdx) => {
+      const rh = rowHeights[iIdx];
+
+      if (cy + rh > maxContentH) {
+        // close current segment
+        segments.push({ startY: curSegStart, rows: curSegRows, isCont: segments.length > 0 });
+        // open new page
+        drawFooter();
+        doc.addPage();
+        pageNum++;
+        drawPageHeader();
+        cy = MT + HEADER_H;
+        curSegStart = cy;
+        curSegRows = [];
+        cy += CONT_H; // room for continuation banner
+      }
+
+      curSegRows.push(iIdx);
+      cy += rh;
+    });
+    // push final segment
+    segments.push({ startY: curSegStart, rows: curSegRows, isCont: segments.length > 0 });
+
+    // ── draw each segment ──
+    // For single-segment cards (the common case) this is one pass.
+    let itemDrawY = segments[0].startY + headerH;
+
+    segments.forEach((seg, sIdx) => {
+      const isCont = seg.isCont;
+      const segItemH = seg.rows.reduce((a, ri) => a + rowHeights[ri], 0);
+      const segPadBottom = PAD;
+      const segH = isCont
+        ? CONT_H + segItemH + segPadBottom
+        : headerH + segItemH + segPadBottom;
+
+      // ── segment background rect ──
+      setFill(bgs[idx]);
+      setDraw(bds[idx]);
+      doc.setLineWidth(0.5);
+      doc.roundedRect(ML, seg.startY, CW, segH, 3, 3, 'FD');
+
+      if (isCont) {
+        // continuation banner
+        setTxt(C.muted);
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(8);
+        doc.text(safeStr(`${cardNum}. ${card.title} — continuacao`), ML + 5, seg.startY + 5.5);
+        itemDrawY = seg.startY + CONT_H;
+      } else {
+        // ── title (first segment only) ──
+        let cy2 = seg.startY + PAD + 1;
+        setTxt(C.cardtitl);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.text(safeStr(`${cardNum}. ${card.title}`), ML + 5, cy2 + 6);
+
+        setTxt(C.muted);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.text(`${doneCount}/${items.length}`, PW - MR - 5, cy2 + 6, { align: 'right' });
+
+        cy2 += TITLE_H;
+        setDraw(bds[idx]);
+        doc.setLineWidth(0.3);
+        doc.line(ML + 4, cy2, PW - MR - 4, cy2);
+        itemDrawY = cy2 + DIVIDER;
+      }
+
+      // ── items in this segment ──
+      seg.rows.forEach((iIdx, rPos) => {
+        const item = items[iIdx];
+        const rh   = rowHeights[iIdx];
+        const cx   = ML + 6;
+        const tx   = cx + CB + 3;
+        doc.setFontSize(ITEM_FS);
+        const lines = splitLines(item.text, CW - 20, ITEM_FS);
+
+        // checkbox
+        setDraw(item.checked ? C.check : C.muted);
+        doc.setLineWidth(item.checked ? 0.6 : 0.4);
+        setFill(item.checked ? C.check : C.bg);
+        doc.roundedRect(cx, itemDrawY + 1, CB, CB, 0.7, 0.7, item.checked ? 'FD' : 'D');
+
+        if (item.checked) {
+          setDraw(C.bg);
+          doc.setLineWidth(0.8);
+          doc.line(cx + 0.7,    itemDrawY + 1 + CB / 2,       cx + CB / 2,   itemDrawY + 1 + CB - 0.8);
+          doc.line(cx + CB / 2, itemDrawY + 1 + CB - 0.8,     cx + CB + 0.5, itemDrawY + 1.5);
+        }
+
+        // text
+        if (item.checked) {
+          setTxt(C.striket);
+          doc.setFont('helvetica', 'normal');
+          lines.forEach((line, li) => {
+            const ty = itemDrawY + 1 + li * LINEHEIGHT + LINEHEIGHT * 0.75;
+            doc.text(safeStr(line), tx, ty);
+            setDraw(C.striket);
+            doc.setLineWidth(0.3);
+            doc.line(tx, ty - LINEHEIGHT * 0.2, tx + doc.getTextWidth(line), ty - LINEHEIGHT * 0.2);
+          });
+        } else {
+          setTxt(C.text);
+          doc.setFont('helvetica', 'normal');
+          lines.forEach((line, li) => {
+            doc.text(safeStr(line), tx, itemDrawY + 1 + li * LINEHEIGHT + LINEHEIGHT * 0.75);
+          });
+        }
+
+        // row separator (skip last in segment)
+        if (rPos < seg.rows.length - 1) {
+          setDraw([220, 225, 235]);
+          doc.setLineWidth(0.2);
+          doc.line(ML + 5, itemDrawY + rh, PW - MR - 5, itemDrawY + rh);
+        }
+
+        itemDrawY += rh;
+      });
+    });
+
+    // advance y past the last segment
+    const lastSeg = segments[segments.length - 1];
+    const lastSegItemH = lastSeg.rows.reduce((a, ri) => a + rowHeights[ri], 0);
+    const lastSegH = lastSeg.isCont
+      ? CONT_H + lastSegItemH + PAD
+      : headerH + lastSegItemH + PAD;
+    y = lastSeg.startY + lastSegH + 6;
+  }
+
+  // ── progress summary block ──
+  function drawProgressSummary() {
+    const cards = tmpl.phases.flatMap(p => p.cards);
+    let total = 0, done = 0;
+    cards.forEach((card, ci) => {
+      const items = getActiveItems(tpl, ci, card.items);
+      items.forEach(i => { total++; if (i.checked) done++; });
+    });
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    const barW = CW - 10;
+    const fillW = barW * (pct / 100);
+
+    ensureSpace(22);
+
+    setFill([245, 247, 250]);
+    setDraw(C.border);
+    doc.setLineWidth(0.4);
+    doc.roundedRect(ML, y, CW, 18, 3, 3, 'FD');
+
+    setTxt(C.text);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.text(safeStr(`Progresso \x97 ${pct}%`), ML + 5, y + 6);
+
+    setTxt(C.muted);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text(safeStr(`${done} / ${total} itens conclu\xEDdos`), PW - MR - 5, y + 6, { align: 'right' });
+
+    // track
+    setFill([220, 220, 220]);
+    setDraw([220, 220, 220]);
+    doc.roundedRect(ML + 5, y + 10, barW, 3.5, 1.5, 1.5, 'F');
+
+    // fill
+    if (fillW > 0) {
+      setFill(pct === 100 ? C.success : C.accent);
+      doc.roundedRect(ML + 5, y + 10, fillW, 3.5, 1.5, 1.5, 'F');
+    }
+
+    y += 24;
+  }
+
+  // ── BUILD PDF ──
+  drawPageHeader();
+  drawProgressSummary();
+
+  // Build phase list respecting phaseFilter
+  const phasesToRender = phaseFilter !== null
+    ? tmpl.phases.filter((_, i) => i + 1 === phaseFilter)
+    : tmpl.phases;
+
+  // globalCardIdx must still count from 0 across ALL cards so state keys match
+  let globalCardIdx = 0;
+  tmpl.phases.forEach((phase, pIdx) => {
+    if (phaseFilter === null || pIdx + 1 === phaseFilter) {
+      drawPhaseBanner(phase.name, pIdx + 1);
+      phase.cards.forEach(card => {
+        drawCard(card, globalCardIdx, pIdx + 1);
+        globalCardIdx++;
+      });
+      y += 4;
+    } else {
+      // still advance globalCardIdx so card state indices stay aligned
+      globalCardIdx += phase.cards.length;
+    }
+  });
+
+  drawFooter();
+
+  // ── filename: NomeProjeto_Template[_FaseN]_DDMM.pdf ──
+  const today = new Date();
+  const ddmm = String(today.getDate()).padStart(2, '0') + String(today.getMonth() + 1).padStart(2, '0');
+  const safeName = nome.normalize('NFD')                          // decompose accents
+    .replace(/[̀-ͯ]/g, '')                              // strip diacritics
+    .replace(/[^a-zA-Z0-9\-_ ]/g, '').trim().replace(/\s+/g, '_');
+  const fasePart = phaseFilter !== null ? `_Fase${phaseFilter}` : '';
+  doc.save(`${safeName}_${tplName}${fasePart}_${ddmm}.pdf`);
+}
+
+/* ─── UTILS ─── */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+let toastTimer;
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = type === 'warn' ? 'var(--warn)' : 'var(--success)';
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+/* ─── INIT ─── */
+state = loadState();
+</script>
+</body>
+</html>
