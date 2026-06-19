@@ -492,13 +492,13 @@
   <!-- ─────────────────── VARREDURA ─────────────────── -->
   <section id="page-scan" class="page active" aria-labelledby="title-scan">
     <h1 id="title-scan">📊 Varredura de Mercado</h1>
-    <p class="page-sub">Identifica qual segmento (MEI, PF ou Adesão) tem maior oportunidade esta semana em Teresópolis.</p>
+    <p class="page-sub">Ranking semanal de oportunidade para todos os produtos: saúde, vida, residencial, auto, previdência, consórcio e mais.</p>
 
     <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:22px">
       <button class="btn btn-primary" onclick="executarScan()" id="btn-scan" aria-describedby="scan-desc">
         <span aria-hidden="true">🔍</span> Executar Varredura
       </button>
-      <span id="scan-desc" class="muted" style="font-size:13px;color:var(--muted)">Agrega sinais de Brasil.IO, ANS, IBGE e busca orgânica</span>
+      <span id="scan-desc" class="muted" style="font-size:13px;color:var(--muted)">Agrega sinais de BACEN, INMET, Brasil.IO, ANS, calendário e busca orgânica</span>
     </div>
 
     <div class="loading-box" id="load-scan" role="status" aria-live="polite">
@@ -834,6 +834,16 @@ function renderLead(d) {
     </div>`;
   }
 
+  if (d.crossSell?.length) {
+    h += `<div class="panel" style="margin-bottom:16px;border-left:4px solid var(--warn)">
+      <div class="result-head">💡 Oportunidades de Cross-sell</div>
+      ${d.crossSell.map(cs => `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:18px">➕</span>
+        <div><strong>${esc(cs.produto)}</strong><br><span style="font-size:13px;color:var(--muted)">${esc(cs.motivo)}</span></div>
+      </div>`).join('')}
+    </div>`;
+  }
+
   if (d.resumoFinal) {
     const txt = gerarTextoRelatorio(d);
     h += `<button class="btn btn-ghost btn-sm" onclick="copiar(${JSON.stringify(txt)})">📋 Copiar Resumo Completo</button>`;
@@ -857,6 +867,7 @@ function gerarTextoRelatorio(d) {
     d.funil.etapas.forEach(e => l.push(`  [${e.timing}] ${e.canal}: ${e.mensagem || e.objetivo}`));
   }
   if (d.campanha?.campanhaCompativel) l.push('', `CAMPANHA: ${d.campanha.campanhaCompativel} — ${d.campanha.acaoRecomendada}`);
+  if (d.crossSell?.length) { l.push('', 'CROSS-SELL:'); d.crossSell.forEach(cs => l.push(`  ➕ ${cs.produto} — ${cs.motivo}`)); }
   return l.join('\n');
 }
 
@@ -880,46 +891,79 @@ async function executarScan() {
 }
 
 function renderScan(d) {
-  const { oportunidades, resumoExecutivo, oqueNaoFazer, proximaVarredura, confianca, fonte, dataVarredura } = d;
+  const { oportunidades, resumoExecutivo, oqueNaoFazer, proximaVarredura, confianca, fonte,
+          dataVarredura, crossSellAlerta, mensagemCampanha, recomendacaoLabel, dadosAPI } = d;
   let h = '';
+
+  // Cabeçalho com dados API
+  const apiChips = [];
+  if (dadosAPI?.selic)     apiChips.push(`Selic: ${dadosAPI.selic}% a.a.`);
+  if (dadosAPI?.cambioUSD) apiChips.push(`USD: R$${parseFloat(dadosAPI.cambioUSD).toFixed(2)}`);
+  if (dadosAPI?.chuvaMM != null) apiChips.push(`Chuva: ${dadosAPI.chuvaMM}mm`);
 
   h += `<div class="panel" style="border-left:4px solid var(--accent);margin-bottom:16px">
     <div style="font-size:17px;font-weight:bold;margin-bottom:8px">${esc(resumoExecutivo || '')}</div>
+    ${apiChips.length ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">${apiChips.map(c=>`<span class="tag tag-blue">${esc(c)}</span>`).join('')}</div>` : ''}
     <div style="font-size:13px;color:var(--muted)">
-      Data: ${esc(dataVarredura)} · Confiança: ${esc(confianca)} · Próxima: ${esc(proximaVarredura)}<br>
-      Fonte: ${esc(Array.isArray(fonte) ? fonte.join(', ') : fonte || '')}
+      Data: ${esc(dataVarredura)} · Próxima: ${esc(proximaVarredura)}<br>
+      Fontes: ${esc(Array.isArray(fonte) ? fonte.join(' · ') : fonte || '')}
     </div>
   </div>`;
 
+  // Cross-sell alerta
+  if (crossSellAlerta) {
+    h += `<div class="alert alert-info" style="margin-bottom:16px">💡 <strong>Cross-sell:</strong> ${esc(crossSellAlerta)}</div>`;
+  }
+
+  // Mensagem de campanha pronta para o produto líder
+  if (mensagemCampanha) {
+    h += `<div class="panel" style="margin-bottom:16px;border-left:4px solid var(--success)">
+      <div class="result-head">⭐ Campanha Prioritária — ${esc(recomendacaoLabel || '')}</div>
+      <div class="funnel-msg">${esc(mensagemCampanha)}</div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="copiar(${JSON.stringify(mensagemCampanha)})">Copiar mensagem</button>
+    </div>`;
+  }
+
   if (oportunidades?.length) {
-    h += `<div class="result-head" style="margin-bottom:12px">Ranking de Oportunidades</div>`;
+    h += `<div class="result-head" style="margin-bottom:12px">Ranking de Todos os Produtos (${oportunidades.length})</div>`;
     oportunidades.forEach((o, i) => {
       const sc  = o.score || 0;
-      const cls = sc >= 60 ? 'score-high' : sc >= 40 ? 'score-med' : 'score-low';
-      const clr = sc >= 60 ? 'var(--success)' : sc >= 40 ? 'var(--warn)' : 'var(--muted)';
+      const cls = sc >= 65 ? 'score-high' : sc >= 40 ? 'score-med' : 'score-low';
+      const clr = sc >= 65 ? 'var(--success)' : sc >= 40 ? 'var(--warn)' : 'var(--muted)';
       const urg = { alta:'🔴 Alta', media:'🟡 Média', baixa:'🟢 Baixa' }[o.urgencia] || o.urgencia;
+      const confTag = { alta:'tag-green', media:'tag-orange', baixa:'tag-gray' }[o.confianca] || 'tag-gray';
 
-      h += `<div class="score-card">
+      h += `<div class="score-card" style="${i > 2 ? 'opacity:0.75' : ''}">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-          <div>
-            <div class="score-num ${cls}" aria-label="Score ${sc}">${sc}</div>
-            <div style="font-size:16px;font-weight:bold;margin-top:2px">${esc(o.titulo)}</div>
-            <div style="font-size:13px;color:var(--muted)">${esc(o.volume)} · Urgência: ${esc(urg)} · ${esc(o.janela)}</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="score-num ${cls}" aria-label="Score ${sc}" style="font-size:26px">${sc}</div>
+              <div>
+                <div style="font-size:15px;font-weight:bold">${esc(o.titulo)}</div>
+                <div style="font-size:12px;color:var(--muted)">${esc(o.volume)}</div>
+              </div>
+            </div>
           </div>
-          ${i === 0 ? '<span class="tag tag-green">⭐ Prioridade da semana</span>' : ''}
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+            ${i === 0 ? '<span class="tag tag-green">⭐ Prioridade #1</span>' : i === 1 ? '<span class="tag tag-orange">#2</span>' : `<span class="tag tag-gray">#${i+1}</span>`}
+            <span class="tag ${confTag}" style="font-size:11px">Confiança ${esc(o.confianca)}</span>
+          </div>
         </div>
-        <div class="prog-track">
+        <div class="prog-track" style="margin:8px 0">
           <div class="prog-fill" style="width:${sc}%;background:${clr}" role="progressbar" aria-valuenow="${sc}" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
-        <div style="margin-top:10px">
-          <div style="font-weight:bold;margin-bottom:4px">${esc(o.acaoRecomendada || '')}</div>
-          <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Planos: ${esc((o.planosIndicados||[]).join(', '))}</div>
-          ${o.mensagemPronta ? `
-            <div class="funnel-msg">${esc(o.mensagemPronta)}</div>
-            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="copiar(${JSON.stringify(o.mensagemPronta)})">Copiar mensagem</button>
-          ` : ''}
-          <div style="font-size:12px;color:var(--muted);margin-top:8px">Meta: ${esc(o.metaEstimada||'')} · Confiança dos dados: ${esc(o.confianca||'')}</div>
-        </div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px"><strong>Gatilho:</strong> ${esc(o.gatilho||'')}</div>
+        <details>
+          <summary style="cursor:pointer;font-size:13px;color:var(--accent)">Ver detalhes e mensagem</summary>
+          <div style="margin-top:10px">
+            <div style="font-weight:bold;font-size:14px;margin-bottom:4px">${esc(o.acaoRecomendada || '')}</div>
+            ${o.sinais?.length ? `<ul style="font-size:13px;color:var(--muted);padding-left:18px;margin-bottom:8px">${o.sinais.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>` : ''}
+            ${o.mensagemPronta ? `
+              <div class="funnel-msg">${esc(o.mensagemPronta)}</div>
+              <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="copiar(${JSON.stringify(o.mensagemPronta)})">Copiar mensagem</button>` : ''}
+            <div style="font-size:12px;color:var(--muted);margin-top:8px">Meta: ${esc(o.metaEstimada||'')} · Urgência: ${esc(urg)}</div>
+          </div>
+        </details>
       </div>`;
     });
   }
@@ -939,14 +983,23 @@ function renderScan(d) {
 
 function gerarTextoScan(d) {
   const l = [`=== VARREDURA QUEIROZ SEGUROS — ${d.dataVarredura} ===`, '', d.resumoExecutivo, ''];
-  (d.oportunidades||[]).forEach(o => {
-    l.push(`[Score ${o.score}] ${o.titulo}`);
-    l.push(`  Volume: ${o.volume} | Urgência: ${o.urgencia}`);
-    l.push(`  Ação: ${o.acaoRecomendada}`);
-    if (o.mensagemPronta) l.push(`  Mensagem: ${o.mensagemPronta}`);
+  if (d.crossSellAlerta) l.push(`Cross-sell: ${d.crossSellAlerta}`, '');
+  if (d.dadosAPI) {
+    const api = [];
+    if (d.dadosAPI.selic)     api.push(`Selic: ${d.dadosAPI.selic}%`);
+    if (d.dadosAPI.cambioUSD) api.push(`USD: R$${parseFloat(d.dadosAPI.cambioUSD).toFixed(2)}`);
+    if (d.dadosAPI.chuvaMM != null) api.push(`Chuva: ${d.dadosAPI.chuvaMM}mm`);
+    if (api.length) l.push(`Dados API: ${api.join(' | ')}`, '');
+  }
+  l.push('RANKING DE PRODUTOS:');
+  (d.oportunidades||[]).forEach((o, i) => {
+    l.push(`${i+1}. [Score ${o.score}] ${o.titulo} — Confiança: ${o.confianca}`);
+    l.push(`   Gatilho: ${o.gatilho}`);
+    l.push(`   Ação: ${o.acaoRecomendada}`);
+    if (o.mensagemPronta) l.push(`   Mensagem: ${o.mensagemPronta}`);
     l.push('');
   });
-  if (d.oqueNaoFazer) { l.push('NÃO FAZER:'); d.oqueNaoFazer.forEach(o => l.push(`  ❌ ${o}`)); }
+  if (d.oqueNaoFazer?.length) { l.push('NÃO FAZER:'); d.oqueNaoFazer.forEach(o => l.push(`  ❌ ${o}`)); }
   l.push('', `Próxima varredura: ${d.proximaVarredura}`);
   return l.join('\n');
 }

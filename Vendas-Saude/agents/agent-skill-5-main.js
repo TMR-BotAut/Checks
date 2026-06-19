@@ -6,6 +6,31 @@ const { consultar, gerir } = require('./agent-skill-3');
 const { analisarMercado }  = require('./agent-skill-4');
 const { executar: gerente } = require('./agent-skill-6-manager');
 
+// ─── Matriz de cross-sell ──────────────────────────────────────────────────────
+const CROSSSELL_MATRIX = {
+  pme: [
+    { produto: 'Previdência Privada (PGBL/VGBL)', motivo: 'INSS MEI garante só 1 salário mínimo de aposentadoria' },
+    { produto: 'RC Profissional', motivo: 'Autônomo sem cobertura de responsabilidade civil' },
+    { produto: 'Acidentes Pessoais', motivo: 'Sem benefício patronal em caso de acidente' },
+    { produto: 'Consórcio Veículo/Imóvel', motivo: 'MEI precisa de veículo de trabalho ou segunda residência' }
+  ],
+  pessoa_fisica: [
+    { produto: 'Seguro de Vida', motivo: 'Proteção para dependentes financeiros' },
+    { produto: 'Previdência Privada', motivo: 'Complementar aposentadoria sem previdência patronal' },
+    { produto: 'Plano Odontológico', motivo: 'Plano de saúde não cobre dentista' }
+  ],
+  adesao: [
+    { produto: 'RC Profissional', motivo: 'Profissional liberal com alta exposição de responsabilidade' },
+    { produto: 'Previdência Privada', motivo: 'Autônomo sem previdência patronal' },
+    { produto: 'Plano Odontológico', motivo: 'Adesão Amil Bronze: dental vence em 12 meses' },
+    { produto: 'Seguro de Vida', motivo: 'Sem cobertura patronal de vida' }
+  ]
+};
+
+function gerarCrossSell(segmento) {
+  return CROSSSELL_MATRIX[segmento] || [];
+}
+
 async function orquestrar(input = {}) {
   const { modo, leadData = {}, campanhas, cidade } = input;
   const erros = [];
@@ -32,6 +57,8 @@ async function orquestrar(input = {}) {
       return r.value;
     }));
 
+    const crossSell = gerarCrossSell(perfil.segmento);
+
     const resumoFinal = [
       `Lead ${leadData.nome || 'sem nome'} — ${perfil.segmento?.toUpperCase()} — Prioridade ${perfil.prioridade?.toUpperCase()}`,
       perfil.alertas?.length ? `Alertas: ${perfil.alertas.join('; ')}` : '',
@@ -39,7 +66,7 @@ async function orquestrar(input = {}) {
       mercado?.resumo || ''
     ].filter(Boolean).join(' | ');
 
-    return { modo, perfil, funil, campanha, mercado, resumoFinal, ...(erros.length ? { erros } : {}) };
+    return { modo, perfil, funil, campanha, mercado, crossSell, resumoFinal, ...(erros.length ? { erros } : {}) };
   }
 
   // ─── funil ────────────────────────────────────────────────────────────────
