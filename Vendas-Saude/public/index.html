@@ -337,8 +337,73 @@
     .hero-badge .hb-name { font-weight: 700; color: #fff; }
     .hero-badge .hb-score { color: rgba(255,255,255,0.85); font-size: 12px; }
 
+    /* ── Hero money protagonist ── */
+    .hero-money { font-family: var(--font-head); font-size: 40px; font-weight: 800; color: #fff; line-height: 1; letter-spacing: -0.02em; }
+    .hero-money-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.8); margin: 8px 0 2px; }
+    .hero-prod { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: #fff; }
+    .hero-base { font-size: 13px; color: rgba(255,255,255,0.85); margin-top: 4px; }
+
+    /* ── Chips ── */
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 999px; padding: 6px 13px; font-size: 13px; font-weight: 600; color: var(--text);
+    }
+    .chip .chip-ico { opacity: 0.8; }
+
+    /* ── Ação hoje ── */
+    .acao-hoje-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 6px 0 14px; }
+    .acao-metric {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px; text-align: center;
+    }
+    .acao-metric .am-num { font-family: var(--font-head); font-size: 24px; font-weight: 800; color: var(--primary); line-height: 1; }
+    .acao-metric .am-lbl { font-size: 12px; color: var(--muted); margin-top: 5px; font-weight: 600; }
+    .oferta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .oferta {
+      flex: 1; min-width: 200px; border-radius: 12px; padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .oferta-primary { background: rgba(6,184,154,0.10); border: 1px solid rgba(6,184,154,0.3); }
+    .oferta-secondary { background: rgba(26,140,200,0.08); border: 1px solid rgba(26,140,200,0.25); }
+    .oferta .of-ico { font-size: 22px; }
+    .oferta .of-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
+    .oferta .of-name { font-size: 15px; font-weight: 700; }
+
+    /* ── Pódio (top 3 independentes) ── */
+    .podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 8px; }
+    .podium-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px; box-shadow: var(--shadow); cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      border-top: 4px solid var(--border);
+    }
+    .podium-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+    .podium-card.p1 { border-top-color: #E0A800; }
+    .podium-card.p2 { border-top-color: #9aa3b5; }
+    .podium-card.p3 { border-top-color: #c8854a; }
+    .podium-medal { font-size: 26px; }
+    .podium-prod { font-family: var(--font-head); font-size: 15px; font-weight: 700; margin: 6px 0 2px; }
+    .podium-money { font-family: var(--font-head); font-size: 19px; font-weight: 800; color: var(--success); }
+    .podium-meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Mercado hoje ── */
+    .mercado-grid { display: flex; flex-direction: column; gap: 8px; }
+    .mercado-item { display: flex; align-items: center; gap: 10px; font-size: 14px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+    .mercado-item:last-child { border-bottom: none; }
+    .mercado-item .mi-ico { font-size: 16px; width: 22px; text-align: center; }
+
+    /* ── Section label ── */
+    .sec-label { font-family: var(--font-head); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); margin: 22px 0 12px; }
+
     /* ── Scan top bar ── */
     .api-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+
+    @media (max-width: 700px) {
+      .acao-hoje-grid { grid-template-columns: repeat(3, 1fr); }
+      .podium { grid-template-columns: 1fr; }
+    }
 
     /* ── PR ── */
     .pr-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
@@ -418,14 +483,14 @@
   <button class="nav-btn" id="nav-lead" onclick="ir('lead')">
     <span class="icon" aria-hidden="true">👤</span> Analisar Lead
   </button>
-  <button class="nav-btn" id="nav-pr" onclick="ir('pr')">
-    <span class="icon" aria-hidden="true">🔀</span> Pull Request
-    <span class="nav-badge" id="pr-badge" aria-label="Status do PR"></span>
-  </button>
 
   <div class="spacer"></div>
   <footer>
     <div id="api-status" aria-live="polite" style="margin-bottom:6px">⚙️ Verificando API...</div>
+    <button class="nav-btn" id="nav-pr" onclick="ir('pr')" style="font-size:12px;padding:7px 10px;margin:6px 0">
+      <span class="icon" aria-hidden="true" style="font-size:14px">🔀</span> Atualizações (PR)
+      <span class="nav-badge" id="pr-badge" aria-label="Status do PR"></span>
+    </button>
     <div>Versão: planos até 25/06/2026</div>
   </footer>
 </aside>
@@ -599,6 +664,27 @@ function copiar(txt) {
 }
 function setLoad(id, show) { document.getElementById(id).classList.toggle('show', show); }
 function fmtBRL(n) { return 'R$ ' + Number(n || 0).toLocaleString('pt-BR'); }
+
+// Extrai o primeiro inteiro de uma string de volume (ex: "62 MEIs..." → 62)
+function parseVol(v) {
+  if (typeof v === 'number') return v;
+  const m = String(v || '').match(/[\d.]+/);
+  return m ? parseInt(m[0].replace(/\./g, '')) : 0;
+}
+
+// Potencial total/ano = elegíveis × ticket mensal × 12 (100% do lucro vai ao vendedor)
+function potencialTotal(o) {
+  const n = parseVol(o.volume);
+  const tkt = o.ticket_medio || 0;
+  if (n && tkt) return n * tkt * 12;
+  return o.receita_potencial || 0;
+}
+// Potencial realista = aplica a taxa de conversão estimada
+function potencialRealista(o) {
+  const total = potencialTotal(o);
+  const conv = o.taxa_conversao || 100;
+  return Math.round(total * conv / 100 / 100) * 100;
+}
 
 // ── Semáforo ──────────────────────────────────────────────────────────────────
 function semIcon(score) { return score >= 50 ? '🟢' : score >= 35 ? '🟡' : '🔴'; }
@@ -826,33 +912,92 @@ function renderScan(d) {
   const medals = ['🥇','🥈','🥉'];
 
   if (top) {
+    const nElegiveis = parseVol(top.volume);
+    const conv  = top.taxa_conversao || 3;
+    const tkt   = top.ticket_medio || 0;
+
+    // ── HERO: dinheiro protagonista (altura reduzida) ──
+    const potTotal = potencialTotal(top);
+    const potReal  = potencialRealista(top);
     h += `<div class="hero-panel">
       <div class="hero-top-label">⭐ Maior Oportunidade Esta Semana</div>
-      <div class="hero-title">${semIcon(top.score)} ${esc(top.titulo)}</div>
-      <div class="hero-meta">
-        Score ${top.score}/100 · ${esc(top.gatilho||'')} ·
-        <span style="color:var(--success);font-weight:700">${fmtBRL(top.receita_potencial)}/ano est.</span>
-      </div>
-      <div class="hero-top3">
-        ${top3.map((o,i)=>`<div class="hero-badge">
-          <span class="medal">${medals[i]}</span>
-          <div>
-            <div class="hb-name">${esc(o.titulo)}</div>
-            <div class="hb-score">${semIcon(o.score)} Score ${o.score} · ${fmtBRL(o.receita_potencial)}/ano</div>
-          </div>
-        </div>`).join('')}
+      <div class="hero-money">${fmtBRL(potTotal)}</div>
+      <div class="hero-money-label">Potencial total / ano — ${nElegiveis ? nElegiveis + ' elegíveis × ' + fmtBRL(tkt) + '/mês × 12' : 'lucro 100% do vendedor'}</div>
+      <div class="hero-prod">${semIcon(top.score)} ${esc(top.titulo)} · Score ${top.score}/100</div>
+      <div class="hero-base">Realista com ${conv}% de conversão: <strong style="color:#fff">${fmtBRL(potReal)}/ano</strong></div>
+    </div>`;
+
+    // ── Cliente Ideal (chips) ──
+    const pc = top.perfil_cliente || {};
+    const chipDefs = [
+      pc.tipo, pc.tempo_abertura, pc.equipe, pc.setor, pc.faixa_etaria,
+      pc.faturamento, pc.perfil, pc.situacao, pc.localizacao
+    ].filter(Boolean).slice(0, 6);
+    if (chipDefs.length) {
+      h += `<div class="panel" style="margin-bottom:14px">
+        <div class="result-head">🎯 Cliente Ideal — quem abordar</div>
+        <div class="chips">${chipDefs.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>
+      </div>`;
+    }
+
+    // ── Próxima Ação (Fazer hoje) ──
+    const ligacoes  = nElegiveis || 0;
+    const whatsapps = nElegiveis ? nElegiveis * 2 : 0;
+    const visitas   = nElegiveis ? Math.max(1, Math.round(nElegiveis * conv / 100)) : 0;
+    const ofertaSec = (top.acoes_recomendadas||[]).find(a => a.tipo === 'cross_sell')?.descricao
+                      || crossSellAlerta || '';
+    h += `<div class="panel" style="border-left:4px solid var(--success);margin-bottom:14px">
+      <div class="result-head">✅ Fazer Hoje</div>
+      ${nElegiveis ? `<div class="acao-hoje-grid">
+        <div class="acao-metric"><div class="am-num">📞 ${ligacoes}</div><div class="am-lbl">ligações</div></div>
+        <div class="acao-metric"><div class="am-num">💬 ${whatsapps}</div><div class="am-lbl">WhatsApps</div></div>
+        <div class="acao-metric"><div class="am-num">📅 ${visitas}</div><div class="am-lbl">visitas alvo</div></div>
+      </div>` : ''}
+      <div class="oferta-row">
+        <div class="oferta oferta-primary">
+          <span class="of-ico">🎯</span>
+          <div><div class="of-lbl">Oferta principal</div><div class="of-name">${esc(top.titulo)}</div></div>
+        </div>
+        ${ofertaSec ? `<div class="oferta oferta-secondary">
+          <span class="of-ico">🎁</span>
+          <div><div class="of-lbl">Oferta secundária</div><div class="of-name">${esc(ofertaSec)}</div></div>
+        </div>` : ''}
       </div>
     </div>`;
   }
 
-  // ── API data chips ──
-  const chips = [];
-  if (dadosAPI?.selic)         chips.push(`📈 Selic: ${dadosAPI.selic}% a.a.`);
-  if (dadosAPI?.cambioUSD)     chips.push(`💵 USD: R$${parseFloat(dadosAPI.cambioUSD).toFixed(2)}`);
-  if (dadosAPI?.chuvaMM != null) chips.push(`🌧 Chuva: ${dadosAPI.chuvaMM}mm`);
+  // ── Pódio: top 3 como cards independentes ──
+  if (top3.length) {
+    h += `<div class="sec-label">🏆 Ranking da Semana</div>`;
+    h += `<div class="podium">${top3.map((o,i)=>{
+      const cardId = `opp_${esc(o.produto)}`;
+      const pcls = ['p1','p2','p3'][i];
+      return `<div class="podium-card ${pcls}" onclick="abrirCard('${cardId}')" role="button" tabindex="0"
+        onkeydown="if(event.key==='Enter'||event.key===' '){abrirCard('${cardId}');event.preventDefault()}">
+        <div class="podium-medal">${medals[i]}</div>
+        <div class="podium-prod">${esc(o.titulo)}</div>
+        <div class="podium-money">${fmtBRL(potencialTotal(o))}<span style="font-size:12px;color:var(--muted);font-weight:600">/ano</span></div>
+        <div class="podium-meta">${semIcon(o.score)} Score ${o.score} · Conf. ${o.confianca_percentual||'—'}%</div>
+      </div>`;
+    }).join('')}</div>`;
+  }
 
-  if (chips.length) {
-    h += `<div class="api-chips">${chips.map(c=>`<span class="tag tag-blue">${esc(c)}</span>`).join('')}</div>`;
+  // ── Mercado hoje (indicadores reais) ──
+  const mkt = [];
+  if (dadosAPI?.selic)           mkt.push(`📈|Selic em ${dadosAPI.selic}% a.a.|Taxa básica de juros — afeta consórcio e previdência`);
+  if (dadosAPI?.cambioUSD)       mkt.push(`💵|Dólar a R$ ${parseFloat(dadosAPI.cambioUSD).toFixed(2)}|Impacta viagem e seguros indexados`);
+  if (dadosAPI?.chuvaMM != null) mkt.push(`🌧|Chuva prevista ${dadosAPI.chuvaMM}mm|Influencia residencial e auto em Teresópolis`);
+  (top?.sinais||[]).slice(0,2).forEach(s => mkt.push(`📡|${s}|`));
+  if (mkt.length) {
+    h += `<div class="panel" style="margin-bottom:14px">
+      <div class="result-head">🌐 Mercado Hoje</div>
+      <div class="mercado-grid">${mkt.map(m=>{
+        const [ico,titulo,sub] = m.split('|');
+        return `<div class="mercado-item"><span class="mi-ico">${ico}</span>
+          <div><strong>${esc(titulo)}</strong>${sub?`<br><span style="font-size:12px;color:var(--muted)">${esc(sub)}</span>`:''}</div>
+        </div>`;
+      }).join('')}</div>
+    </div>`;
   }
 
   // Cross-sell alert
@@ -871,7 +1016,7 @@ function renderScan(d) {
 
   // ── Ranking completo ──
   if (oportunidades?.length) {
-    h += `<div class="result-head" style="margin-bottom:10px">Ranking Completo — ${oportunidades.length} Produtos</div>`;
+    h += `<div class="sec-label">📋 Todos os Produtos — ${oportunidades.length} (clique para detalhes)</div>`;
     oportunidades.forEach((o, i) => {
       const sc   = o.score || 0;
       const pct  = o.confianca_percentual || 50;
@@ -886,10 +1031,10 @@ function renderScan(d) {
       // RF-02: 6-row data table
       const tableHtml = `<table class="data-table" aria-label="Dados de ${esc(o.titulo)}">
         <tr><td>Score de Oportunidade</td><td>${semIcon(sc)} ${sc}/100</td></tr>
-        <tr><td>Potencial Estimado/Ano</td><td style="color:var(--success)">${fmtBRL(o.receita_potencial)}</td></tr>
-        <tr><td>Volume Estimado</td><td>${esc(o.volume||'—')}</td></tr>
+        <tr><td>Potencial Total/Ano (100% vendedor)</td><td style="color:var(--success)">${fmtBRL(potencialTotal(o))}</td></tr>
+        <tr><td>Realista (${o.taxa_conversao||3}% conversão)</td><td>${fmtBRL(potencialRealista(o))}</td></tr>
+        <tr><td>Elegíveis / Volume</td><td>${esc(o.volume||'—')}</td></tr>
         <tr><td>Ticket Médio/Mês</td><td>${o.ticket_medio ? fmtBRL(o.ticket_medio) : '—'}</td></tr>
-        <tr><td>Taxa de Conversão Est.</td><td>${o.taxa_conversao ? o.taxa_conversao + '%' : '—'}</td></tr>
         <tr><td>Meta de Leads</td><td>${esc(o.metaEstimada||'—')}</td></tr>
       </table>`;
 
@@ -990,7 +1135,7 @@ function renderScan(d) {
             <div class="opp-gatilho">${esc(o.gatilho||'')}</div>
           </div>
           <div class="opp-right">
-            <div class="opp-receita">${fmtBRL(o.receita_potencial)}/ano</div>
+            <div class="opp-receita">${fmtBRL(potencialTotal(o))}/ano</div>
             <div class="opp-conf-bar">
               <span class="conf-dot conf-${conf}"></span>
               <span>Conf. ${pct}%</span>
@@ -1046,6 +1191,18 @@ function toggleCard(id) {
   const open = body.classList.toggle('open');
   header.setAttribute('aria-expanded', open);
   if (arrow) arrow.textContent = open ? '▲' : '▼';
+}
+
+// Abre um card específico (a partir do pódio) e rola até ele
+function abrirCard(id) {
+  const card = document.getElementById(id);
+  if (!card) return;
+  const body = document.getElementById(`${id}_body`);
+  if (body && !body.classList.contains('open')) toggleCard(id);
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  card.style.transition = 'box-shadow 0.3s';
+  card.style.boxShadow = '0 0 0 3px var(--primary)';
+  setTimeout(() => card.style.boxShadow = '', 1200);
 }
 
 function recalcLead(produto, ticket, conv) {
