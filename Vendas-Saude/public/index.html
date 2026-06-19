@@ -5,52 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Queiroz Seguros — Painel Comercial</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f1117'/%3E%3Ctext x='6' y='24' font-size='20'%3E🏥%3C/text%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/open-dyslexic-regular.min.css" crossorigin="anonymous" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* ── Reset ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #111318;
-      --surface:  #1c1f2b;
-      --surface2: #252938;
-      --border:   #303549;
-      --text:     #e6e8f0;
-      --muted:    #8b90ab;
-      --accent:   #5b9cf6;
-      --accent-h: #3b82f6;
-      --success:  #34d399;
-      --warn:     #fbbf24;
-      --danger:   #f87171;
-      --info:     #60a5fa;
-      --font:     'OpenDyslexic', 'Comic Sans MS', Arial, sans-serif;
+      --bg:        #0f1117;
+      --surface:   #181c27;
+      --surface2:  #1e2335;
+      --border:    #2a2f45;
+      --text:      #e8eaf2;
+      --muted:     #7c82a0;
+      --primary:   #1A8CC8;
+      --primary-h: #1478ae;
+      --success:   #06B89A;
+      --success-h: #059882;
+      --warn:      #F59E0B;
+      --danger:    #EF4444;
+      --purple:    #a78bfa;
+      --sem-green: #06B89A;
+      --sem-yellow:#F59E0B;
+      --sem-red:   #EF4444;
+      --font-head: 'Montserrat', sans-serif;
+      --font-body: 'Nunito', 'Comic Sans MS', Arial, sans-serif;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: var(--font);
+      font-family: var(--font-body);
       font-size: 16px;
-      line-height: 1.65;
+      line-height: 1.6;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       display: flex;
     }
 
-    /* ── Skip link (acessibilidade) ── */
     .skip-link {
-      position: absolute;
-      top: -100px;
-      left: 12px;
-      background: var(--accent);
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 14px;
-      z-index: 9999;
-      text-decoration: none;
-      transition: top 0.1s;
+      position: absolute; top: -100px; left: 12px;
+      background: var(--primary); color: #fff;
+      padding: 8px 16px; border-radius: 6px; font-size: 14px;
+      z-index: 9999; text-decoration: none; transition: top 0.1s;
     }
     .skip-link:focus { top: 12px; }
 
@@ -59,384 +57,314 @@
       width: 240px;
       background: var(--surface);
       border-right: 2px solid var(--border);
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
       padding: 28px 16px 20px;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
-      flex-shrink: 0;
+      position: sticky; top: 0; height: 100vh;
+      overflow-y: auto; flex-shrink: 0;
     }
 
-    .brand { font-size: 15px; font-weight: bold; color: var(--accent); margin-bottom: 4px; }
+    .brand {
+      font-family: var(--font-head);
+      font-size: 15px; font-weight: 700;
+      color: var(--primary); margin-bottom: 4px;
+    }
     .brand-sub { font-size: 12px; color: var(--muted); margin-bottom: 32px; line-height: 1.5; }
-
     .nav-section { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 8px; }
 
     .nav-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      background: none;
-      border: 2px solid transparent;
-      border-radius: 10px;
-      padding: 11px 14px;
-      color: var(--muted);
-      font-family: var(--font);
-      font-size: 15px;
-      cursor: pointer;
-      text-align: left;
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; background: none; border: 2px solid transparent;
+      border-radius: 10px; padding: 11px 14px;
+      color: var(--muted); font-family: var(--font-body); font-size: 15px;
+      cursor: pointer; text-align: left;
       transition: background 0.12s, color 0.12s, border-color 0.12s;
-      margin-bottom: 6px;
-      line-height: 1.4;
+      margin-bottom: 6px; line-height: 1.4;
     }
-
     .nav-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border); }
-    .nav-btn.active { background: rgba(91,156,246,0.14); color: var(--accent); border-color: var(--accent); }
-    .nav-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-
+    .nav-btn.active { background: rgba(26,140,200,0.14); color: var(--primary); border-color: var(--primary); }
+    .nav-btn:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
     .nav-btn .icon { font-size: 18px; flex-shrink: 0; }
     .nav-badge {
-      margin-left: auto;
-      font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: rgba(91,156,246,0.2);
-      color: var(--accent);
+      margin-left: auto; font-size: 11px; padding: 2px 7px;
+      border-radius: 999px; background: rgba(26,140,200,0.2); color: var(--primary);
     }
-
     #sidebar .spacer { flex: 1; }
-
     #sidebar footer {
-      font-size: 11px;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      padding-top: 14px;
-      line-height: 1.6;
+      font-size: 11px; color: var(--muted);
+      border-top: 1px solid var(--border); padding-top: 14px; line-height: 1.6;
     }
 
     /* ── Main ── */
-    #main {
-      flex: 1;
-      padding: 32px 36px;
-      overflow-y: auto;
-      max-width: 900px;
-    }
-
+    #main { flex: 1; padding: 32px 36px; overflow-y: auto; max-width: 960px; }
     .page { display: none; }
     .page.active { display: block; }
 
-    h1 { font-size: 24px; font-weight: bold; margin-bottom: 6px; line-height: 1.3; }
-    .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+    h1 { font-family: var(--font-head); font-size: 22px; font-weight: 800; margin-bottom: 4px; line-height: 1.3; color: var(--text); }
+    h2 { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
 
     /* ── Panel ── */
     .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 22px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 22px; margin-bottom: 18px;
     }
-
-    .panel-title {
-      font-size: 12px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      color: var(--muted);
-      margin-bottom: 18px;
-    }
+    .panel-title { font-family: var(--font-head); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); margin-bottom: 16px; }
 
     /* ── Form ── */
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-grid .full { grid-column: 1 / -1; }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+    .field input, .field select, .field textarea {
+      background: var(--surface2); border: 2px solid var(--border); border-radius: 8px;
+      padding: 10px 13px; color: var(--text); font-family: var(--font-body);
+      font-size: 15px; line-height: 1.5; outline: none; transition: border-color 0.15s;
     }
-
-    .field label {
-      font-size: 13px;
-      font-weight: bold;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      background: var(--surface2);
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 13px;
-      color: var(--text);
-      font-family: var(--font);
-      font-size: 15px;
-      line-height: 1.5;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus { border-color: var(--accent); }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); }
     .field textarea { resize: vertical; min-height: 80px; }
 
     /* ── Toggle ── */
     .toggle-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 13px;
-      background: var(--surface2);
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      cursor: pointer;
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 13px; background: var(--surface2);
+      border: 2px solid var(--border); border-radius: 8px; cursor: pointer;
     }
-
     .toggle-wrap label { font-size: 15px; color: var(--text); cursor: pointer; }
-
     .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
     .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
-
     .toggle-track {
       position: absolute; inset: 0;
-      background: var(--border);
-      border-radius: 999px;
-      cursor: pointer;
-      transition: background 0.2s;
+      background: var(--border); border-radius: 999px; cursor: pointer; transition: background 0.2s;
     }
-    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle input:checked + .toggle-track { background: var(--primary); }
     .toggle-track::after {
-      content: '';
-      position: absolute;
-      width: 16px; height: 16px;
-      left: 3px; top: 3px;
-      background: #fff;
-      border-radius: 50%;
-      transition: transform 0.2s;
+      content: ''; position: absolute;
+      width: 16px; height: 16px; left: 3px; top: 3px;
+      background: #fff; border-radius: 50%; transition: transform 0.2s;
     }
     .toggle input:checked + .toggle-track::after { transform: translateX(18px); }
 
-    /* ── Mode tabs ── */
-    .tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 22px;
-      background: var(--surface2);
-      border-radius: 10px;
-      padding: 4px;
-    }
-
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 6px; margin-bottom: 22px; background: var(--surface2); border-radius: 10px; padding: 4px; }
     .tab {
-      flex: 1;
-      padding: 9px 12px;
-      background: none;
-      border: none;
-      border-radius: 8px;
-      color: var(--muted);
-      font-family: var(--font);
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.12s, color 0.12s;
-      text-align: center;
+      flex: 1; padding: 9px 12px; background: none; border: none; border-radius: 8px;
+      color: var(--muted); font-family: var(--font-body); font-size: 14px;
+      cursor: pointer; transition: background 0.12s, color 0.12s; text-align: center;
     }
-
     .tab:hover { color: var(--text); }
-    .tab.active { background: var(--accent); color: #fff; }
-    .tab:focus-visible { outline: 3px solid var(--accent); }
+    .tab.active { background: var(--primary); color: #fff; }
+    .tab:focus-visible { outline: 3px solid var(--primary); }
 
     /* ── Buttons ── */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-family: var(--font);
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      transition: background 0.15s, opacity 0.15s;
-      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px; border-radius: 10px; font-family: var(--font-body);
+      font-size: 15px; font-weight: 700; cursor: pointer; border: none;
+      transition: background 0.15s, opacity 0.15s; text-decoration: none;
     }
-
-    .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .btn:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
     .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover:not(:disabled) { background: var(--accent-h); }
-
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-h); }
     .btn-success { background: var(--success); color: #000; }
-    .btn-success:hover:not(:disabled) { filter: brightness(0.9); }
-
+    .btn-success:hover:not(:disabled) { background: var(--success-h); }
     .btn-danger { background: var(--danger); color: #fff; }
-    .btn-danger:hover:not(:disabled) { filter: brightness(0.9); }
-
-    .btn-ghost {
-      background: none;
-      border: 2px solid var(--border);
-      color: var(--muted);
-    }
+    .btn-ghost { background: none; border: 2px solid var(--border); color: var(--muted); }
     .btn-ghost:hover:not(:disabled) { border-color: var(--text); color: var(--text); }
-
     .btn-sm { padding: 6px 14px; font-size: 13px; border-radius: 7px; }
 
     /* ── Loading ── */
     .loading-box {
-      display: none;
-      align-items: center;
-      gap: 14px;
-      padding: 20px 24px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      margin-bottom: 22px;
+      display: none; align-items: center; gap: 14px;
+      padding: 20px 24px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; margin-bottom: 18px;
     }
     .loading-box.show { display: flex; }
-
     .spinner {
       width: 24px; height: 24px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.75s linear infinite;
-      flex-shrink: 0;
+      border: 3px solid var(--border); border-top-color: var(--primary);
+      border-radius: 50%; animation: spin 0.75s linear infinite; flex-shrink: 0;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── Tags ── */
-    .tag {
-      display: inline-block;
-      padding: 3px 11px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: bold;
-    }
-    .tag-blue   { background: rgba(91,156,246,0.18); color: #93c5fd; }
-    .tag-green  { background: rgba(52,211,153,0.18); color: #6ee7b7; }
-    .tag-orange { background: rgba(251,191,36,0.18); color: #fde68a; }
-    .tag-red    { background: rgba(248,113,113,0.18); color: #fca5a5; }
-    .tag-gray   { background: rgba(139,144,171,0.18); color: #8b90ab; }
+    .tag { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .tag-blue   { background: rgba(26,140,200,0.18);  color: #5bc4f0; }
+    .tag-green  { background: rgba(6,184,154,0.18);   color: #34d5ba; }
+    .tag-orange { background: rgba(245,158,11,0.18);  color: #fcd34d; }
+    .tag-red    { background: rgba(239,68,68,0.18);   color: #fca5a5; }
+    .tag-gray   { background: rgba(124,130,160,0.18); color: #9ca3af; }
+    .tag-purple { background: rgba(167,139,250,0.18); color: #c4b5fd; }
 
-    /* ── Alert box ── */
-    .alert {
-      border-radius: 9px;
-      padding: 11px 15px;
-      margin-bottom: 10px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-    .alert-warn  { background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.3); color: #fde68a; }
-    .alert-err   { background: rgba(248,113,113,0.10); border: 1px solid rgba(248,113,113,0.3); color: #fca5a5; }
-    .alert-ok    { background: rgba(52,211,153,0.10); border: 1px solid rgba(52,211,153,0.3); color: #6ee7b7; }
-    .alert-info  { background: rgba(96,165,250,0.10); border: 1px solid rgba(96,165,250,0.3); color: #93c5fd; }
+    /* ── Alert ── */
+    .alert { border-radius: 9px; padding: 11px 15px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
+    .alert-warn { background: rgba(245,158,11,0.10);  border: 1px solid rgba(245,158,11,0.3);  color: #fcd34d; }
+    .alert-err  { background: rgba(239,68,68,0.10);   border: 1px solid rgba(239,68,68,0.3);   color: #fca5a5; }
+    .alert-ok   { background: rgba(6,184,154,0.10);   border: 1px solid rgba(6,184,154,0.3);   color: #34d5ba; }
+    .alert-info { background: rgba(26,140,200,0.10);  border: 1px solid rgba(26,140,200,0.3);  color: #5bc4f0; }
 
-    /* ── Result sections ── */
-    .result-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      color: var(--muted);
-      margin-bottom: 10px;
+    /* ── Progress bar ── */
+    .prog-track { height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; margin: 8px 0; }
+    .prog-fill  { height: 100%; border-radius: 999px; transition: width 0.6s; }
+
+    /* ── Semaphore ── */
+    .sem-green  { color: var(--sem-green);  }
+    .sem-yellow { color: var(--sem-yellow); }
+    .sem-red    { color: var(--sem-red);    }
+
+    /* ── Opportunity card (RF-01 / RF-02) ── */
+    .opp-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      transition: border-color 0.2s;
     }
+    .opp-card:hover { border-color: var(--primary); }
+    .opp-card.rank-1 { border-left: 4px solid var(--sem-green); }
+    .opp-card.rank-2 { border-left: 4px solid var(--sem-yellow); }
+    .opp-card.rank-3 { border-left: 4px solid var(--sem-yellow); }
+
+    .opp-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px; cursor: pointer;
+    }
+    .opp-medal { font-size: 24px; flex-shrink: 0; width: 32px; text-align: center; }
+    .opp-score-block { flex-shrink: 0; text-align: center; min-width: 56px; }
+    .opp-sem   { font-size: 22px; line-height: 1; display: block; }
+    .opp-score { font-family: var(--font-head); font-size: 28px; font-weight: 800; line-height: 1; display: block; }
+    .opp-info  { flex: 1; min-width: 0; }
+    .opp-title { font-family: var(--font-head); font-size: 16px; font-weight: 700; }
+    .opp-gatilho { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .opp-right  { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+    .opp-receita { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--success); }
+    .opp-conf-bar { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    .conf-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .conf-alta   { background: var(--sem-green); }
+    .conf-media  { background: var(--sem-yellow); }
+    .conf-baixa  { background: var(--sem-red); }
+
+    .opp-expand { font-size: 12px; color: var(--muted); margin-left: auto; padding: 4px 10px; }
+
+    .opp-body { display: none; padding: 0 20px 20px; border-top: 1px solid var(--border); }
+    .opp-body.open { display: block; }
+
+    /* RF-02: 6-row data table */
+    .data-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+    .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    .data-table td:first-child { color: var(--muted); font-weight: 600; width: 48%; }
+    .data-table td:last-child { font-weight: 700; color: var(--text); }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    /* RF-03: Confidence % */
+    .conf-pct-bar { height: 6px; border-radius: 999px; margin-top: 4px; }
+
+    /* RF-04: Fatores */
+    .fator-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+    }
+    .fator-item:last-child { border-bottom: none; }
+    .fator-check { color: var(--success); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* RF-05: Profile card */
+    .profile-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px;
+      font-size: 13px; margin-top: 8px;
+    }
+    .profile-item strong { color: var(--muted); display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; }
+    .profile-item span { color: var(--text); font-weight: 600; }
+
+    /* RF-07: Calculator */
+    .calc-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+    .calc-label { font-size: 14px; color: var(--muted); }
+    .calc-input {
+      width: 90px; padding: 6px 10px;
+      background: var(--surface2); border: 2px solid var(--border); border-radius: 8px;
+      color: var(--text); font-family: var(--font-body); font-size: 15px; font-weight: 700;
+      text-align: center; outline: none;
+    }
+    .calc-input:focus { border-color: var(--primary); }
+    .calc-result { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--success); }
+
+    /* RF-10: Actions checklist */
+    .action-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+    .action-item:last-child { border-bottom: none; }
+    .action-item input[type=checkbox] { width: 17px; height: 17px; margin-top: 2px; flex-shrink: 0; accent-color: var(--success); cursor: pointer; }
+    .action-item label { font-size: 14px; line-height: 1.5; cursor: pointer; flex: 1; }
+    .action-item label.done { text-decoration: line-through; color: var(--muted); }
+    .action-cond { font-size: 11px; color: var(--warn); font-weight: 700; display: block; margin-top: 2px; }
+    .action-tipo-obr  { border-left: 3px solid var(--success); padding-left: 8px; }
+    .action-tipo-cond { border-left: 3px solid var(--warn);    padding-left: 8px; }
+    .action-tipo-plus { border-left: 3px solid var(--primary); padding-left: 8px; }
+
+    /* RF-08: Trend badge */
+    .trend-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      background: rgba(124,130,160,0.12); color: var(--muted); border: 1px solid var(--border);
+    }
+
+    /* ── First-fold hero (RF-01) ── */
+    .hero-panel {
+      background: linear-gradient(135deg, rgba(26,140,200,0.12) 0%, rgba(6,184,154,0.08) 100%);
+      border: 1px solid rgba(26,140,200,0.3);
+      border-radius: 16px; padding: 22px 24px; margin-bottom: 18px;
+    }
+    .hero-top-label { font-family: var(--font-head); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--primary); margin-bottom: 6px; }
+    .hero-title { font-family: var(--font-head); font-size: 21px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .hero-meta { font-size: 13px; color: var(--muted); }
+    .hero-top3 { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .hero-badge {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 8px 14px; font-size: 14px;
+    }
+    .hero-badge .medal { font-size: 18px; }
+    .hero-badge .hb-name { font-weight: 700; }
+    .hero-badge .hb-score { color: var(--muted); font-size: 12px; }
+
+    /* ── Scan top bar ── */
+    .api-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+
+    /* ── PR ── */
+    .pr-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .pr-open   { background: var(--success); }
+    .pr-merged { background: var(--purple); }
+    .pr-closed { background: var(--danger); }
 
     /* ── Plan card ── */
     .plan-card {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
+      display: flex; align-items: flex-start; gap: 16px;
     }
-    .plan-price { font-size: 21px; font-weight: bold; color: var(--success); flex-shrink: 0; min-width: 96px; }
-    .plan-name  { font-size: 15px; font-weight: bold; margin-bottom: 3px; }
+    .plan-price { font-family: var(--font-head); font-size: 20px; font-weight: 700; color: var(--success); flex-shrink: 0; min-width: 96px; }
+    .plan-name  { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
     .plan-meta  { font-size: 13px; color: var(--muted); }
     .plan-tags  { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
 
     /* ── Funnel ── */
-    .funnel-step {
-      display: flex;
-      gap: 14px;
-      padding: 13px 0;
-      border-bottom: 1px solid var(--border);
-    }
+    .funnel-step { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .funnel-step:last-child { border-bottom: none; }
-    .funnel-num {
-      width: 30px; height: 30px;
-      background: rgba(91,156,246,0.18);
-      color: var(--accent);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: bold; flex-shrink: 0;
-    }
-    .funnel-timing { font-size: 12px; color: var(--accent); font-weight: bold; }
+    .funnel-num { width: 30px; height: 30px; background: rgba(26,140,200,0.18); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+    .funnel-timing { font-size: 12px; color: var(--primary); font-weight: 700; }
     .funnel-canal  { font-size: 12px; color: var(--muted); }
-    .funnel-obj    { font-size: 15px; font-weight: bold; margin: 3px 0; }
-    .funnel-msg {
-      font-size: 14px; color: var(--muted);
-      background: var(--surface); border-radius: 8px;
-      padding: 9px 12px; margin-top: 7px; white-space: pre-wrap;
-    }
-
-    /* ── Score card ── */
-    .score-card {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px 20px;
-      margin-bottom: 14px;
-    }
-    .score-num { font-size: 34px; font-weight: bold; line-height: 1; }
-    .score-high { color: var(--success); }
-    .score-med  { color: var(--warn); }
-    .score-low  { color: var(--muted); }
-    .prog-track { height: 7px; background: var(--border); border-radius: 999px; overflow: hidden; margin: 10px 0; }
-    .prog-fill  { height: 100%; border-radius: 999px; transition: width 0.5s; }
-
-    /* ── PR Status ── */
-    .pr-status-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-    .pr-dot {
-      width: 14px; height: 14px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .pr-open   { background: var(--success); }
-    .pr-merged { background: #a78bfa; }
-    .pr-closed { background: var(--danger); }
+    .funnel-obj    { font-size: 15px; font-weight: 700; margin: 3px 0; }
+    .funnel-msg    { font-size: 14px; color: var(--muted); background: var(--surface); border-radius: 8px; padding: 9px 12px; margin-top: 7px; white-space: pre-wrap; }
 
     /* ── Toast ── */
     #toast {
-      position: fixed;
-      bottom: 28px; right: 28px;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-family: var(--font);
-      font-size: 15px;
-      font-weight: bold;
-      opacity: 0;
-      transform: translateY(8px);
+      position: fixed; bottom: 28px; right: 28px;
+      padding: 12px 20px; border-radius: 10px;
+      font-family: var(--font-body); font-size: 15px; font-weight: 700;
+      opacity: 0; transform: translateY(8px);
       transition: opacity 0.2s, transform 0.2s;
-      pointer-events: none;
-      z-index: 9999;
+      pointer-events: none; z-index: 9999;
     }
     #toast.show { opacity: 1; transform: translateY(0); }
     #toast.ok   { background: var(--success); color: #000; }
@@ -450,10 +378,18 @@
       #main { padding: 18px 16px; }
       .form-grid { grid-template-columns: 1fr; }
       .form-grid .full { grid-column: 1; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .hero-top3 { flex-direction: column; }
     }
 
-    /* ── Focus ring global ── */
-    :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+    .result-head {
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: var(--font-head); font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); margin-bottom: 12px;
+    }
+    .section-sep { margin: 20px 0 16px; border-top: 1px solid var(--border); padding-top: 16px; }
+    .msg-box { font-size: 14px; color: var(--muted); background: var(--surface2); border-radius: 8px; padding: 10px 14px; white-space: pre-wrap; line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -467,10 +403,10 @@
 
   <div class="nav-section" aria-hidden="true">Menu</div>
 
-  <button class="nav-btn active" id="nav-scan"  onclick="ir('scan')"  aria-current="page">
+  <button class="nav-btn active" id="nav-scan" onclick="ir('scan')" aria-current="page">
     <span class="icon" aria-hidden="true">📊</span> Varredura de Mercado
   </button>
-  <button class="nav-btn" id="nav-lead"  onclick="ir('lead')">
+  <button class="nav-btn" id="nav-lead" onclick="ir('lead')">
     <span class="icon" aria-hidden="true">👤</span> Analisar Lead
   </button>
   <button class="nav-btn" id="nav-pr" onclick="ir('pr')">
@@ -479,7 +415,6 @@
   </button>
 
   <div class="spacer"></div>
-
   <footer>
     <div id="api-status" aria-live="polite" style="margin-bottom:6px">⚙️ Verificando API...</div>
     <div>Versão: planos até 25/06/2026</div>
@@ -492,13 +427,13 @@
   <!-- ─────────────────── VARREDURA ─────────────────── -->
   <section id="page-scan" class="page active" aria-labelledby="title-scan">
     <h1 id="title-scan">📊 Varredura de Mercado</h1>
-    <p class="page-sub">Ranking semanal de oportunidade para todos os produtos: saúde, vida, residencial, auto, previdência, consórcio e mais.</p>
+    <p class="page-sub">Ranking semanal — todos os 13 produtos: saúde, vida, auto, residencial, previdência, consórcio e mais. Dados reais via BACEN, INMET, Brasil.IO, ANS.</p>
 
     <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:22px">
-      <button class="btn btn-primary" onclick="executarScan()" id="btn-scan" aria-describedby="scan-desc">
+      <button class="btn btn-primary" onclick="executarScan()" id="btn-scan">
         <span aria-hidden="true">🔍</span> Executar Varredura
       </button>
-      <span id="scan-desc" class="muted" style="font-size:13px;color:var(--muted)">Agrega sinais de BACEN, INMET, Brasil.IO, ANS, calendário e busca orgânica</span>
+      <span style="font-size:13px;color:var(--muted)">Leva ~15s · Sinais de mercado em tempo real</span>
     </div>
 
     <div class="loading-box" id="load-scan" role="status" aria-live="polite">
@@ -512,13 +447,13 @@
   <!-- ─────────────────── LEAD ─────────────────── -->
   <section id="page-lead" class="page" aria-labelledby="title-lead">
     <h1 id="title-lead">👤 Analisar Lead</h1>
-    <p class="page-sub">Preencha os dados do lead para receber classificação, planos recomendados e funil de contato.</p>
+    <p class="page-sub">Preencha os dados do lead para receber classificação, planos recomendados, funil de contato e cross-sell.</p>
 
     <div class="panel">
       <div class="panel-title">Modo de análise</div>
       <div class="tabs" role="tablist" aria-label="Modo de análise">
-        <button class="tab active" role="tab" aria-selected="true"  id="tab-completo" onclick="setModo('novo_lead', this)">Análise Completa</button>
-        <button class="tab"        role="tab" aria-selected="false" id="tab-funil"    onclick="setModo('funil', this)">Só Funil</button>
+        <button class="tab active" role="tab" aria-selected="true"  onclick="setModo('novo_lead', this)">Análise Completa</button>
+        <button class="tab"        role="tab" aria-selected="false" onclick="setModo('funil', this)">Só Funil</button>
       </div>
 
       <form id="form-lead" onsubmit="return false" novalidate>
@@ -568,7 +503,7 @@
               <label for="f-mei">Sim, tem MEI ou empresa</label>
             </div>
           </div>
-          <div class="field hidden" id="campo-meses">
+          <div class="field" id="campo-meses" style="display:none">
             <label for="f-meses">Tempo de empresa (meses)</label>
             <input type="number" id="f-meses" min="0" placeholder="Ex: 8" />
           </div>
@@ -577,7 +512,6 @@
             <textarea id="f-mensagem" placeholder="Cole aqui a mensagem que o lead enviou..."></textarea>
           </div>
         </div>
-
         <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
           <button class="btn btn-primary" onclick="analisarLead()" id="btn-lead">
             <span aria-hidden="true">🔍</span> Analisar Lead
@@ -594,7 +528,6 @@
 
     <div id="res-lead" aria-live="polite" aria-atomic="false"></div>
   </section>
-
 
   <!-- ─────────────────── PULL REQUEST ─────────────────── -->
   <section id="page-pr" class="page" aria-labelledby="title-pr">
@@ -624,8 +557,6 @@
 
 // ── Navegação ─────────────────────────────────────────────────────────────────
 const PAGES = ['scan','lead','pr'];
-let paginaAtual = 'scan';
-
 function ir(p) {
   PAGES.forEach(id => {
     document.getElementById(`page-${id}`).classList.toggle('active', id === p);
@@ -633,7 +564,6 @@ function ir(p) {
     nav.classList.toggle('active', id === p);
     nav.setAttribute('aria-current', id === p ? 'page' : 'false');
   });
-  paginaAtual = p;
   if (p === 'pr') carregarPR();
 }
 
@@ -641,7 +571,6 @@ function ir(p) {
 function esc(v) {
   return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
 let _toastT;
 function toast(msg, tipo = 'ok') {
   const el = document.getElementById('toast');
@@ -650,7 +579,6 @@ function toast(msg, tipo = 'ok') {
   clearTimeout(_toastT);
   _toastT = setTimeout(() => el.className = '', 2600);
 }
-
 function copiar(txt) {
   navigator.clipboard.writeText(txt)
     .then(() => toast('Copiado! ✓'))
@@ -660,14 +588,17 @@ function copiar(txt) {
       toast('Copiado! ✓');
     });
 }
+function setLoad(id, show) { document.getElementById(id).classList.toggle('show', show); }
+function fmtBRL(n) { return 'R$ ' + Number(n || 0).toLocaleString('pt-BR'); }
 
-function setLoad(id, show) {
-  document.getElementById(id).classList.toggle('show', show);
-}
+// ── Semáforo ──────────────────────────────────────────────────────────────────
+function semIcon(score) { return score >= 50 ? '🟢' : score >= 35 ? '🟡' : '🔴'; }
+function semClass(score) { return score >= 50 ? 'sem-green' : score >= 35 ? 'sem-yellow' : 'sem-red'; }
+function semColor(score) { return score >= 50 ? 'var(--sem-green)' : score >= 35 ? 'var(--sem-yellow)' : 'var(--sem-red)'; }
+function confColor(pct) { return pct >= 80 ? 'var(--sem-green)' : pct >= 60 ? 'var(--sem-yellow)' : 'var(--sem-red)'; }
 
 // ── Modo lead ─────────────────────────────────────────────────────────────────
 let modoLead = 'novo_lead';
-
 function setModo(modo, btn) {
   modoLead = modo;
   document.querySelectorAll('#form-lead .tab').forEach(b => {
@@ -675,52 +606,39 @@ function setModo(modo, btn) {
     b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
   });
 }
-
 function toggleMEI() {
-  document.getElementById('campo-meses').classList.toggle('hidden', !document.getElementById('f-mei').checked);
+  document.getElementById('campo-meses').style.display = document.getElementById('f-mei').checked ? '' : 'none';
 }
-
 function limparForm() {
-  document.getElementById('f-nome').value = '';
-  document.getElementById('f-idade').value = '';
-  document.getElementById('f-profissao').value = '';
+  ['f-nome','f-idade','f-profissao','f-orcamento','f-mensagem','f-meses'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-cidade').value = 'Teresópolis';
   document.getElementById('f-dependentes').value = '0';
-  document.getElementById('f-orcamento').value = '';
   document.getElementById('f-origem').value = '';
-  document.getElementById('f-mensagem').value = '';
   document.getElementById('f-mei').checked = false;
-  document.getElementById('f-meses').value = '';
-  document.getElementById('campo-meses').classList.add('hidden');
+  document.getElementById('campo-meses').style.display = 'none';
   document.getElementById('res-lead').innerHTML = '';
 }
 
 // ── Análise de lead ───────────────────────────────────────────────────────────
 async function analisarLead() {
   const nome = document.getElementById('f-nome').value.trim();
-  if (!nome) {
-    toast('Preencha o nome do lead', 'warn');
-    document.getElementById('f-nome').focus();
-    return;
-  }
-
+  if (!nome) { toast('Preencha o nome do lead', 'warn'); document.getElementById('f-nome').focus(); return; }
   const leadData = {
     nome,
     cidade:       document.getElementById('f-cidade').value.trim() || 'Teresópolis',
-    idade:        parseInt(document.getElementById('f-idade').value)      || null,
-    profissao:    document.getElementById('f-profissao').value.trim()     || null,
+    idade:        parseInt(document.getElementById('f-idade').value)       || null,
+    profissao:    document.getElementById('f-profissao').value.trim()      || null,
     dependentes:  parseInt(document.getElementById('f-dependentes').value) || 0,
     orcamento:    parseFloat(document.getElementById('f-orcamento').value) || null,
-    origem:       document.getElementById('f-origem').value               || null,
+    origem:       document.getElementById('f-origem').value                || null,
     temMEI:       document.getElementById('f-mei').checked,
-    mesesEmpresa: parseInt(document.getElementById('f-meses').value)      || 0,
-    mensagem:     document.getElementById('f-mensagem').value.trim()      || null
+    mesesEmpresa: parseInt(document.getElementById('f-meses').value)       || 0,
+    mensagem:     document.getElementById('f-mensagem').value.trim()       || null
   };
-
   const endpoint = modoLead === 'funil' ? '/api/funil' : '/api/lead';
   setLoad('load-lead', true);
   document.getElementById('res-lead').innerHTML = '';
   document.getElementById('btn-lead').disabled = true;
-
   try {
     const resp = await fetch(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ leadData }) });
     const data = await resp.json();
@@ -735,18 +653,15 @@ async function analisarLead() {
 }
 
 function renderLead(d) {
-  const { perfil, funil, campanha, mercado, resumoFinal, erros } = d;
+  const { perfil, funil, campanha, mercado, erros } = d;
   let h = '';
-
   if (erros?.length) h += erros.map(e => `<div class="alert alert-warn">⚠️ ${esc(e)}</div>`).join('');
 
   if (perfil) {
     const segLabel = { pessoa_fisica:'Pessoa Física', pme:'MEI/PME', adesao:'Adesão ANASPL' }[perfil.segmento] || perfil.segmento;
     const priCor   = { alta:'tag-green', media:'tag-orange', baixa:'tag-gray' }[perfil.prioridade] || 'tag-gray';
     const eleg     = perfil.elegibilidade;
-
-    h += `
-    <div class="panel" style="margin-bottom:16px">
+    h += `<div class="panel" style="border-left:4px solid var(--primary)">
       <div class="result-head">Perfil Classificado
         <div style="display:flex;gap:6px">
           <span class="tag tag-blue">${esc(segLabel)}</span>
@@ -761,31 +676,28 @@ function renderLead(d) {
     </div>`;
 
     if (perfil.alertas?.length) {
-      h += `<div style="margin-bottom:16px">
-        <div class="result-head">Alertas</div>
-        ${perfil.alertas.map(a => `<div class="alert alert-warn">⚠️ ${esc(a)}</div>`).join('')}
-      </div>`;
+      h += `<div style="margin-bottom:14px">${perfil.alertas.map(a=>`<div class="alert alert-warn">⚠️ ${esc(a)}</div>`).join('')}</div>`;
     }
 
     const fpr = perfil.faixaPrecoReal;
     if (fpr?.todosPlanos?.length) {
-      const lista = fpr.todosPlanos.map(p => `${p.plano}: R$${p.valor.toFixed(2)}`).join('\n');
-      h += `<div style="margin-bottom:16px">
+      const lista = fpr.todosPlanos.map(p=>`${p.plano}: R$${p.valor.toFixed(2)}`).join('\n');
+      h += `<div class="panel">
         <div class="result-head">Planos Adequados ao Perfil
           <button class="btn btn-ghost btn-sm" onclick="copiar(${JSON.stringify(lista)})">Copiar lista</button>
         </div>
         ${fpr.alertaOrcamento ? `<div class="alert alert-warn">⚠️ ${esc(fpr.alertaOrcamento)}</div>` : ''}
-        ${fpr.todosPlanos.map(p => {
-          const dentro = !fpr.alertaOrcamento || fpr.opcoesDentroDoOrcamento.some(o => o.startsWith(p.plano));
-          return `<div class="plan-card" style="${dentro ? '' : 'opacity:0.45'}">
+        ${fpr.todosPlanos.map(p=>{
+          const dentro = !fpr.alertaOrcamento || (fpr.opcoesDentroDoOrcamento||[]).some(o=>o.startsWith(p.plano));
+          return `<div class="plan-card" style="${dentro?'':'opacity:0.45'}">
             <div class="plan-price">R$${p.valor.toFixed(2)}</div>
             <div>
               <div class="plan-name">${esc(p.plano)}</div>
               <div class="plan-meta">${esc(p.operadora)} · ${esc(p.acomodacao)}</div>
               <div class="plan-tags">
-                ${p.coparticipacao ? '<span class="tag tag-orange">Coparticipação</span>' : '<span class="tag tag-green">Sem coparticipação</span>'}
-                ${p.obstetrica     ? '<span class="tag tag-blue">Obstetrícia</span>'      : '<span class="tag tag-gray">Sem obstetrícia</span>'}
-                ${!dentro ? '<span class="tag tag-red">Fora do orçamento</span>' : ''}
+                ${p.coparticipacao?'<span class="tag tag-orange">Coparticipação</span>':'<span class="tag tag-green">Sem coparticipação</span>'}
+                ${p.obstetrica?'<span class="tag tag-blue">Obstetrícia</span>':'<span class="tag tag-gray">Sem obstetrícia</span>'}
+                ${!dentro?'<span class="tag tag-red">Fora do orçamento</span>':''}
               </div>
             </div>
           </div>`;
@@ -795,50 +707,49 @@ function renderLead(d) {
   }
 
   if (funil?.etapas?.length) {
-    h += `<div class="panel" style="margin-bottom:16px">
-      <div class="result-head">Funil de Contato &nbsp;—&nbsp; ${esc(funil.resumo || '')}</div>
-      ${funil.etapas.map(e => `
-        <div class="funnel-step">
-          <div class="funnel-num" aria-hidden="true">${e.etapa}</div>
-          <div style="flex:1">
-            <div><span class="funnel-timing">${esc(e.timing)}</span> · <span class="funnel-canal">${esc(e.canal)}</span></div>
-            <div class="funnel-obj">${esc(e.objetivo)}</div>
-            ${e.mensagem ? `<div class="funnel-msg">${esc(e.mensagem)}</div>
-              <button class="btn btn-ghost btn-sm" style="margin-top:7px" onclick="copiar(${JSON.stringify(e.mensagem)})">Copiar mensagem</button>` : ''}
-          </div>
-        </div>`).join('')}
+    h += `<div class="panel">
+      <div class="result-head">Funil de Contato &nbsp;—&nbsp; ${esc(funil.resumo||'')}</div>
+      ${funil.etapas.map(e=>`<div class="funnel-step">
+        <div class="funnel-num" aria-hidden="true">${e.etapa}</div>
+        <div style="flex:1">
+          <div><span class="funnel-timing">${esc(e.timing)}</span> · <span class="funnel-canal">${esc(e.canal)}</span></div>
+          <div class="funnel-obj">${esc(e.objetivo)}</div>
+          ${e.mensagem?`<div class="funnel-msg">${esc(e.mensagem)}</div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:7px" onclick="copiar(${JSON.stringify(e.mensagem)})">Copiar mensagem</button>`:''}
+        </div>
+      </div>`).join('')}
     </div>`;
   }
 
   if (campanha?.campanhaCompativel) {
-    h += `<div class="panel" style="margin-bottom:16px">
+    h += `<div class="panel">
       <div class="result-head">Campanha Recomendada</div>
-      <div style="font-size:17px;font-weight:bold;margin-bottom:6px">📣 ${esc(campanha.campanhaCompativel)}</div>
-      <div>${esc(campanha.acaoRecomendada || '')}</div>
-      ${campanha.mensagemCorretor ? `<div style="color:var(--muted);font-size:14px;margin-top:6px">${esc(campanha.mensagemCorretor)}</div>` : ''}
+      <div style="font-size:17px;font-weight:700;margin-bottom:6px">📣 ${esc(campanha.campanhaCompativel)}</div>
+      <div>${esc(campanha.acaoRecomendada||'')}</div>
+      ${campanha.mensagemCorretor?`<div style="color:var(--muted);font-size:14px;margin-top:6px">${esc(campanha.mensagemCorretor)}</div>`:''}
     </div>`;
   }
 
   if (mercado?.planosRecomendados?.length) {
-    h += `<div style="margin-bottom:16px">
+    h += `<div class="panel">
       <div class="result-head">Análise de Mercado</div>
-      ${mercado.planosRecomendados.map(p => `<div class="plan-card">
-        <div class="plan-price" style="font-size:17px">R$${typeof p.valor === 'number' ? p.valor.toFixed(2) : esc(p.valor)}</div>
+      ${mercado.planosRecomendados.map(p=>`<div class="plan-card">
+        <div class="plan-price" style="font-size:17px">R$${typeof p.valor==='number'?p.valor.toFixed(2):esc(p.valor)}</div>
         <div>
           <div class="plan-name">${esc(p.nome)}</div>
           <div class="plan-meta">${esc(p.operadora||'')} · ${esc(p.acomodacao||'')}</div>
-          ${p.motivo ? `<div style="font-size:13px;color:var(--muted);margin-top:4px">${esc(p.motivo)}</div>` : ''}
+          ${p.motivo?`<div style="font-size:13px;color:var(--muted);margin-top:4px">${esc(p.motivo)}</div>`:''}
         </div>
       </div>`).join('')}
-      ${mercado.resumo ? `<p style="color:var(--muted);font-size:14px;margin-top:8px">${esc(mercado.resumo)}</p>` : ''}
+      ${mercado.resumo?`<p style="color:var(--muted);font-size:14px;margin-top:8px">${esc(mercado.resumo)}</p>`:''}
     </div>`;
   }
 
   if (d.crossSell?.length) {
-    h += `<div class="panel" style="margin-bottom:16px;border-left:4px solid var(--warn)">
+    h += `<div class="panel" style="border-left:4px solid var(--warn)">
       <div class="result-head">💡 Oportunidades de Cross-sell</div>
-      ${d.crossSell.map(cs => `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
-        <span style="font-size:18px">➕</span>
+      ${d.crossSell.map(cs=>`<div class="fator-item">
+        <span class="fator-check">➕</span>
         <div><strong>${esc(cs.produto)}</strong><br><span style="font-size:13px;color:var(--muted)">${esc(cs.motivo)}</span></div>
       </div>`).join('')}
     </div>`;
@@ -847,9 +758,7 @@ function renderLead(d) {
   if (d.resumoFinal) {
     const txt = gerarTextoRelatorio(d);
     h += `<button class="btn btn-ghost btn-sm" onclick="copiar(${JSON.stringify(txt)})">📋 Copiar Resumo Completo</button>`;
-    window._leadData = d;
   }
-
   document.getElementById('res-lead').innerHTML = h;
 }
 
@@ -862,12 +771,9 @@ function gerarTextoRelatorio(d) {
     if (p.alertas?.length) l.push(`Alertas: ${p.alertas.join('; ')}`);
     if (p.faixaPrecoReal?.menorPreco) l.push(`Menor preço: ${p.faixaPrecoReal.menorPreco.plano} R$${p.faixaPrecoReal.menorPreco.valor.toFixed(2)}`);
   }
-  if (d.funil?.etapas?.length) {
-    l.push('', 'FUNIL:');
-    d.funil.etapas.forEach(e => l.push(`  [${e.timing}] ${e.canal}: ${e.mensagem || e.objetivo}`));
-  }
-  if (d.campanha?.campanhaCompativel) l.push('', `CAMPANHA: ${d.campanha.campanhaCompativel} — ${d.campanha.acaoRecomendada}`);
-  if (d.crossSell?.length) { l.push('', 'CROSS-SELL:'); d.crossSell.forEach(cs => l.push(`  ➕ ${cs.produto} — ${cs.motivo}`)); }
+  if (d.funil?.etapas?.length) { l.push('','FUNIL:'); d.funil.etapas.forEach(e=>l.push(`  [${e.timing}] ${e.canal}: ${e.mensagem||e.objetivo}`)); }
+  if (d.campanha?.campanhaCompativel) l.push('',`CAMPANHA: ${d.campanha.campanhaCompativel} — ${d.campanha.acaoRecomendada}`);
+  if (d.crossSell?.length) { l.push('','CROSS-SELL:'); d.crossSell.forEach(cs=>l.push(`  ➕ ${cs.produto} — ${cs.motivo}`)); }
   return l.join('\n');
 }
 
@@ -876,7 +782,6 @@ async function executarScan() {
   setLoad('load-scan', true);
   document.getElementById('res-scan').innerHTML = '';
   document.getElementById('btn-scan').disabled = true;
-
   try {
     const resp = await fetch('/api/scan');
     const data = await resp.json();
@@ -890,80 +795,216 @@ async function executarScan() {
   }
 }
 
+// LocalStorage keys for checklist persistence
+function lsKey(produto, num) { return `qs_acao_${produto}_${num}`; }
+function isChecked(produto, num) { return localStorage.getItem(lsKey(produto, num)) === '1'; }
+function toggleChecked(produto, num) {
+  const k = lsKey(produto, num);
+  localStorage.setItem(k, localStorage.getItem(k) === '1' ? '0' : '1');
+  const cb = document.getElementById(`cb_${produto}_${num}`);
+  const lbl = document.getElementById(`lbl_${produto}_${num}`);
+  if (cb && lbl) lbl.classList.toggle('done', cb.checked);
+}
+
 function renderScan(d) {
-  const { oportunidades, resumoExecutivo, oqueNaoFazer, proximaVarredura, confianca, fonte,
-          dataVarredura, crossSellAlerta, mensagemCampanha, recomendacaoLabel, dadosAPI } = d;
+  const { oportunidades, resumoExecutivo, oqueNaoFazer, proximaVarredura, fonte, dataVarredura,
+          crossSellAlerta, mensagemCampanha, recomendacaoLabel, dadosAPI } = d;
   let h = '';
 
-  // Cabeçalho com dados API
-  const apiChips = [];
-  if (dadosAPI?.selic)     apiChips.push(`Selic: ${dadosAPI.selic}% a.a.`);
-  if (dadosAPI?.cambioUSD) apiChips.push(`USD: R$${parseFloat(dadosAPI.cambioUSD).toFixed(2)}`);
-  if (dadosAPI?.chuvaMM != null) apiChips.push(`Chuva: ${dadosAPI.chuvaMM}mm`);
+  // ── Hero: first-fold layout (RF-01) ──
+  const top = oportunidades?.[0];
+  const top3 = (oportunidades || []).slice(0, 3);
+  const medals = ['🥇','🥈','🥉'];
 
-  h += `<div class="panel" style="border-left:4px solid var(--accent);margin-bottom:16px">
-    <div style="font-size:17px;font-weight:bold;margin-bottom:8px">${esc(resumoExecutivo || '')}</div>
-    ${apiChips.length ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">${apiChips.map(c=>`<span class="tag tag-blue">${esc(c)}</span>`).join('')}</div>` : ''}
-    <div style="font-size:13px;color:var(--muted)">
-      Data: ${esc(dataVarredura)} · Próxima: ${esc(proximaVarredura)}<br>
-      Fontes: ${esc(Array.isArray(fonte) ? fonte.join(' · ') : fonte || '')}
-    </div>
-  </div>`;
-
-  // Cross-sell alerta
-  if (crossSellAlerta) {
-    h += `<div class="alert alert-info" style="margin-bottom:16px">💡 <strong>Cross-sell:</strong> ${esc(crossSellAlerta)}</div>`;
-  }
-
-  // Mensagem de campanha pronta para o produto líder
-  if (mensagemCampanha) {
-    h += `<div class="panel" style="margin-bottom:16px;border-left:4px solid var(--success)">
-      <div class="result-head">⭐ Campanha Prioritária — ${esc(recomendacaoLabel || '')}</div>
-      <div class="funnel-msg">${esc(mensagemCampanha)}</div>
-      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="copiar(${JSON.stringify(mensagemCampanha)})">Copiar mensagem</button>
+  if (top) {
+    h += `<div class="hero-panel">
+      <div class="hero-top-label">⭐ Maior Oportunidade Esta Semana</div>
+      <div class="hero-title">${semIcon(top.score)} ${esc(top.titulo)}</div>
+      <div class="hero-meta">
+        Score ${top.score}/100 · ${esc(top.gatilho||'')} ·
+        <span style="color:var(--success);font-weight:700">${fmtBRL(top.receita_potencial)}/ano est.</span>
+      </div>
+      <div class="hero-top3">
+        ${top3.map((o,i)=>`<div class="hero-badge">
+          <span class="medal">${medals[i]}</span>
+          <div>
+            <div class="hb-name">${esc(o.titulo)}</div>
+            <div class="hb-score">${semIcon(o.score)} Score ${o.score} · ${fmtBRL(o.receita_potencial)}/ano</div>
+          </div>
+        </div>`).join('')}
+      </div>
     </div>`;
   }
 
-  if (oportunidades?.length) {
-    h += `<div class="result-head" style="margin-bottom:12px">Ranking de Todos os Produtos (${oportunidades.length})</div>`;
-    oportunidades.forEach((o, i) => {
-      const sc  = o.score || 0;
-      const cls = sc >= 65 ? 'score-high' : sc >= 40 ? 'score-med' : 'score-low';
-      const clr = sc >= 65 ? 'var(--success)' : sc >= 40 ? 'var(--warn)' : 'var(--muted)';
-      const urg = { alta:'🔴 Alta', media:'🟡 Média', baixa:'🟢 Baixa' }[o.urgencia] || o.urgencia;
-      const confTag = { alta:'tag-green', media:'tag-orange', baixa:'tag-gray' }[o.confianca] || 'tag-gray';
+  // ── API data chips ──
+  const chips = [];
+  if (dadosAPI?.selic)         chips.push(`📈 Selic: ${dadosAPI.selic}% a.a.`);
+  if (dadosAPI?.cambioUSD)     chips.push(`💵 USD: R$${parseFloat(dadosAPI.cambioUSD).toFixed(2)}`);
+  if (dadosAPI?.chuvaMM != null) chips.push(`🌧 Chuva: ${dadosAPI.chuvaMM}mm`);
 
-      h += `<div class="score-card" style="${i > 2 ? 'opacity:0.75' : ''}">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-          <div style="flex:1">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="score-num ${cls}" aria-label="Score ${sc}" style="font-size:26px">${sc}</div>
-              <div>
-                <div style="font-size:15px;font-weight:bold">${esc(o.titulo)}</div>
-                <div style="font-size:12px;color:var(--muted)">${esc(o.volume)}</div>
-              </div>
+  if (chips.length) {
+    h += `<div class="api-chips">${chips.map(c=>`<span class="tag tag-blue">${esc(c)}</span>`).join('')}</div>`;
+  }
+
+  // Cross-sell alert
+  if (crossSellAlerta) {
+    h += `<div class="alert alert-info" style="margin-bottom:14px">💡 <strong>Cross-sell:</strong> ${esc(crossSellAlerta)}</div>`;
+  }
+
+  // Mensagem de campanha
+  if (mensagemCampanha) {
+    h += `<div class="panel" style="border-left:4px solid var(--success);margin-bottom:14px">
+      <div class="result-head">📣 Mensagem Pronta — ${esc(recomendacaoLabel||'')}</div>
+      <div class="msg-box">${esc(mensagemCampanha)}</div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="copiar(${JSON.stringify(mensagemCampanha)})">Copiar mensagem</button>
+    </div>`;
+  }
+
+  // ── Ranking completo ──
+  if (oportunidades?.length) {
+    h += `<div class="result-head" style="margin-bottom:10px">Ranking Completo — ${oportunidades.length} Produtos</div>`;
+    oportunidades.forEach((o, i) => {
+      const sc   = o.score || 0;
+      const pct  = o.confianca_percentual || 50;
+      const conf = o.confianca || 'media';
+      const medal = i < 3 ? medals[i] : `#${i+1}`;
+      const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : '';
+      const cardId = `opp_${esc(o.produto)}`;
+
+      // RF-08: Trend
+      const trendHtml = `<span class="trend-badge">↔ Sem histórico — primeira varredura</span>`;
+
+      // RF-02: 6-row data table
+      const tableHtml = `<table class="data-table" aria-label="Dados de ${esc(o.titulo)}">
+        <tr><td>Score de Oportunidade</td><td>${semIcon(sc)} ${sc}/100</td></tr>
+        <tr><td>Potencial Estimado/Ano</td><td style="color:var(--success)">${fmtBRL(o.receita_potencial)}</td></tr>
+        <tr><td>Volume Estimado</td><td>${esc(o.volume||'—')}</td></tr>
+        <tr><td>Ticket Médio/Mês</td><td>${o.ticket_medio ? fmtBRL(o.ticket_medio) : '—'}</td></tr>
+        <tr><td>Taxa de Conversão Est.</td><td>${o.taxa_conversao ? o.taxa_conversao + '%' : '—'}</td></tr>
+        <tr><td>Meta de Leads</td><td>${esc(o.metaEstimada||'—')}</td></tr>
+      </table>`;
+
+      // RF-03: Confidence % bar
+      const confHtml = `<div style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:13px;color:var(--muted);font-weight:600">Confiança dos dados</span>
+          <span style="font-size:13px;font-weight:700;color:${confColor(pct)}">${pct}%</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill conf-pct-bar" style="width:${pct}%;background:${confColor(pct)}"></div></div>
+      </div>`;
+
+      // RF-04: Fatores impulsionadores
+      let fatoresHtml = '';
+      if (o.fatores_impulsionadores?.length) {
+        fatoresHtml = `<div style="margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px">✅ Fatores Impulsionadores</div>
+          ${o.fatores_impulsionadores.map(f=>`<div class="fator-item">
+            <span class="fator-check">✔</span>
+            <span>${esc(f)}</span>
+          </div>`).join('')}
+        </div>`;
+      }
+
+      // RF-05: Client profile
+      let profileHtml = '';
+      const pc = o.perfil_cliente;
+      if (pc) {
+        profileHtml = `<div style="margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px">🎯 Perfil do Cliente Ideal</div>
+          <div class="profile-grid">
+            ${pc.tipo        ? `<div class="profile-item"><strong>Tipo</strong><span>${esc(pc.tipo)}</span></div>` : ''}
+            ${pc.faturamento ? `<div class="profile-item"><strong>Faturamento</strong><span>${esc(pc.faturamento)}</span></div>` : ''}
+            ${pc.setor       ? `<div class="profile-item"><strong>Setor</strong><span>${esc(pc.setor)}</span></div>` : ''}
+            ${pc.faixa_etaria? `<div class="profile-item"><strong>Faixa Etária</strong><span>${esc(pc.faixa_etaria)}</span></div>` : ''}
+            ${pc.perfil      ? `<div class="profile-item"><strong>Perfil</strong><span>${esc(pc.perfil)}</span></div>` : ''}
+            ${pc.situacao    ? `<div class="profile-item"><strong>Situação</strong><span>${esc(pc.situacao)}</span></div>` : ''}
+            ${pc.tempo_abertura ? `<div class="profile-item"><strong>Tempo</strong><span>${esc(pc.tempo_abertura)}</span></div>` : ''}
+            ${pc.equipe      ? `<div class="profile-item"><strong>Equipe</strong><span>${esc(pc.equipe)}</span></div>` : ''}
+            ${pc.localizacao ? `<div class="profile-item"><strong>Local</strong><span>${esc(pc.localizacao)}</span></div>` : ''}
+          </div>
+        </div>`;
+      }
+
+      // RF-07: Leads calculator
+      const calcId = `calc_${esc(o.produto)}`;
+      const metaDefault = parseInt((o.metaEstimada || '10').replace(/\D.*/, '')) || 10;
+      const calcHtml = `<div style="margin-bottom:14px;padding:14px;background:var(--surface2);border-radius:10px">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px">🧮 Calculadora de Leads</div>
+        <div class="calc-row">
+          <span class="calc-label">Meta de leads/mês:</span>
+          <input class="calc-input" type="number" min="1" max="500" value="${metaDefault}"
+            id="${calcId}_leads" oninput="recalcLead('${esc(o.produto)}', ${o.ticket_medio||0}, ${o.taxa_conversao||3})" />
+          <span class="calc-label">→</span>
+          <span class="calc-result" id="${calcId}_result">${fmtBRL(Math.round(metaDefault*(o.taxa_conversao||3)/100*(o.ticket_medio||30)*12/100)*100)}/ano est.</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">Ticket: ${fmtBRL(o.ticket_medio||0)}/mês · Conversão: ${o.taxa_conversao||3}%</div>
+      </div>`;
+
+      // RF-10: Actions checklist
+      let acoesHtml = '';
+      if (o.acoes_recomendadas?.length) {
+        const tipoClass = { obrigatoria:'action-tipo-obr', condicional:'action-tipo-cond', cross_sell:'action-tipo-plus' };
+        acoesHtml = `<div style="margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px">📋 Próximas Ações</div>
+          ${o.acoes_recomendadas.map(a=>{
+            const key = `${o.produto}_${a.numero}`;
+            const checked = isChecked(o.produto, a.numero);
+            const tc = tipoClass[a.tipo] || 'action-tipo-obr';
+            return `<div class="action-item">
+              <input type="checkbox" id="cb_${key}" ${checked?'checked':''} onchange="toggleChecked('${esc(o.produto)}', ${a.numero})" aria-label="${esc(a.descricao)}" />
+              <label id="lbl_${key}" for="cb_${key}" class="${checked?'done':''} ${tc}">
+                ${esc(a.descricao)}
+                ${a.condicao?`<span class="action-cond">${esc(a.condicao)}</span>`:''}
+              </label>
+            </div>`;
+          }).join('')}
+        </div>`;
+      }
+
+      // Sinais
+      const sinaisHtml = o.sinais?.length ? `<div style="margin-bottom:10px">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px">📡 Sinais de Mercado</div>
+        <ul style="font-size:13px;color:var(--muted);padding-left:18px">${o.sinais.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>
+      </div>` : '';
+
+      h += `<div class="opp-card ${rankClass}" id="${cardId}">
+        <div class="opp-header" onclick="toggleCard('${cardId}')" role="button" tabindex="0"
+          aria-expanded="false" aria-controls="${cardId}_body"
+          onkeydown="if(event.key==='Enter'||event.key===' '){toggleCard('${cardId}');event.preventDefault()}">
+          <div class="opp-medal">${medal}</div>
+          <div class="opp-score-block">
+            <span class="opp-sem">${semIcon(sc)}</span>
+            <span class="opp-score ${semClass(sc)}">${sc}</span>
+          </div>
+          <div class="opp-info">
+            <div class="opp-title">${esc(o.titulo)}</div>
+            <div class="opp-gatilho">${esc(o.gatilho||'')}</div>
+          </div>
+          <div class="opp-right">
+            <div class="opp-receita">${fmtBRL(o.receita_potencial)}/ano</div>
+            <div class="opp-conf-bar">
+              <span class="conf-dot conf-${conf}"></span>
+              <span>Conf. ${pct}%</span>
             </div>
+            ${trendHtml}
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
-            ${i === 0 ? '<span class="tag tag-green">⭐ Prioridade #1</span>' : i === 1 ? '<span class="tag tag-orange">#2</span>' : `<span class="tag tag-gray">#${i+1}</span>`}
-            <span class="tag ${confTag}" style="font-size:11px">Confiança ${esc(o.confianca)}</span>
-          </div>
+          <span class="opp-expand" aria-hidden="true">▼</span>
         </div>
-        <div class="prog-track" style="margin:8px 0">
-          <div class="prog-fill" style="width:${sc}%;background:${clr}" role="progressbar" aria-valuenow="${sc}" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="opp-body" id="${cardId}_body">
+          ${tableHtml}
+          ${confHtml}
+          ${fatoresHtml}
+          ${profileHtml}
+          ${calcHtml}
+          ${acoesHtml}
+          ${sinaisHtml}
+          ${o.mensagemPronta ? `<div style="margin-bottom:10px">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px">💬 Mensagem Pronta</div>
+            <div class="msg-box">${esc(o.mensagemPronta)}</div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="copiar(${JSON.stringify(o.mensagemPronta)})">Copiar mensagem</button>
+          </div>` : ''}
+          ${o.planosIndicados?.length ? `<div style="font-size:13px;color:var(--muted)"><strong>Planos indicados:</strong> ${esc(o.planosIndicados.join(', '))}</div>` : ''}
         </div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:6px"><strong>Gatilho:</strong> ${esc(o.gatilho||'')}</div>
-        <details>
-          <summary style="cursor:pointer;font-size:13px;color:var(--accent)">Ver detalhes e mensagem</summary>
-          <div style="margin-top:10px">
-            <div style="font-weight:bold;font-size:14px;margin-bottom:4px">${esc(o.acaoRecomendada || '')}</div>
-            ${o.sinais?.length ? `<ul style="font-size:13px;color:var(--muted);padding-left:18px;margin-bottom:8px">${o.sinais.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>` : ''}
-            ${o.mensagemPronta ? `
-              <div class="funnel-msg">${esc(o.mensagemPronta)}</div>
-              <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="copiar(${JSON.stringify(o.mensagemPronta)})">Copiar mensagem</button>` : ''}
-            <div style="font-size:12px;color:var(--muted);margin-top:8px">Meta: ${esc(o.metaEstimada||'')} · Urgência: ${esc(urg)}</div>
-          </div>
-        </details>
       </div>`;
     });
   }
@@ -971,17 +1012,44 @@ function renderScan(d) {
   if (oqueNaoFazer?.length) {
     h += `<div class="panel" style="margin-top:6px">
       <div class="result-head">O Que NÃO Fazer</div>
-      ${oqueNaoFazer.map(o => `<div style="padding:7px 0;border-bottom:1px solid var(--border)">❌ ${esc(o)}</div>`).join('')}
+      ${oqueNaoFazer.map(o=>`<div style="padding:7px 0;border-bottom:1px solid var(--border);font-size:14px">❌ ${esc(o)}</div>`).join('')}
     </div>`;
   }
 
-  const txt = gerarTextoScan(d);
-  h += `<button class="btn btn-ghost btn-sm" onclick="copiar(${JSON.stringify(txt)})">📋 Copiar Relatório Completo</button>`;
+  // Footer: dates + export
+  h += `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:14px">
+    <div style="font-size:12px;color:var(--muted)">
+      Data: ${esc(dataVarredura)} · Próxima: ${esc(proximaVarredura)}<br>
+      Fontes: ${esc(Array.isArray(fonte)?fonte.join(' · '):fonte||'')}
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="copiar(gerarTextoScan(window._scanData))">📋 Exportar Relatório</button>
+  </div>`;
+
   window._scanData = d;
   document.getElementById('res-scan').innerHTML = h;
 }
 
+function toggleCard(id) {
+  const card = document.getElementById(id);
+  const body = document.getElementById(`${id}_body`);
+  const header = card.querySelector('.opp-header');
+  const arrow = card.querySelector('.opp-expand');
+  const open = body.classList.toggle('open');
+  header.setAttribute('aria-expanded', open);
+  if (arrow) arrow.textContent = open ? '▲' : '▼';
+}
+
+function recalcLead(produto, ticket, conv) {
+  const el = document.getElementById(`calc_${produto}_leads`);
+  const res = document.getElementById(`calc_${produto}_result`);
+  if (!el || !res) return;
+  const leads = parseInt(el.value) || 0;
+  const anual = Math.round(leads * (conv / 100) * ticket * 12 / 100) * 100;
+  res.textContent = fmtBRL(anual) + '/ano est.';
+}
+
 function gerarTextoScan(d) {
+  if (!d) return '';
   const l = [`=== VARREDURA QUEIROZ SEGUROS — ${d.dataVarredura} ===`, '', d.resumoExecutivo, ''];
   if (d.crossSellAlerta) l.push(`Cross-sell: ${d.crossSellAlerta}`, '');
   if (d.dadosAPI) {
@@ -992,25 +1060,23 @@ function gerarTextoScan(d) {
     if (api.length) l.push(`Dados API: ${api.join(' | ')}`, '');
   }
   l.push('RANKING DE PRODUTOS:');
-  (d.oportunidades||[]).forEach((o, i) => {
-    l.push(`${i+1}. [Score ${o.score}] ${o.titulo} — Confiança: ${o.confianca}`);
-    l.push(`   Gatilho: ${o.gatilho}`);
-    l.push(`   Ação: ${o.acaoRecomendada}`);
+  (d.oportunidades||[]).forEach((o,i)=>{
+    l.push(`${i+1}. [Score ${o.score}] ${o.titulo} — ${o.receita_potencial ? fmtBRL(o.receita_potencial)+'/ano' : ''} — Conf: ${o.confianca_percentual||'?'}%`);
+    l.push(`   Gatilho: ${o.gatilho||''}`);
+    l.push(`   Ação: ${o.acaoRecomendada||''}`);
     if (o.mensagemPronta) l.push(`   Mensagem: ${o.mensagemPronta}`);
     l.push('');
   });
-  if (d.oqueNaoFazer?.length) { l.push('NÃO FAZER:'); d.oqueNaoFazer.forEach(o => l.push(`  ❌ ${o}`)); }
+  if (d.oqueNaoFazer?.length) { l.push('NÃO FAZER:'); d.oqueNaoFazer.forEach(o=>l.push(`  ❌ ${o}`)); }
   l.push('', `Próxima varredura: ${d.proximaVarredura}`);
   return l.join('\n');
 }
-
 
 // ── Pull Request ──────────────────────────────────────────────────────────────
 async function carregarPR() {
   setLoad('load-pr', true);
   document.getElementById('res-pr').innerHTML = '';
   document.getElementById('btn-pr-load').disabled = true;
-
   try {
     const resp = await fetch('/api/pr');
     const pr   = await resp.json();
@@ -1027,9 +1093,7 @@ async function carregarPR() {
 async function mergePR() {
   if (!confirm('Confirmar merge do PR? Esta ação não pode ser desfeita.')) return;
   const btn = document.getElementById('btn-merge');
-  btn.disabled = true;
-  btn.textContent = 'Mergeando...';
-
+  btn.disabled = true; btn.textContent = 'Mergeando...';
   try {
     const resp = await fetch('/api/pr/merge', { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' });
     const data = await resp.json();
@@ -1039,8 +1103,7 @@ async function mergePR() {
     document.getElementById('pr-badge').textContent = '✓';
   } catch(e) {
     toast(`❌ ${e.message}`, 'err');
-    btn.disabled = false;
-    btn.textContent = '🔀 Fazer Merge';
+    btn.disabled = false; btn.textContent = '🔀 Fazer Merge';
   }
 }
 
@@ -1050,19 +1113,17 @@ function renderPR(pr) {
   const dotClass = isMerged ? 'pr-merged' : isOpen ? 'pr-open' : 'pr-closed';
   const stateLabel = isMerged ? '✅ Mergeado' : isOpen ? '🟢 Aberto' : '🔴 Fechado';
   const canMerge = isOpen && pr.mergeable === true;
-
-  // Atualizar badge da sidebar
   document.getElementById('pr-badge').textContent = isMerged ? '✓' : isOpen ? 'open' : '';
 
   let h = `<div class="panel">
-    <div class="pr-status-row">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
       <div class="pr-dot ${dotClass}" aria-hidden="true"></div>
-      <strong style="font-size:17px">#${esc(pr.number)} — ${esc(pr.title)}</strong>
+      <strong style="font-size:17px;font-family:var(--font-head)">#${esc(pr.number)} — ${esc(pr.title)}</strong>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-      <span class="tag ${isMerged ? 'tag-blue' : isOpen ? 'tag-green' : 'tag-red'}">${stateLabel}</span>
+      <span class="tag ${isMerged?'tag-purple':isOpen?'tag-green':'tag-red'}">${stateLabel}</span>
       <span class="tag tag-gray">${esc(pr.head)} → ${esc(pr.base)}</span>
-      ${!canMerge && isOpen ? `<span class="tag tag-orange">Mergeabilidade: ${esc(pr.mergeable_state || '?')}</span>` : ''}
+      ${!canMerge&&isOpen?`<span class="tag tag-orange">Estado: ${esc(pr.mergeable_state||'?')}</span>`:''}
     </div>`;
 
   if (pr.body) {
@@ -1075,32 +1136,20 @@ function renderPR(pr) {
   h += `<div style="font-size:13px;color:var(--muted);margin-bottom:18px">
     Criado: ${new Date(pr.created_at).toLocaleString('pt-BR')} ·
     Atualizado: ${new Date(pr.updated_at).toLocaleString('pt-BR')}
-  </div>`;
-
-  h += `<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">`;
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">`;
 
   if (isOpen) {
-    if (canMerge) {
-      h += `<button class="btn btn-success" id="btn-merge" onclick="mergePR()">🔀 Fazer Merge</button>`;
-    } else {
-      h += `<button class="btn btn-success" id="btn-merge" disabled title="PR não está pronto para merge">🔀 Fazer Merge</button>`;
-      h += `<span style="font-size:13px;color:var(--warn)">⚠️ PR ainda não está mergeable (estado: ${esc(pr.mergeable_state)})</span>`;
-    }
+    h += canMerge
+      ? `<button class="btn btn-success" id="btn-merge" onclick="mergePR()">🔀 Fazer Merge</button>`
+      : `<button class="btn btn-success" id="btn-merge" disabled>🔀 Fazer Merge</button>
+         <span style="font-size:13px;color:var(--warn)">⚠️ PR não está pronto (${esc(pr.mergeable_state)})</span>`;
   } else if (isMerged) {
     h += `<div class="alert alert-ok" style="flex:1">✅ Este PR já foi mergeado com sucesso.</div>`;
   } else {
     h += `<div class="alert alert-err" style="flex:1">❌ Este PR está fechado sem merge.</div>`;
   }
-
-  h += `<a href="${esc(pr.url)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Abrir no GitHub ↗</a>`;
-  h += `</div></div>`;
-
-  if (!isMerged && isOpen) {
-    h += `<div class="alert alert-info" style="margin-top:12px" role="note">
-      💡 <strong>Para mergear pela interface:</strong> configure <code>GITHUB_TOKEN</code> no arquivo <code>.env</code> com permissão <code>pull_requests: write</code>.
-    </div>`;
-  }
-
+  h += `<a href="${esc(pr.url)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Abrir no GitHub ↗</a></div></div>`;
   document.getElementById('res-pr').innerHTML = h;
 }
 
@@ -1109,14 +1158,13 @@ async function checkHealth() {
   try {
     const r = await fetch('/health');
     const d = await r.json();
-    document.getElementById('api-status').textContent = `✅ API · ${d.provider || '?'}`;
+    document.getElementById('api-status').textContent = `✅ API · ${d.provider||'?'}`;
   } catch {
     document.getElementById('api-status').textContent = '❌ API offline';
   }
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-document.querySelectorAll('.hidden').forEach(el => el.style.display = 'none');
 checkHealth();
 </script>
 </body>

@@ -86,8 +86,15 @@ async function opportunityScan(cidade = 'Teresópolis') {
     mensagemPronta: s.mensagemPronta,
     metaEstimada: s.metaEstimada,
     confianca: s.confianca,
+    confianca_percentual: s.confianca_percentual,
     gatilho: s.gatilho,
-    sinais: s.sinais
+    sinais: s.sinais,
+    fatores_impulsionadores: s.fatores_impulsionadores,
+    perfil_cliente: s.perfil_cliente,
+    acoes_recomendadas: s.acoes_recomendadas,
+    receita_potencial: s.receita_potencial,
+    ticket_medio: s.ticket_medio,
+    taxa_conversao: s.taxa_conversao
   }));
 
   const top = scanner.scores[0];
