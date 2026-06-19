@@ -3,298 +3,355 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Queiroz Seguros — Bot Comercial</title>
+  <title>Queiroz Seguros — Painel Comercial</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f1117'/%3E%3Ctext x='6' y='24' font-size='20'%3E🏥%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/open-dyslexic-regular.min.css" crossorigin="anonymous" />
   <style>
+    /* ── Reset ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --surface2: #222636;
-      --border: #2e3347;
-      --text: #e8eaf0;
-      --muted: #8b91a8;
-      --accent: #4f7ef0;
-      --accent-h: #3b6bdd;
-      --success: #22c55e;
-      --warn: #f59e0b;
-      --danger: #ef4444;
-      --info: #38bdf8;
+      --bg:       #111318;
+      --surface:  #1c1f2b;
+      --surface2: #252938;
+      --border:   #303549;
+      --text:     #e6e8f0;
+      --muted:    #8b90ab;
+      --accent:   #5b9cf6;
+      --accent-h: #3b82f6;
+      --success:  #34d399;
+      --warn:     #fbbf24;
+      --danger:   #f87171;
+      --info:     #60a5fa;
+      --font:     'OpenDyslexic', 'Comic Sans MS', Arial, sans-serif;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 15px;
-      line-height: 1.6;
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.65;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       display: flex;
     }
 
+    /* ── Skip link (acessibilidade) ── */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 12px;
+      background: var(--accent);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      z-index: 9999;
+      text-decoration: none;
+      transition: top 0.1s;
+    }
+    .skip-link:focus { top: 12px; }
+
     /* ── Sidebar ── */
     #sidebar {
-      width: 220px;
+      width: 240px;
       background: var(--surface);
-      border-right: 1px solid var(--border);
+      border-right: 2px solid var(--border);
       display: flex;
       flex-direction: column;
-      padding: 24px 14px 20px;
+      padding: 28px 16px 20px;
       position: sticky;
       top: 0;
       height: 100vh;
+      overflow-y: auto;
       flex-shrink: 0;
     }
 
-    .brand {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--accent);
-      margin-bottom: 4px;
-      letter-spacing: 0.03em;
-    }
+    .brand { font-size: 15px; font-weight: bold; color: var(--accent); margin-bottom: 4px; }
+    .brand-sub { font-size: 12px; color: var(--muted); margin-bottom: 32px; line-height: 1.5; }
 
-    .brand-sub { font-size: 11px; color: var(--muted); margin-bottom: 28px; }
-
-    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+    .nav-section { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 8px; }
 
     .nav-btn {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       width: 100%;
       background: none;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 12px;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 11px 14px;
       color: var(--muted);
-      font-size: 14px;
+      font-family: var(--font);
+      font-size: 15px;
       cursor: pointer;
       text-align: left;
-      transition: background 0.12s, color 0.12s;
-      margin-bottom: 4px;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
+      margin-bottom: 6px;
+      line-height: 1.4;
     }
 
-    .nav-btn:hover { background: var(--surface2); color: var(--text); }
-    .nav-btn.active { background: rgba(79,126,240,0.15); color: var(--accent); }
-    .nav-btn .icon { font-size: 16px; flex-shrink: 0; }
+    .nav-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border); }
+    .nav-btn.active { background: rgba(91,156,246,0.14); color: var(--accent); border-color: var(--accent); }
+    .nav-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+    .nav-btn .icon { font-size: 18px; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(91,156,246,0.2);
+      color: var(--accent);
+    }
 
     #sidebar .spacer { flex: 1; }
 
-    #sidebar footer { font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 14px; }
+    #sidebar footer {
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      line-height: 1.6;
+    }
 
     /* ── Main ── */
     #main {
       flex: 1;
-      padding: 28px 32px;
+      padding: 32px 36px;
       overflow-y: auto;
-      max-width: 860px;
+      max-width: 900px;
     }
 
-    h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-    .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    h1 { font-size: 24px; font-weight: bold; margin-bottom: 6px; line-height: 1.3; }
+    .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
 
     /* ── Panel ── */
     .panel {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 22px 24px;
-      margin-bottom: 20px;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 22px;
     }
 
     .panel-title {
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 0.07em;
+      letter-spacing: 0.09em;
       color: var(--muted);
       margin-bottom: 18px;
     }
 
     /* ── Form ── */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-grid .full { grid-column: 1 / -1; }
 
-    .field-group { display: flex; flex-direction: column; gap: 5px; }
-
-    .field-group label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
-    .field-group input,
-    .field-group select,
-    .field-group textarea {
+    .field label {
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
       background: var(--surface2);
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
       border-radius: 8px;
-      padding: 9px 12px;
+      padding: 10px 13px;
       color: var(--text);
-      font-size: 14px;
-      font-family: inherit;
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.5;
       outline: none;
       transition: border-color 0.15s;
     }
 
-    .field-group input:focus,
-    .field-group select:focus,
-    .field-group textarea:focus { border-color: var(--accent); }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus { border-color: var(--accent); }
+    .field textarea { resize: vertical; min-height: 80px; }
 
-    .field-group textarea { resize: vertical; min-height: 70px; }
-
-    /* ── Toggle MEI ── */
-    .toggle-row {
+    /* ── Toggle ── */
+    .toggle-wrap {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
+      gap: 12px;
+      padding: 10px 13px;
       background: var(--surface2);
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
       border-radius: 8px;
+      cursor: pointer;
     }
 
-    .toggle-row label { font-size: 14px; color: var(--text); cursor: pointer; }
+    .toggle-wrap label { font-size: 15px; color: var(--text); cursor: pointer; }
 
-    .toggle {
-      position: relative;
-      width: 36px;
-      height: 20px;
-      flex-shrink: 0;
-    }
-
-    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
 
     .toggle-track {
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background: var(--border);
       border-radius: 999px;
       cursor: pointer;
       transition: background 0.2s;
     }
-
     .toggle input:checked + .toggle-track { background: var(--accent); }
-
     .toggle-track::after {
       content: '';
       position: absolute;
-      width: 14px;
-      height: 14px;
-      left: 3px;
-      top: 3px;
+      width: 16px; height: 16px;
+      left: 3px; top: 3px;
       background: #fff;
       border-radius: 50%;
       transition: transform 0.2s;
     }
+    .toggle input:checked + .toggle-track::after { transform: translateX(18px); }
 
-    .toggle input:checked + .toggle-track::after { transform: translateX(16px); }
-
-    /* ── Mode selector ── */
-    .mode-tabs {
+    /* ── Mode tabs ── */
+    .tabs {
       display: flex;
       gap: 6px;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
       background: var(--surface2);
       border-radius: 10px;
       padding: 4px;
     }
 
-    .mode-tab {
+    .tab {
       flex: 1;
-      padding: 8px 12px;
+      padding: 9px 12px;
       background: none;
-      border: none;
-      border-radius: 7px;
-      color: var(--muted);
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.12s, color 0.12s;
-    }
-
-    .mode-tab.active { background: var(--accent); color: #fff; }
-
-    /* ── Buttons ── */
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
       border: none;
       border-radius: 8px;
-      padding: 11px 24px;
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      text-align: center;
+    }
+
+    .tab:hover { color: var(--text); }
+    .tab.active { background: var(--accent); color: #fff; }
+    .tab:focus-visible { outline: 3px solid var(--accent); }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-family: var(--font);
       font-size: 15px;
-      font-weight: 600;
-      font-family: inherit;
+      font-weight: bold;
       cursor: pointer;
-      transition: background 0.15s;
+      border: none;
+      transition: background 0.15s, opacity 0.15s;
+      text-decoration: none;
     }
 
-    .btn-primary:hover { background: var(--accent-h); }
-    .btn-primary:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+    .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-    .btn-copy {
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-h); }
+
+    .btn-success { background: var(--success); color: #000; }
+    .btn-success:hover:not(:disabled) { filter: brightness(0.9); }
+
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-danger:hover:not(:disabled) { filter: brightness(0.9); }
+
+    .btn-ghost {
       background: none;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 4px 10px;
+      border: 2px solid var(--border);
       color: var(--muted);
-      font-size: 12px;
-      cursor: pointer;
-      transition: border-color 0.12s, color 0.12s;
     }
+    .btn-ghost:hover:not(:disabled) { border-color: var(--text); color: var(--text); }
 
-    .btn-copy:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm { padding: 6px 14px; font-size: 13px; border-radius: 7px; }
 
-    /* ── Result cards ── */
-    .result-section { margin-bottom: 20px; }
+    /* ── Loading ── */
+    .loading-box {
+      display: none;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 22px;
+    }
+    .loading-box.show { display: flex; }
 
-    .result-section-title {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
+    .spinner {
+      width: 24px; height: 24px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Tags ── */
+    .tag {
+      display: inline-block;
+      padding: 3px 11px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .tag-blue   { background: rgba(91,156,246,0.18); color: #93c5fd; }
+    .tag-green  { background: rgba(52,211,153,0.18); color: #6ee7b7; }
+    .tag-orange { background: rgba(251,191,36,0.18); color: #fde68a; }
+    .tag-red    { background: rgba(248,113,113,0.18); color: #fca5a5; }
+    .tag-gray   { background: rgba(139,144,171,0.18); color: #8b90ab; }
+
+    /* ── Alert box ── */
+    .alert {
+      border-radius: 9px;
+      padding: 11px 15px;
       margin-bottom: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .alert-warn  { background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.3); color: #fde68a; }
+    .alert-err   { background: rgba(248,113,113,0.10); border: 1px solid rgba(248,113,113,0.3); color: #fca5a5; }
+    .alert-ok    { background: rgba(52,211,153,0.10); border: 1px solid rgba(52,211,153,0.3); color: #6ee7b7; }
+    .alert-info  { background: rgba(96,165,250,0.10); border: 1px solid rgba(96,165,250,0.3); color: #93c5fd; }
+
+    /* ── Result sections ── */
+    .result-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 999px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--muted);
+      margin-bottom: 10px;
     }
 
-    .tag-blue   { background: rgba(79,126,240,0.18); color: #7baeff; }
-    .tag-green  { background: rgba(34,197,94,0.18);  color: #4ade80; }
-    .tag-orange { background: rgba(245,158,11,0.18); color: #fbbf24; }
-    .tag-red    { background: rgba(239,68,68,0.18);  color: #f87171; }
-    .tag-gray   { background: rgba(139,145,168,0.18); color: #8b91a8; }
-
-    /* ── Alert box ── */
-    .alert-box {
-      background: rgba(245,158,11,0.1);
-      border: 1px solid rgba(245,158,11,0.3);
-      border-radius: 8px;
-      padding: 10px 14px;
-      margin-bottom: 8px;
-      font-size: 13px;
-      color: #fde68a;
-    }
-
-    /* ── Plan cards ── */
+    /* ── Plan card ── */
     .plan-card {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -303,429 +360,454 @@
       margin-bottom: 10px;
       display: flex;
       align-items: flex-start;
-      gap: 14px;
+      gap: 16px;
     }
+    .plan-price { font-size: 21px; font-weight: bold; color: var(--success); flex-shrink: 0; min-width: 96px; }
+    .plan-name  { font-size: 15px; font-weight: bold; margin-bottom: 3px; }
+    .plan-meta  { font-size: 13px; color: var(--muted); }
+    .plan-tags  { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
 
-    .plan-price {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--success);
-      flex-shrink: 0;
-      min-width: 90px;
-    }
-
-    .plan-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
-    .plan-meta { font-size: 12px; color: var(--muted); }
-    .plan-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
-
-    /* ── Funnel timeline ── */
+    /* ── Funnel ── */
     .funnel-step {
       display: flex;
       gap: 14px;
-      padding: 12px 0;
+      padding: 13px 0;
       border-bottom: 1px solid var(--border);
     }
-
     .funnel-step:last-child { border-bottom: none; }
-
     .funnel-num {
-      width: 28px;
-      height: 28px;
-      background: rgba(79,126,240,0.2);
+      width: 30px; height: 30px;
+      background: rgba(91,156,246,0.18);
       color: var(--accent);
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      flex-shrink: 0;
-      margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: bold; flex-shrink: 0;
     }
-
-    .funnel-timing { font-size: 12px; color: var(--accent); font-weight: 600; }
-    .funnel-canal { font-size: 12px; color: var(--muted); }
-    .funnel-obj { font-size: 14px; font-weight: 600; margin: 2px 0; }
+    .funnel-timing { font-size: 12px; color: var(--accent); font-weight: bold; }
+    .funnel-canal  { font-size: 12px; color: var(--muted); }
+    .funnel-obj    { font-size: 15px; font-weight: bold; margin: 3px 0; }
     .funnel-msg {
-      font-size: 13px;
-      color: var(--muted);
-      background: var(--surface);
-      border-radius: 6px;
-      padding: 8px 10px;
-      margin-top: 6px;
-      white-space: pre-wrap;
+      font-size: 14px; color: var(--muted);
+      background: var(--surface); border-radius: 8px;
+      padding: 9px 12px; margin-top: 7px; white-space: pre-wrap;
     }
 
-    /* ── Scan cards ── */
-    .scan-card {
+    /* ── Score card ── */
+    .score-card {
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 12px;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
     }
+    .score-num { font-size: 34px; font-weight: bold; line-height: 1; }
+    .score-high { color: var(--success); }
+    .score-med  { color: var(--warn); }
+    .score-low  { color: var(--muted); }
+    .prog-track { height: 7px; background: var(--border); border-radius: 999px; overflow: hidden; margin: 10px 0; }
+    .prog-fill  { height: 100%; border-radius: 999px; transition: width 0.5s; }
 
-    .scan-score {
-      font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 2px;
-    }
-
-    .scan-score.high  { color: var(--success); }
-    .scan-score.med   { color: var(--warn); }
-    .scan-score.low   { color: var(--muted); }
-
-    .progress-bar {
-      height: 6px;
-      background: var(--border);
-      border-radius: 999px;
-      overflow: hidden;
-      margin: 8px 0;
-    }
-
-    .progress-fill { height: 100%; border-radius: 999px; transition: width 0.5s; }
-
-    /* ── Loading ── */
-    #loading {
-      display: none;
+    /* ── PR Status ── */
+    .pr-status-row {
+      display: flex;
       align-items: center;
       gap: 12px;
-      padding: 20px 24px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
-
-    .spinner {
-      width: 22px;
-      height: 22px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
+    .pr-dot {
+      width: 14px; height: 14px;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
     }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .pr-open   { background: var(--success); }
+    .pr-merged { background: #a78bfa; }
+    .pr-closed { background: var(--danger); }
 
     /* ── Toast ── */
     #toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--success);
-      color: #000;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
+      bottom: 28px; right: 28px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: bold;
       opacity: 0;
-      transform: translateY(6px);
+      transform: translateY(8px);
       transition: opacity 0.2s, transform 0.2s;
       pointer-events: none;
       z-index: 9999;
     }
-
     #toast.show { opacity: 1; transform: translateY(0); }
-
-    /* ── Empty ── */
-    .empty { text-align: center; padding: 48px 20px; color: var(--muted); }
-    .empty .icon { font-size: 48px; margin-bottom: 12px; }
+    #toast.ok   { background: var(--success); color: #000; }
+    #toast.warn { background: var(--warn);    color: #000; }
+    #toast.err  { background: var(--danger);  color: #fff; }
 
     /* ── Responsive ── */
-    @media (max-width: 680px) {
+    @media (max-width: 700px) {
       body { flex-direction: column; }
-      #sidebar { width: 100%; height: auto; position: relative; }
-      #main { padding: 16px; }
+      #sidebar { width: 100%; height: auto; position: relative; overflow-y: visible; }
+      #main { padding: 18px 16px; }
       .form-grid { grid-template-columns: 1fr; }
       .form-grid .full { grid-column: 1; }
     }
 
-    /* ── Hidden ── */
-    .hidden { display: none !important; }
+    /* ── Focus ring global ── */
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
   </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside id="sidebar">
-  <div class="brand">🏥 Queiroz Seguros</div>
-  <div class="brand-sub">Bot Comercial · Teresópolis/RJ</div>
+<a href="#main" class="skip-link">Ir para o conteúdo principal</a>
 
-  <div class="nav-label">Menu</div>
-  <button class="nav-btn active" onclick="showPage('lead')" id="nav-lead">
-    <span class="icon">👤</span> Analisar Lead
+<!-- ── SIDEBAR ── -->
+<aside id="sidebar" role="navigation" aria-label="Menu principal">
+  <div class="brand">🏥 Queiroz Seguros</div>
+  <div class="brand-sub">Painel Comercial<br>Teresópolis / RJ</div>
+
+  <div class="nav-section" aria-hidden="true">Menu</div>
+
+  <button class="nav-btn active" id="nav-scan"  onclick="ir('scan')"  aria-current="page">
+    <span class="icon" aria-hidden="true">📊</span> Varredura de Mercado
   </button>
-  <button class="nav-btn" onclick="showPage('scan')" id="nav-scan">
-    <span class="icon">📊</span> Varredura de Mercado
+  <button class="nav-btn" id="nav-lead"  onclick="ir('lead')">
+    <span class="icon" aria-hidden="true">👤</span> Analisar Lead
   </button>
-  <button class="nav-btn" onclick="showPage('planos')" id="nav-planos">
-    <span class="icon">📋</span> Base de Planos
+  <button class="nav-btn" id="nav-planos" onclick="ir('planos')">
+    <span class="icon" aria-hidden="true">📋</span> Base de Planos
+  </button>
+  <button class="nav-btn" id="nav-pr" onclick="ir('pr')">
+    <span class="icon" aria-hidden="true">🔀</span> Pull Request
+    <span class="nav-badge" id="pr-badge" aria-label="Status do PR"></span>
   </button>
 
   <div class="spacer"></div>
+
   <footer>
-    <div id="api-status" style="margin-bottom:8px">⚙️ Verificando...</div>
-    Queiroz Seguros · Teresópolis/RJ
+    <div id="api-status" aria-live="polite" style="margin-bottom:6px">⚙️ Verificando API...</div>
+    <div>Versão: planos até 25/06/2026</div>
   </footer>
 </aside>
 
-<!-- MAIN -->
+<!-- ── MAIN ── -->
 <main id="main">
 
-  <!-- ── PAGE: LEAD ── -->
-  <div id="page-lead">
-    <h1>Analisar Lead</h1>
-    <p class="page-sub">Preencha os dados do lead para classificação, funil e planos recomendados.</p>
+  <!-- ─────────────────── VARREDURA ─────────────────── -->
+  <section id="page-scan" class="page active" aria-labelledby="title-scan">
+    <h1 id="title-scan">📊 Varredura de Mercado</h1>
+    <p class="page-sub">Identifica qual segmento (MEI, PF ou Adesão) tem maior oportunidade esta semana em Teresópolis.</p>
+
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:22px">
+      <button class="btn btn-primary" onclick="executarScan()" id="btn-scan" aria-describedby="scan-desc">
+        <span aria-hidden="true">🔍</span> Executar Varredura
+      </button>
+      <span id="scan-desc" class="muted" style="font-size:13px;color:var(--muted)">Agrega sinais de Brasil.IO, ANS, IBGE e busca orgânica</span>
+    </div>
+
+    <div class="loading-box" id="load-scan" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <span>Varrendo dados de mercado — pode levar até 30 segundos...</span>
+    </div>
+
+    <div id="res-scan" aria-live="polite" aria-atomic="false"></div>
+  </section>
+
+  <!-- ─────────────────── LEAD ─────────────────── -->
+  <section id="page-lead" class="page" aria-labelledby="title-lead">
+    <h1 id="title-lead">👤 Analisar Lead</h1>
+    <p class="page-sub">Preencha os dados do lead para receber classificação, planos recomendados e funil de contato.</p>
 
     <div class="panel">
-      <div class="panel-title">Modo de Análise</div>
-      <div class="mode-tabs">
-        <button class="mode-tab active" onclick="setMode('novo_lead', this)">Análise Completa</button>
-        <button class="mode-tab" onclick="setMode('funil', this)">Só Funil</button>
+      <div class="panel-title">Modo de análise</div>
+      <div class="tabs" role="tablist" aria-label="Modo de análise">
+        <button class="tab active" role="tab" aria-selected="true"  id="tab-completo" onclick="setModo('novo_lead', this)">Análise Completa</button>
+        <button class="tab"        role="tab" aria-selected="false" id="tab-funil"    onclick="setModo('funil', this)">Só Funil</button>
       </div>
 
-      <div class="form-grid">
-        <div class="field-group">
-          <label>Nome *</label>
-          <input type="text" id="f-nome" placeholder="Nome do lead" />
-        </div>
-        <div class="field-group">
-          <label>Cidade</label>
-          <input type="text" id="f-cidade" value="Teresópolis" />
-        </div>
-        <div class="field-group">
-          <label>Idade</label>
-          <input type="number" id="f-idade" placeholder="Ex: 35" min="0" max="110" />
-        </div>
-        <div class="field-group">
-          <label>Profissão</label>
-          <input type="text" id="f-profissao" placeholder="Ex: Enfermeira" />
-        </div>
-        <div class="field-group">
-          <label>Dependentes</label>
-          <input type="number" id="f-dependentes" placeholder="0" min="0" max="10" value="0" />
-        </div>
-        <div class="field-group">
-          <label>Orçamento (R$/mês)</label>
-          <input type="number" id="f-orcamento" placeholder="Ex: 500" min="0" />
-        </div>
-        <div class="field-group">
-          <label>Canal de Origem</label>
-          <select id="f-origem">
-            <option value="">Selecione...</option>
-            <option>WhatsApp</option>
-            <option>Instagram</option>
-            <option>Indicação</option>
-            <option>Site</option>
-            <option>Outro</option>
-          </select>
-        </div>
-        <div class="field-group">
-          <label>Possui MEI ou Empresa?</label>
-          <div class="toggle-row">
-            <label class="toggle">
-              <input type="checkbox" id="f-mei" onchange="toggleMEI()" />
-              <span class="toggle-track"></span>
-            </label>
-            <label for="f-mei">Sim, possui MEI/empresa</label>
+      <form id="form-lead" onsubmit="return false" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="f-nome">Nome <span aria-hidden="true" style="color:var(--danger)">*</span></label>
+            <input type="text" id="f-nome" autocomplete="name" placeholder="Nome do lead" required aria-required="true" />
+          </div>
+          <div class="field">
+            <label for="f-cidade">Cidade</label>
+            <input type="text" id="f-cidade" value="Teresópolis" />
+          </div>
+          <div class="field">
+            <label for="f-idade">Idade</label>
+            <input type="number" id="f-idade" min="0" max="110" placeholder="Ex: 35" />
+          </div>
+          <div class="field">
+            <label for="f-profissao">Profissão</label>
+            <input type="text" id="f-profissao" placeholder="Ex: Enfermeira" />
+          </div>
+          <div class="field">
+            <label for="f-dependentes">Dependentes</label>
+            <input type="number" id="f-dependentes" min="0" max="10" value="0" />
+          </div>
+          <div class="field">
+            <label for="f-orcamento">Orçamento (R$/mês)</label>
+            <input type="number" id="f-orcamento" min="0" placeholder="Ex: 500" />
+          </div>
+          <div class="field">
+            <label for="f-origem">Canal de Origem</label>
+            <select id="f-origem">
+              <option value="">Selecione...</option>
+              <option>WhatsApp</option>
+              <option>Instagram</option>
+              <option>Indicação</option>
+              <option>Site</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Possui MEI ou Empresa?</label>
+            <div class="toggle-wrap" onclick="document.getElementById('f-mei').click()">
+              <label class="toggle" onclick="event.stopPropagation()">
+                <input type="checkbox" id="f-mei" onchange="toggleMEI()" />
+                <span class="toggle-track"></span>
+              </label>
+              <label for="f-mei">Sim, tem MEI ou empresa</label>
+            </div>
+          </div>
+          <div class="field hidden" id="campo-meses">
+            <label for="f-meses">Tempo de empresa (meses)</label>
+            <input type="number" id="f-meses" min="0" placeholder="Ex: 8" />
+          </div>
+          <div class="field full">
+            <label for="f-mensagem">Mensagem original do lead</label>
+            <textarea id="f-mensagem" placeholder="Cole aqui a mensagem que o lead enviou..."></textarea>
           </div>
         </div>
-        <div class="field-group hidden" id="campo-meses">
-          <label>Tempo de Empresa (meses)</label>
-          <input type="number" id="f-meses" placeholder="Ex: 8" min="0" />
+
+        <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="analisarLead()" id="btn-lead">
+            <span aria-hidden="true">🔍</span> Analisar Lead
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="limparForm()" type="button">Limpar</button>
         </div>
-        <div class="field-group full">
-          <label>Mensagem Original do Lead</label>
-          <textarea id="f-mensagem" placeholder="Cole aqui a mensagem que o lead enviou..."></textarea>
-        </div>
-      </div>
-
-      <div style="margin-top:18px;display:flex;align-items:center;gap:12px">
-        <button class="btn-primary" onclick="analisarLead()">Analisar Lead</button>
-        <button class="btn-copy" onclick="limparForm()">Limpar</button>
-      </div>
+      </form>
     </div>
 
-    <div id="loading" style="display:none;align-items:center;gap:12px;padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:20px">
-      <div class="spinner"></div>
-      <span>Analisando lead com IA...</span>
+    <div class="loading-box" id="load-lead" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <span>Analisando com IA — aguarde até 25 segundos...</span>
     </div>
 
-    <div id="resultado-lead"></div>
-  </div>
+    <div id="res-lead" aria-live="polite" aria-atomic="false"></div>
+  </section>
 
-  <!-- ── PAGE: SCAN ── -->
-  <div id="page-scan" class="hidden">
-    <h1>Varredura de Mercado</h1>
-    <p class="page-sub">Identifica qual segmento tem maior oportunidade esta semana em Teresópolis.</p>
+  <!-- ─────────────────── PLANOS ─────────────────── -->
+  <section id="page-planos" class="page" aria-labelledby="title-planos">
+    <h1 id="title-planos">📋 Base de Planos</h1>
+    <p class="page-sub">Carteira vigente para Teresópolis/RJ · Válida até 25/06/2026.</p>
 
-    <div style="display:flex;gap:12px;margin-bottom:24px;align-items:center">
-      <button class="btn-primary" onclick="executarScan()">Executar Varredura</button>
-      <span id="scan-status" style="font-size:13px;color:var(--muted)"></span>
+    <div class="alert alert-warn" role="note">
+      ⚠️ Nenhum plano tem hospital em Teresópolis — internação em Petrópolis ou Rio de Janeiro.
     </div>
 
-    <div id="loading-scan" style="display:none;align-items:center;gap:12px;padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:20px">
-      <div class="spinner"></div>
-      <span>Varrendo dados de mercado...</span>
+    <div class="tabs" style="margin-top:16px" role="tablist" aria-label="Filtrar planos por segmento">
+      <button class="tab active" onclick="filtrarPlanos('',this)">Todos</button>
+      <button class="tab" onclick="filtrarPlanos('pme',this)">MEI/PME</button>
+      <button class="tab" onclick="filtrarPlanos('pessoa_fisica',this)">PF</button>
+      <button class="tab" onclick="filtrarPlanos('adesao',this)">Adesão</button>
     </div>
 
-    <div id="resultado-scan"></div>
-  </div>
+    <div id="lista-planos" style="margin-top:16px" aria-live="polite"></div>
+  </section>
 
-  <!-- ── PAGE: PLANOS ── -->
-  <div id="page-planos" class="hidden">
-    <h1>Base de Planos</h1>
-    <p class="page-sub">Carteira de planos vigente para Teresópolis/RJ. Válida até 25/06/2026.</p>
+  <!-- ─────────────────── PULL REQUEST ─────────────────── -->
+  <section id="page-pr" class="page" aria-labelledby="title-pr">
+    <h1 id="title-pr">🔀 Pull Request</h1>
+    <p class="page-sub">Visualize e gerencie o PR do Bot Queiroz Seguros diretamente aqui.</p>
 
-    <div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="mode-tab active" onclick="filtrarPlanos('', this)">Todos</button>
-      <button class="mode-tab" onclick="filtrarPlanos('pme', this)">MEI/PME</button>
-      <button class="mode-tab" onclick="filtrarPlanos('pessoa_fisica', this)">PF</button>
-      <button class="mode-tab" onclick="filtrarPlanos('adesao', this)">Adesão</button>
+    <div style="display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="carregarPR()" id="btn-pr-load">
+        <span aria-hidden="true">🔄</span> Atualizar Status
+      </button>
     </div>
 
-    <div class="alert-box">⚠️ Nenhum plano tem hospital em Teresópolis — internação em Petrópolis ou RJ.</div>
+    <div class="loading-box" id="load-pr" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <span>Consultando GitHub...</span>
+    </div>
 
-    <div id="lista-planos" style="margin-top:16px"></div>
-  </div>
+    <div id="res-pr" aria-live="polite" aria-atomic="true"></div>
+  </section>
 
 </main>
 
-<div id="toast"></div>
+<div id="toast" role="alert" aria-live="assertive"></div>
 
 <script>
-const API = '';  // mesmo origin
+'use strict';
 
-let modoAnalise = 'novo_lead';
+// ── Navegação ─────────────────────────────────────────────────────────────────
+const PAGES = ['scan','lead','planos','pr'];
+let paginaAtual = 'scan';
 
-// ── Navigation ──────────────────────────────────────────────────────────────
-function showPage(p) {
-  ['lead','scan','planos'].forEach(id => {
-    document.getElementById(`page-${id}`).classList.toggle('hidden', id !== p);
-    document.getElementById(`nav-${id}`).classList.toggle('active', id === p);
+function ir(p) {
+  PAGES.forEach(id => {
+    document.getElementById(`page-${id}`).classList.toggle('active', id === p);
+    const nav = document.getElementById(`nav-${id}`);
+    nav.classList.toggle('active', id === p);
+    nav.setAttribute('aria-current', id === p ? 'page' : 'false');
   });
+  paginaAtual = p;
   if (p === 'planos') carregarPlanos();
+  if (p === 'pr')     carregarPR();
 }
 
-function setMode(modo, btn) {
-  modoAnalise = modo;
-  document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+// ── Utilidades ────────────────────────────────────────────────────────────────
+function esc(v) {
+  return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── MEI toggle ──────────────────────────────────────────────────────────────
+let _toastT;
+function toast(msg, tipo = 'ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${tipo}`;
+  clearTimeout(_toastT);
+  _toastT = setTimeout(() => el.className = '', 2600);
+}
+
+function copiar(txt) {
+  navigator.clipboard.writeText(txt)
+    .then(() => toast('Copiado! ✓'))
+    .catch(() => {
+      const el = Object.assign(document.createElement('textarea'), { value: txt, style: 'position:fixed;opacity:0' });
+      document.body.append(el); el.select(); document.execCommand('copy'); el.remove();
+      toast('Copiado! ✓');
+    });
+}
+
+function setLoad(id, show) {
+  document.getElementById(id).classList.toggle('show', show);
+}
+
+// ── Modo lead ─────────────────────────────────────────────────────────────────
+let modoLead = 'novo_lead';
+
+function setModo(modo, btn) {
+  modoLead = modo;
+  document.querySelectorAll('#form-lead .tab').forEach(b => {
+    b.classList.toggle('active', b === btn);
+    b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+  });
+}
+
 function toggleMEI() {
-  const checked = document.getElementById('f-mei').checked;
-  document.getElementById('campo-meses').classList.toggle('hidden', !checked);
+  document.getElementById('campo-meses').classList.toggle('hidden', !document.getElementById('f-mei').checked);
 }
 
 function limparForm() {
-  ['f-nome','f-cidade','f-idade','f-profissao','f-dependentes','f-orcamento','f-mensagem'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = id === 'f-cidade' ? 'Teresópolis' : id === 'f-dependentes' ? '0' : '';
-  });
-  document.getElementById('f-mei').checked = false;
+  document.getElementById('f-nome').value = '';
+  document.getElementById('f-idade').value = '';
+  document.getElementById('f-profissao').value = '';
+  document.getElementById('f-dependentes').value = '0';
+  document.getElementById('f-orcamento').value = '';
   document.getElementById('f-origem').value = '';
+  document.getElementById('f-mensagem').value = '';
+  document.getElementById('f-mei').checked = false;
+  document.getElementById('f-meses').value = '';
   document.getElementById('campo-meses').classList.add('hidden');
-  document.getElementById('resultado-lead').innerHTML = '';
+  document.getElementById('res-lead').innerHTML = '';
 }
 
-// ── Analisar Lead ────────────────────────────────────────────────────────────
+// ── Análise de lead ───────────────────────────────────────────────────────────
 async function analisarLead() {
   const nome = document.getElementById('f-nome').value.trim();
-  if (!nome) { toast('Preencha o nome do lead', 'warn'); return; }
+  if (!nome) {
+    toast('Preencha o nome do lead', 'warn');
+    document.getElementById('f-nome').focus();
+    return;
+  }
 
   const leadData = {
     nome,
-    cidade:      document.getElementById('f-cidade').value.trim() || 'Teresópolis',
-    idade:       parseInt(document.getElementById('f-idade').value) || null,
-    profissao:   document.getElementById('f-profissao').value.trim() || null,
-    dependentes: parseInt(document.getElementById('f-dependentes').value) || 0,
-    orcamento:   parseFloat(document.getElementById('f-orcamento').value) || null,
-    origem:      document.getElementById('f-origem').value || null,
-    temMEI:      document.getElementById('f-mei').checked,
-    mesesEmpresa: parseInt(document.getElementById('f-meses').value) || 0,
-    mensagem:    document.getElementById('f-mensagem').value.trim() || null
+    cidade:       document.getElementById('f-cidade').value.trim() || 'Teresópolis',
+    idade:        parseInt(document.getElementById('f-idade').value)      || null,
+    profissao:    document.getElementById('f-profissao').value.trim()     || null,
+    dependentes:  parseInt(document.getElementById('f-dependentes').value) || 0,
+    orcamento:    parseFloat(document.getElementById('f-orcamento').value) || null,
+    origem:       document.getElementById('f-origem').value               || null,
+    temMEI:       document.getElementById('f-mei').checked,
+    mesesEmpresa: parseInt(document.getElementById('f-meses').value)      || 0,
+    mensagem:     document.getElementById('f-mensagem').value.trim()      || null
   };
 
-  const endpoint = modoAnalise === 'funil' ? '/api/funil' : '/api/lead';
-  document.getElementById('loading').style.display = 'flex';
-  document.getElementById('resultado-lead').innerHTML = '';
+  const endpoint = modoLead === 'funil' ? '/api/funil' : '/api/lead';
+  setLoad('load-lead', true);
+  document.getElementById('res-lead').innerHTML = '';
+  document.getElementById('btn-lead').disabled = true;
 
   try {
-    const resp = await fetch(API + endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ leadData })
-    });
+    const resp = await fetch(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ leadData }) });
     const data = await resp.json();
     if (!resp.ok) throw new Error(data.erro || 'Erro na API');
-    renderResultadoLead(data);
-  } catch (err) {
-    document.getElementById('resultado-lead').innerHTML = `<div class="alert-box" style="border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08);color:#fca5a5">❌ ${err.message}</div>`;
+    renderLead(data);
+  } catch(e) {
+    document.getElementById('res-lead').innerHTML = `<div class="alert alert-err" role="alert">❌ ${esc(e.message)}</div>`;
   } finally {
-    document.getElementById('loading').style.display = 'none';
+    setLoad('load-lead', false);
+    document.getElementById('btn-lead').disabled = false;
   }
 }
 
-function renderResultadoLead(data) {
-  const { perfil, funil, campanha, mercado, resumoFinal, erros } = data;
-  let html = '';
+function renderLead(d) {
+  const { perfil, funil, campanha, mercado, resumoFinal, erros } = d;
+  let h = '';
 
-  if (erros?.length) {
-    html += erros.map(e => `<div class="alert-box" style="border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08);color:#fca5a5">⚠️ ${esc(e)}</div>`).join('');
-  }
+  if (erros?.length) h += erros.map(e => `<div class="alert alert-warn">⚠️ ${esc(e)}</div>`).join('');
 
-  // ── Perfil ──
   if (perfil) {
-    const segLabel = { pessoa_fisica: 'Pessoa Física', pme: 'MEI/PME', adesao: 'Adesão ANASPL' }[perfil.segmento] || perfil.segmento;
-    const priColor = { alta: 'tag-green', media: 'tag-orange', baixa: 'tag-gray' }[perfil.prioridade] || 'tag-gray';
-    const elegivel = perfil.elegibilidade?.elegivel;
+    const segLabel = { pessoa_fisica:'Pessoa Física', pme:'MEI/PME', adesao:'Adesão ANASPL' }[perfil.segmento] || perfil.segmento;
+    const priCor   = { alta:'tag-green', media:'tag-orange', baixa:'tag-gray' }[perfil.prioridade] || 'tag-gray';
+    const eleg     = perfil.elegibilidade;
 
-    html += `<div class="result-section">
-      <div class="result-section-title">Perfil Classificado
+    h += `
+    <div class="panel" style="margin-bottom:16px">
+      <div class="result-head">Perfil Classificado
         <div style="display:flex;gap:6px">
           <span class="tag tag-blue">${esc(segLabel)}</span>
-          <span class="tag ${priColor}">Prioridade ${esc(perfil.prioridade?.toUpperCase() || '')}</span>
+          <span class="tag ${priCor}">Prioridade ${esc((perfil.prioridade||'').toUpperCase())}</span>
         </div>
       </div>
-      <div class="panel">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="font-size:18px">${elegivel ? '✅' : '⚠️'}</span>
-          <span>${esc(perfil.elegibilidade?.motivo || '')}</span>
-        </div>
-        ${perfil.observacoes ? `<p style="color:var(--muted);font-size:13px">${esc(perfil.observacoes)}</p>` : ''}
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:20px">${eleg?.elegivel !== false ? '✅' : '⚠️'}</span>
+        <strong>${esc(eleg?.motivo || '')}</strong>
       </div>
+      ${perfil.observacoes ? `<p style="color:var(--muted);font-size:14px">${esc(perfil.observacoes)}</p>` : ''}
     </div>`;
 
-    // ── Alertas ──
     if (perfil.alertas?.length) {
-      html += `<div class="result-section">
-        <div class="result-section-title">Alertas Importantes</div>
-        ${perfil.alertas.map(a => `<div class="alert-box">⚠️ ${esc(a)}</div>`).join('')}
+      h += `<div style="margin-bottom:16px">
+        <div class="result-head">Alertas</div>
+        ${perfil.alertas.map(a => `<div class="alert alert-warn">⚠️ ${esc(a)}</div>`).join('')}
       </div>`;
     }
 
-    // ── Planos ──
-    if (perfil.faixaPrecoReal?.todosPlanos?.length) {
-      const planos = perfil.faixaPrecoReal.todosPlanos;
-      const dentro = perfil.faixaPrecoReal.opcoesDentroDoOrcamento;
-      html += `<div class="result-section">
-        <div class="result-section-title">Planos Adequados ao Perfil
-          <button class="btn-copy" onclick="copiar('${esc(planos.map(p=>`${p.plano}: R$${p.valor.toFixed(2)}`).join('\\n'))}')">Copiar lista</button>
+    const fpr = perfil.faixaPrecoReal;
+    if (fpr?.todosPlanos?.length) {
+      const lista = fpr.todosPlanos.map(p => `${p.plano}: R$${p.valor.toFixed(2)}`).join('\n');
+      h += `<div style="margin-bottom:16px">
+        <div class="result-head">Planos Adequados ao Perfil
+          <button class="btn btn-ghost btn-sm" onclick="copiar(${JSON.stringify(lista)})">Copiar lista</button>
         </div>
-        ${perfil.faixaPrecoReal.alertaOrcamento ? `<div class="alert-box">⚠️ ${esc(perfil.faixaPrecoReal.alertaOrcamento)}</div>` : ''}
-        ${planos.map(p => {
-          const dentroOrc = !perfil.faixaPrecoReal.alertaOrcamento || dentro.some(d => d.includes(p.plano));
-          return `<div class="plan-card" style="${dentroOrc ? '' : 'opacity:0.5'}">
+        ${fpr.alertaOrcamento ? `<div class="alert alert-warn">⚠️ ${esc(fpr.alertaOrcamento)}</div>` : ''}
+        ${fpr.todosPlanos.map(p => {
+          const dentro = !fpr.alertaOrcamento || fpr.opcoesDentroDoOrcamento.some(o => o.startsWith(p.plano));
+          return `<div class="plan-card" style="${dentro ? '' : 'opacity:0.45'}">
             <div class="plan-price">R$${p.valor.toFixed(2)}</div>
             <div>
               <div class="plan-name">${esc(p.plano)}</div>
               <div class="plan-meta">${esc(p.operadora)} · ${esc(p.acomodacao)}</div>
               <div class="plan-tags">
                 ${p.coparticipacao ? '<span class="tag tag-orange">Coparticipação</span>' : '<span class="tag tag-green">Sem coparticipação</span>'}
-                ${p.obstetrica ? '<span class="tag tag-blue">Com obstetrícia</span>' : '<span class="tag tag-gray">Sem obstetrícia</span>'}
+                ${p.obstetrica     ? '<span class="tag tag-blue">Obstetrícia</span>'      : '<span class="tag tag-gray">Sem obstetrícia</span>'}
+                ${!dentro ? '<span class="tag tag-red">Fora do orçamento</span>' : ''}
               </div>
             </div>
           </div>`;
@@ -734,262 +816,319 @@ function renderResultadoLead(data) {
     }
   }
 
-  // ── Funil ──
   if (funil?.etapas?.length) {
-    html += `<div class="result-section">
-      <div class="result-section-title">Funil de Contato — ${esc(funil.resumo || '')}</div>
-      <div class="panel">
-        ${funil.etapas.map(e => `
-          <div class="funnel-step">
-            <div class="funnel-num">${e.etapa}</div>
-            <div style="flex:1">
-              <div><span class="funnel-timing">${esc(e.timing)}</span> · <span class="funnel-canal">${esc(e.canal)}</span></div>
-              <div class="funnel-obj">${esc(e.objetivo)}</div>
-              ${e.mensagem ? `<div class="funnel-msg">${esc(e.mensagem)}</div>
-              <button class="btn-copy" style="margin-top:6px" onclick="copiar('${e.mensagem.replace(/'/g,"\\'")}')">Copiar mensagem</button>` : ''}
-            </div>
-          </div>`).join('')}
-      </div>
+    h += `<div class="panel" style="margin-bottom:16px">
+      <div class="result-head">Funil de Contato &nbsp;—&nbsp; ${esc(funil.resumo || '')}</div>
+      ${funil.etapas.map(e => `
+        <div class="funnel-step">
+          <div class="funnel-num" aria-hidden="true">${e.etapa}</div>
+          <div style="flex:1">
+            <div><span class="funnel-timing">${esc(e.timing)}</span> · <span class="funnel-canal">${esc(e.canal)}</span></div>
+            <div class="funnel-obj">${esc(e.objetivo)}</div>
+            ${e.mensagem ? `<div class="funnel-msg">${esc(e.mensagem)}</div>
+              <button class="btn btn-ghost btn-sm" style="margin-top:7px" onclick="copiar(${JSON.stringify(e.mensagem)})">Copiar mensagem</button>` : ''}
+          </div>
+        </div>`).join('')}
     </div>`;
   }
 
-  // ── Campanha ──
   if (campanha?.campanhaCompativel) {
-    html += `<div class="result-section">
-      <div class="result-section-title">Campanha Recomendada</div>
-      <div class="panel">
-        <div style="font-weight:700;margin-bottom:6px">📣 ${esc(campanha.campanhaCompativel)}</div>
-        <div style="margin-bottom:8px">${esc(campanha.acaoRecomendada || '')}</div>
-        ${campanha.mensagemCorretor ? `<div style="font-size:13px;color:var(--muted)">${esc(campanha.mensagemCorretor)}</div>` : ''}
-      </div>
+    h += `<div class="panel" style="margin-bottom:16px">
+      <div class="result-head">Campanha Recomendada</div>
+      <div style="font-size:17px;font-weight:bold;margin-bottom:6px">📣 ${esc(campanha.campanhaCompativel)}</div>
+      <div>${esc(campanha.acaoRecomendada || '')}</div>
+      ${campanha.mensagemCorretor ? `<div style="color:var(--muted);font-size:14px;margin-top:6px">${esc(campanha.mensagemCorretor)}</div>` : ''}
     </div>`;
   }
 
-  // ── Mercado ──
   if (mercado?.planosRecomendados?.length) {
-    html += `<div class="result-section">
-      <div class="result-section-title">Análise de Mercado</div>
+    h += `<div style="margin-bottom:16px">
+      <div class="result-head">Análise de Mercado</div>
       ${mercado.planosRecomendados.map(p => `<div class="plan-card">
-        <div class="plan-price" style="font-size:16px">R$${typeof p.valor === 'number' ? p.valor.toFixed(2) : p.valor}</div>
+        <div class="plan-price" style="font-size:17px">R$${typeof p.valor === 'number' ? p.valor.toFixed(2) : esc(p.valor)}</div>
         <div>
           <div class="plan-name">${esc(p.nome)}</div>
-          <div class="plan-meta">${esc(p.operadora || '')} · ${esc(p.acomodacao || '')}</div>
-          ${p.motivo ? `<div style="font-size:12px;color:var(--muted);margin-top:4px">${esc(p.motivo)}</div>` : ''}
+          <div class="plan-meta">${esc(p.operadora||'')} · ${esc(p.acomodacao||'')}</div>
+          ${p.motivo ? `<div style="font-size:13px;color:var(--muted);margin-top:4px">${esc(p.motivo)}</div>` : ''}
         </div>
       </div>`).join('')}
-      ${mercado.resumo ? `<div style="font-size:13px;color:var(--muted);margin-top:8px">${esc(mercado.resumo)}</div>` : ''}
+      ${mercado.resumo ? `<p style="color:var(--muted);font-size:14px;margin-top:8px">${esc(mercado.resumo)}</p>` : ''}
     </div>`;
   }
 
-  // ── Botão copiar resumo ──
-  if (resumoFinal) {
-    html += `<div style="margin-top:8px">
-      <button class="btn-copy" onclick="copiarRelatorio()">📋 Copiar Resumo Completo</button>
-    </div>`;
+  if (d.resumoFinal) {
+    const txt = gerarTextoRelatorio(d);
+    h += `<button class="btn btn-ghost btn-sm" onclick="copiar(${JSON.stringify(txt)})">📋 Copiar Resumo Completo</button>`;
+    window._leadData = d;
   }
 
-  document.getElementById('resultado-lead').innerHTML = html;
-  window._ultimoResultado = data;
+  document.getElementById('res-lead').innerHTML = h;
 }
 
-function copiarRelatorio() {
-  const d = window._ultimoResultado;
-  if (!d) return;
-  const linhas = [];
-  linhas.push(`=== ANÁLISE QUEIROZ SEGUROS ===`);
-  if (d.perfil) {
-    linhas.push(`Lead: ${d.perfil.segmento?.toUpperCase()} | Prioridade: ${d.perfil.prioridade?.toUpperCase()}`);
-    linhas.push(`Elegibilidade: ${d.perfil.elegibilidade?.motivo}`);
-    if (d.perfil.alertas?.length) linhas.push(`Alertas: ${d.perfil.alertas.join('; ')}`);
-    if (d.perfil.faixaPrecoReal?.menorPreco) linhas.push(`Menor preço: ${d.perfil.faixaPrecoReal.menorPreco.plano} R$${d.perfil.faixaPrecoReal.menorPreco.valor.toFixed(2)}`);
+function gerarTextoRelatorio(d) {
+  const l = [`=== ANÁLISE QUEIROZ SEGUROS ===`];
+  const p = d.perfil;
+  if (p) {
+    l.push(`Segmento: ${p.segmento?.toUpperCase()} | Prioridade: ${p.prioridade?.toUpperCase()}`);
+    l.push(`Elegibilidade: ${p.elegibilidade?.motivo}`);
+    if (p.alertas?.length) l.push(`Alertas: ${p.alertas.join('; ')}`);
+    if (p.faixaPrecoReal?.menorPreco) l.push(`Menor preço: ${p.faixaPrecoReal.menorPreco.plano} R$${p.faixaPrecoReal.menorPreco.valor.toFixed(2)}`);
   }
-  if (d.funil?.etapas) {
-    linhas.push(`\nFUNIL:`);
-    d.funil.etapas.forEach(e => linhas.push(`  [${e.timing}] ${e.canal}: ${e.mensagem || e.objetivo}`));
+  if (d.funil?.etapas?.length) {
+    l.push('', 'FUNIL:');
+    d.funil.etapas.forEach(e => l.push(`  [${e.timing}] ${e.canal}: ${e.mensagem || e.objetivo}`));
   }
-  if (d.campanha?.campanhaCompativel) linhas.push(`\nCAMPANHA: ${d.campanha.campanhaCompativel} — ${d.campanha.acaoRecomendada}`);
-  copiar(linhas.join('\n'));
+  if (d.campanha?.campanhaCompativel) l.push('', `CAMPANHA: ${d.campanha.campanhaCompativel} — ${d.campanha.acaoRecomendada}`);
+  return l.join('\n');
 }
 
-// ── Scan ─────────────────────────────────────────────────────────────────────
+// ── Varredura ─────────────────────────────────────────────────────────────────
 async function executarScan() {
-  document.getElementById('loading-scan').style.display = 'flex';
-  document.getElementById('resultado-scan').innerHTML = '';
-  document.getElementById('scan-status').textContent = '';
+  setLoad('load-scan', true);
+  document.getElementById('res-scan').innerHTML = '';
+  document.getElementById('btn-scan').disabled = true;
 
   try {
-    const resp = await fetch(API + '/api/scan');
+    const resp = await fetch('/api/scan');
     const data = await resp.json();
     if (!resp.ok) throw new Error(data.erro || 'Erro na API');
     renderScan(data);
-    document.getElementById('scan-status').textContent = `Última varredura: ${data.dataVarredura}`;
-  } catch (err) {
-    document.getElementById('resultado-scan').innerHTML = `<div class="alert-box" style="border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08);color:#fca5a5">❌ ${esc(err.message)}</div>`;
+  } catch(e) {
+    document.getElementById('res-scan').innerHTML = `<div class="alert alert-err" role="alert">❌ ${esc(e.message)}</div>`;
   } finally {
-    document.getElementById('loading-scan').style.display = 'none';
+    setLoad('load-scan', false);
+    document.getElementById('btn-scan').disabled = false;
   }
 }
 
-function renderScan(data) {
-  const { oportunidades, resumoExecutivo, oqueNaoFazer, proximaVarredura, confianca, fonte, scores } = data;
-  let html = '';
+function renderScan(d) {
+  const { oportunidades, resumoExecutivo, oqueNaoFazer, proximaVarredura, confianca, fonte, dataVarredura } = d;
+  let h = '';
 
-  // Cabeçalho
-  html += `<div class="panel" style="border-left:4px solid var(--accent)">
-    <div style="font-weight:700;font-size:16px;margin-bottom:6px">📊 ${esc(resumoExecutivo || '')}</div>
-    <div style="font-size:12px;color:var(--muted)">Fonte: ${esc(Array.isArray(fonte) ? fonte.join(', ') : fonte || '')} · Confiança: ${esc(confianca || '')} · Próxima varredura: ${esc(proximaVarredura || '')}</div>
+  h += `<div class="panel" style="border-left:4px solid var(--accent);margin-bottom:16px">
+    <div style="font-size:17px;font-weight:bold;margin-bottom:8px">${esc(resumoExecutivo || '')}</div>
+    <div style="font-size:13px;color:var(--muted)">
+      Data: ${esc(dataVarredura)} · Confiança: ${esc(confianca)} · Próxima: ${esc(proximaVarredura)}<br>
+      Fonte: ${esc(Array.isArray(fonte) ? fonte.join(', ') : fonte || '')}
+    </div>
   </div>`;
 
-  // Oportunidades
   if (oportunidades?.length) {
-    html += `<div class="result-section">
-      <div class="result-section-title">Ranking de Oportunidade</div>`;
-
+    h += `<div class="result-head" style="margin-bottom:12px">Ranking de Oportunidades</div>`;
     oportunidades.forEach((o, i) => {
-      const score = o.score || 0;
-      const scoreClass = score >= 60 ? 'high' : score >= 40 ? 'med' : 'low';
-      const fillColor = score >= 60 ? 'var(--success)' : score >= 40 ? 'var(--warn)' : 'var(--muted)';
-      const urgLabel = { alta: '🔴 Urgência Alta', media: '🟡 Urgência Média', baixa: '🟢 Urgência Baixa' }[o.urgencia] || o.urgencia;
+      const sc  = o.score || 0;
+      const cls = sc >= 60 ? 'score-high' : sc >= 40 ? 'score-med' : 'score-low';
+      const clr = sc >= 60 ? 'var(--success)' : sc >= 40 ? 'var(--warn)' : 'var(--muted)';
+      const urg = { alta:'🔴 Alta', media:'🟡 Média', baixa:'🟢 Baixa' }[o.urgencia] || o.urgencia;
 
-      html += `<div class="scan-card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      h += `<div class="score-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
           <div>
-            <div class="scan-score ${scoreClass}">${score}</div>
-            <div style="font-weight:700;font-size:15px">${esc(o.titulo)}</div>
-            <div style="font-size:12px;color:var(--muted)">${esc(o.volume)} · ${esc(o.janela)} · ${esc(urgLabel)}</div>
+            <div class="score-num ${cls}" aria-label="Score ${sc}">${sc}</div>
+            <div style="font-size:16px;font-weight:bold;margin-top:2px">${esc(o.titulo)}</div>
+            <div style="font-size:13px;color:var(--muted)">${esc(o.volume)} · Urgência: ${esc(urg)} · ${esc(o.janela)}</div>
           </div>
-          ${i === 0 ? '<span class="tag tag-green">⭐ Prioridade</span>' : ''}
+          ${i === 0 ? '<span class="tag tag-green">⭐ Prioridade da semana</span>' : ''}
         </div>
-        <div class="progress-bar">
-          <div class="progress-fill" style="width:${score}%;background:${fillColor}"></div>
+        <div class="prog-track">
+          <div class="prog-fill" style="width:${sc}%;background:${clr}" role="progressbar" aria-valuenow="${sc}" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
         <div style="margin-top:10px">
-          <div style="font-size:13px;font-weight:600;margin-bottom:4px">${esc(o.acaoRecomendada || '')}</div>
-          <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Planos: ${esc((o.planosIndicados || []).join(', '))}</div>
-          ${o.mensagemPronta ? `<div class="funnel-msg">${esc(o.mensagemPronta)}</div>
-          <button class="btn-copy" style="margin-top:6px" onclick="copiar('${o.mensagemPronta.replace(/'/g,"\\'")}')">Copiar mensagem</button>` : ''}
-          <div style="font-size:12px;color:var(--muted);margin-top:6px">Meta estimada: ${esc(o.metaEstimada || '')} · Confiança: ${esc(o.confianca || '')}</div>
+          <div style="font-weight:bold;margin-bottom:4px">${esc(o.acaoRecomendada || '')}</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Planos: ${esc((o.planosIndicados||[]).join(', '))}</div>
+          ${o.mensagemPronta ? `
+            <div class="funnel-msg">${esc(o.mensagemPronta)}</div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="copiar(${JSON.stringify(o.mensagemPronta)})">Copiar mensagem</button>
+          ` : ''}
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">Meta: ${esc(o.metaEstimada||'')} · Confiança dos dados: ${esc(o.confianca||'')}</div>
         </div>
       </div>`;
     });
-
-    html += `</div>`;
   }
 
-  // O que não fazer
   if (oqueNaoFazer?.length) {
-    html += `<div class="result-section">
-      <div class="result-section-title">O Que NÃO Fazer</div>
-      <div class="panel">
-        ${oqueNaoFazer.map(o => `<div style="padding:6px 0;border-bottom:1px solid var(--border)">❌ ${esc(o)}</div>`).join('')}
-      </div>
+    h += `<div class="panel" style="margin-top:6px">
+      <div class="result-head">O Que NÃO Fazer</div>
+      ${oqueNaoFazer.map(o => `<div style="padding:7px 0;border-bottom:1px solid var(--border)">❌ ${esc(o)}</div>`).join('')}
     </div>`;
   }
 
-  // Botão copiar relatório
-  html += `<div style="margin-top:8px">
-    <button class="btn-copy" onclick="copiarScan(${JSON.stringify(JSON.stringify(data)).replace(/"/g,'&quot;')})">📋 Copiar Relatório</button>
-  </div>`;
-
-  document.getElementById('resultado-scan').innerHTML = html;
-  window._ultimoScan = data;
+  const txt = gerarTextoScan(d);
+  h += `<button class="btn btn-ghost btn-sm" onclick="copiar(${JSON.stringify(txt)})">📋 Copiar Relatório Completo</button>`;
+  window._scanData = d;
+  document.getElementById('res-scan').innerHTML = h;
 }
 
-function copiarScan() {
-  const d = window._ultimoScan;
-  if (!d) return;
-  const linhas = [`=== VARREDURA QUEIROZ SEGUROS — ${d.dataVarredura} ===`, d.resumoExecutivo, ''];
-  (d.oportunidades || []).forEach(o => {
-    linhas.push(`[${o.score}] ${o.titulo}`);
-    linhas.push(`  Volume: ${o.volume} | Urgência: ${o.urgencia}`);
-    linhas.push(`  Ação: ${o.acaoRecomendada}`);
-    if (o.mensagemPronta) linhas.push(`  Mensagem: ${o.mensagemPronta}`);
-    linhas.push('');
+function gerarTextoScan(d) {
+  const l = [`=== VARREDURA QUEIROZ SEGUROS — ${d.dataVarredura} ===`, '', d.resumoExecutivo, ''];
+  (d.oportunidades||[]).forEach(o => {
+    l.push(`[Score ${o.score}] ${o.titulo}`);
+    l.push(`  Volume: ${o.volume} | Urgência: ${o.urgencia}`);
+    l.push(`  Ação: ${o.acaoRecomendada}`);
+    if (o.mensagemPronta) l.push(`  Mensagem: ${o.mensagemPronta}`);
+    l.push('');
   });
-  if (d.oqueNaoFazer) linhas.push('NÃO FAZER:', ...(d.oqueNaoFazer.map(o => `  ❌ ${o}`)));
-  linhas.push(`\nPróxima varredura: ${d.proximaVarredura}`);
-  copiar(linhas.join('\n'));
+  if (d.oqueNaoFazer) { l.push('NÃO FAZER:'); d.oqueNaoFazer.forEach(o => l.push(`  ❌ ${o}`)); }
+  l.push('', `Próxima varredura: ${d.proximaVarredura}`);
+  return l.join('\n');
 }
 
-// ── Planos ───────────────────────────────────────────────────────────────────
-let _planosCache = null;
-let _filtroPlanos = '';
+// ── Planos ────────────────────────────────────────────────────────────────────
+let _planos = null;
+let _filtroSeg = '';
 
 async function carregarPlanos() {
-  if (_planosCache) { renderPlanos(_planosCache); return; }
+  if (_planos) { renderPlanos(); return; }
   try {
-    const resp = await fetch(API + '/api/planos');
-    _planosCache = await resp.json();
-    renderPlanos(_planosCache);
-  } catch (err) {
-    document.getElementById('lista-planos').innerHTML = `<div class="alert-box" style="color:#fca5a5">❌ ${esc(err.message)}</div>`;
+    const resp = await fetch('/api/planos');
+    _planos = await resp.json();
+    renderPlanos();
+  } catch(e) {
+    document.getElementById('lista-planos').innerHTML = `<div class="alert alert-err">❌ ${esc(e.message)}</div>`;
   }
 }
 
 function filtrarPlanos(seg, btn) {
-  _filtroPlanos = seg;
-  document.querySelectorAll('#page-planos .mode-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (_planosCache) renderPlanos(_planosCache);
+  _filtroSeg = seg;
+  document.querySelectorAll('#page-planos .tabs .tab').forEach(b => {
+    b.classList.toggle('active', b === btn);
+    b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+  });
+  renderPlanos();
 }
 
-function renderPlanos(planos) {
-  const lista = _filtroPlanos ? planos.filter(p => p.segmento === _filtroPlanos || (_filtroPlanos === 'pme' && p.segmento === 'pme')) : planos;
-  const segLabel = { pessoa_fisica: 'PF', pme: 'MEI/PME', adesao: 'Adesão' };
-
+function renderPlanos() {
+  if (!_planos) return;
+  const labels = { pessoa_fisica:'PF', pme:'MEI/PME', adesao:'Adesão' };
+  const lista = _filtroSeg ? _planos.filter(p => p.segmento === _filtroSeg) : _planos;
   document.getElementById('lista-planos').innerHTML = lista.map(p => `
     <div class="plan-card">
-      <div>
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:2px">${esc(segLabel[p.segmento] || p.segmento)}</div>
+      <div style="flex:1">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px">${esc(labels[p.segmento]||p.segmento)}</div>
         <div class="plan-name">${esc(p.nome)}</div>
         <div class="plan-meta">${esc(p.operadora)} · ${esc(p.acomodacao)}</div>
         <div class="plan-tags">
           ${p.coparticipacao ? '<span class="tag tag-orange">Coparticipação</span>' : '<span class="tag tag-green">Sem coparticipação</span>'}
-          ${p.obstetrica ? '<span class="tag tag-blue">Obstetrícia</span>' : ''}
+          ${p.obstetrica     ? '<span class="tag tag-blue">Obstetrícia</span>'      : ''}
         </div>
-        <div style="margin-top:8px;font-size:12px;color:var(--muted)">Rede: ${esc((p.rede || []).join(', '))}</div>
-        ${(p.alertas || []).map(a => `<div style="font-size:11px;color:#fbbf24;margin-top:2px">⚠️ ${esc(a)}</div>`).join('')}
+        <div style="font-size:12px;color:var(--muted);margin-top:7px">Rede: ${esc((p.rede||[]).join(', '))}</div>
+        ${(p.alertas||[]).map(a => `<div style="font-size:12px;color:var(--warn);margin-top:2px">⚠️ ${esc(a)}</div>`).join('')}
       </div>
     </div>`).join('');
 }
 
-// ── Utilities ────────────────────────────────────────────────────────────────
-function esc(str) {
-  return String(str || '')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ── Pull Request ──────────────────────────────────────────────────────────────
+async function carregarPR() {
+  setLoad('load-pr', true);
+  document.getElementById('res-pr').innerHTML = '';
+  document.getElementById('btn-pr-load').disabled = true;
+
+  try {
+    const resp = await fetch('/api/pr');
+    const pr   = await resp.json();
+    if (!resp.ok) throw new Error(pr.erro || 'Erro ao carregar PR');
+    renderPR(pr);
+  } catch(e) {
+    document.getElementById('res-pr').innerHTML = `<div class="alert alert-err" role="alert">❌ ${esc(e.message)}</div>`;
+  } finally {
+    setLoad('load-pr', false);
+    document.getElementById('btn-pr-load').disabled = false;
+  }
 }
 
-function copiar(texto) {
-  navigator.clipboard.writeText(texto).then(() => toast('Copiado!', 'ok')).catch(() => {
-    const el = document.createElement('textarea');
-    el.value = texto; el.style.position='fixed'; el.style.opacity='0';
-    document.body.appendChild(el); el.select(); document.execCommand('copy');
-    document.body.removeChild(el); toast('Copiado!', 'ok');
-  });
+async function mergePR() {
+  if (!confirm('Confirmar merge do PR? Esta ação não pode ser desfeita.')) return;
+  const btn = document.getElementById('btn-merge');
+  btn.disabled = true;
+  btn.textContent = 'Mergeando...';
+
+  try {
+    const resp = await fetch('/api/pr/merge', { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.erro);
+    toast('✅ PR mergeado com sucesso!', 'ok');
+    await carregarPR();
+    document.getElementById('pr-badge').textContent = '✓';
+  } catch(e) {
+    toast(`❌ ${e.message}`, 'err');
+    btn.disabled = false;
+    btn.textContent = '🔀 Fazer Merge';
+  }
 }
 
-let _toastTimer;
-function toast(msg, type = 'ok') {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.style.background = type === 'warn' ? 'var(--warn)' : 'var(--success)';
-  el.classList.add('show');
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+function renderPR(pr) {
+  const isMerged = pr.merged;
+  const isOpen   = pr.state === 'open' && !pr.merged;
+  const dotClass = isMerged ? 'pr-merged' : isOpen ? 'pr-open' : 'pr-closed';
+  const stateLabel = isMerged ? '✅ Mergeado' : isOpen ? '🟢 Aberto' : '🔴 Fechado';
+  const canMerge = isOpen && pr.mergeable === true;
+
+  // Atualizar badge da sidebar
+  document.getElementById('pr-badge').textContent = isMerged ? '✓' : isOpen ? 'open' : '';
+
+  let h = `<div class="panel">
+    <div class="pr-status-row">
+      <div class="pr-dot ${dotClass}" aria-hidden="true"></div>
+      <strong style="font-size:17px">#${esc(pr.number)} — ${esc(pr.title)}</strong>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <span class="tag ${isMerged ? 'tag-blue' : isOpen ? 'tag-green' : 'tag-red'}">${stateLabel}</span>
+      <span class="tag tag-gray">${esc(pr.head)} → ${esc(pr.base)}</span>
+      ${!canMerge && isOpen ? `<span class="tag tag-orange">Mergeabilidade: ${esc(pr.mergeable_state || '?')}</span>` : ''}
+    </div>`;
+
+  if (pr.body) {
+    h += `<details style="margin-bottom:14px">
+      <summary style="cursor:pointer;color:var(--muted);font-size:14px">Ver descrição do PR</summary>
+      <div style="margin-top:8px;font-size:14px;color:var(--muted);white-space:pre-wrap;line-height:1.6">${esc(pr.body)}</div>
+    </details>`;
+  }
+
+  h += `<div style="font-size:13px;color:var(--muted);margin-bottom:18px">
+    Criado: ${new Date(pr.created_at).toLocaleString('pt-BR')} ·
+    Atualizado: ${new Date(pr.updated_at).toLocaleString('pt-BR')}
+  </div>`;
+
+  h += `<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">`;
+
+  if (isOpen) {
+    if (canMerge) {
+      h += `<button class="btn btn-success" id="btn-merge" onclick="mergePR()">🔀 Fazer Merge</button>`;
+    } else {
+      h += `<button class="btn btn-success" id="btn-merge" disabled title="PR não está pronto para merge">🔀 Fazer Merge</button>`;
+      h += `<span style="font-size:13px;color:var(--warn)">⚠️ PR ainda não está mergeable (estado: ${esc(pr.mergeable_state)})</span>`;
+    }
+  } else if (isMerged) {
+    h += `<div class="alert alert-ok" style="flex:1">✅ Este PR já foi mergeado com sucesso.</div>`;
+  } else {
+    h += `<div class="alert alert-err" style="flex:1">❌ Este PR está fechado sem merge.</div>`;
+  }
+
+  h += `<a href="${esc(pr.url)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Abrir no GitHub ↗</a>`;
+  h += `</div></div>`;
+
+  if (!isMerged && isOpen) {
+    h += `<div class="alert alert-info" style="margin-top:12px" role="note">
+      💡 <strong>Para mergear pela interface:</strong> configure <code>GITHUB_TOKEN</code> no arquivo <code>.env</code> com permissão <code>pull_requests: write</code>.
+    </div>`;
+  }
+
+  document.getElementById('res-pr').innerHTML = h;
 }
 
 // ── Health check ──────────────────────────────────────────────────────────────
 async function checkHealth() {
   try {
-    const resp = await fetch(API + '/health');
-    const data = await resp.json();
-    const el = document.getElementById('api-status');
-    el.textContent = `✅ API ok · ${data.provider || '?'}`;
+    const r = await fetch('/health');
+    const d = await r.json();
+    document.getElementById('api-status').textContent = `✅ API · ${d.provider || '?'}`;
   } catch {
     document.getElementById('api-status').textContent = '❌ API offline';
   }
 }
 
+// ── Init ──────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.hidden').forEach(el => el.style.display = 'none');
 checkHealth();
 </script>
 </body>
