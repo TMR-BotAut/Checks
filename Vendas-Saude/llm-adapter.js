@@ -9,12 +9,12 @@ const MODEL    = process.env.LLM_MODEL    || 'claude-haiku-4-5-20251001';
 const MOCK_RESPONSES = {
   default: JSON.stringify({
     resposta: 'Resposta simulada (modo mock — configure LLM_PROVIDER no .env)',
-    nota: 'Para respostas reais, configure ANTHROPIC_API_KEY ou OPENAI_API_KEY'
+    nota: 'Para respostas reais, configure ANTHROPIC_API_KEY ou GOOGLE_API_KEY'
   })
 };
 
 async function callLLM(systemPrompt, userPrompt, options = {}) {
-  const { json = true, maxTokens = 2048 } = options;
+  const { maxTokens = 2048 } = options;
 
   if (PROVIDER === 'mock') {
     await new Promise(r => setTimeout(r, 200));
@@ -45,6 +45,17 @@ async function callLLM(systemPrompt, userPrompt, options = {}) {
       ]
     });
     return resp.choices[0].message.content;
+  }
+
+  if (PROVIDER === 'gemini') {
+    const { GoogleGenerativeAI } = require('@google/generative-ai');
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+    const model = genAI.getGenerativeModel({
+      model: process.env.LLM_MODEL || 'gemini-1.5-flash',
+      systemInstruction: systemPrompt
+    });
+    const result = await model.generateContent(userPrompt);
+    return result.response.text();
   }
 
   throw new Error(`LLM_PROVIDER desconhecido: ${PROVIDER}`);
