@@ -473,9 +473,6 @@
   <button class="nav-btn" id="nav-lead"  onclick="ir('lead')">
     <span class="icon" aria-hidden="true">👤</span> Analisar Lead
   </button>
-  <button class="nav-btn" id="nav-planos" onclick="ir('planos')">
-    <span class="icon" aria-hidden="true">📋</span> Base de Planos
-  </button>
   <button class="nav-btn" id="nav-pr" onclick="ir('pr')">
     <span class="icon" aria-hidden="true">🔀</span> Pull Request
     <span class="nav-badge" id="pr-badge" aria-label="Status do PR"></span>
@@ -598,24 +595,6 @@
     <div id="res-lead" aria-live="polite" aria-atomic="false"></div>
   </section>
 
-  <!-- ─────────────────── PLANOS ─────────────────── -->
-  <section id="page-planos" class="page" aria-labelledby="title-planos">
-    <h1 id="title-planos">📋 Base de Planos</h1>
-    <p class="page-sub">Carteira vigente para Teresópolis/RJ · Válida até 25/06/2026.</p>
-
-    <div class="alert alert-warn" role="note">
-      ⚠️ Nenhum plano tem hospital em Teresópolis — internação em Petrópolis ou Rio de Janeiro.
-    </div>
-
-    <div class="tabs" style="margin-top:16px" role="tablist" aria-label="Filtrar planos por segmento">
-      <button class="tab active" onclick="filtrarPlanos('',this)">Todos</button>
-      <button class="tab" onclick="filtrarPlanos('pme',this)">MEI/PME</button>
-      <button class="tab" onclick="filtrarPlanos('pessoa_fisica',this)">PF</button>
-      <button class="tab" onclick="filtrarPlanos('adesao',this)">Adesão</button>
-    </div>
-
-    <div id="lista-planos" style="margin-top:16px" aria-live="polite"></div>
-  </section>
 
   <!-- ─────────────────── PULL REQUEST ─────────────────── -->
   <section id="page-pr" class="page" aria-labelledby="title-pr">
@@ -644,7 +623,7 @@
 'use strict';
 
 // ── Navegação ─────────────────────────────────────────────────────────────────
-const PAGES = ['scan','lead','planos','pr'];
+const PAGES = ['scan','lead','pr'];
 let paginaAtual = 'scan';
 
 function ir(p) {
@@ -655,8 +634,7 @@ function ir(p) {
     nav.setAttribute('aria-current', id === p ? 'page' : 'false');
   });
   paginaAtual = p;
-  if (p === 'planos') carregarPlanos();
-  if (p === 'pr')     carregarPR();
+  if (p === 'pr') carregarPR();
 }
 
 // ── Utilidades ────────────────────────────────────────────────────────────────
@@ -973,49 +951,6 @@ function gerarTextoScan(d) {
   return l.join('\n');
 }
 
-// ── Planos ────────────────────────────────────────────────────────────────────
-let _planos = null;
-let _filtroSeg = '';
-
-async function carregarPlanos() {
-  if (_planos) { renderPlanos(); return; }
-  try {
-    const resp = await fetch('/api/planos');
-    _planos = await resp.json();
-    renderPlanos();
-  } catch(e) {
-    document.getElementById('lista-planos').innerHTML = `<div class="alert alert-err">❌ ${esc(e.message)}</div>`;
-  }
-}
-
-function filtrarPlanos(seg, btn) {
-  _filtroSeg = seg;
-  document.querySelectorAll('#page-planos .tabs .tab').forEach(b => {
-    b.classList.toggle('active', b === btn);
-    b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
-  });
-  renderPlanos();
-}
-
-function renderPlanos() {
-  if (!_planos) return;
-  const labels = { pessoa_fisica:'PF', pme:'MEI/PME', adesao:'Adesão' };
-  const lista = _filtroSeg ? _planos.filter(p => p.segmento === _filtroSeg) : _planos;
-  document.getElementById('lista-planos').innerHTML = lista.map(p => `
-    <div class="plan-card">
-      <div style="flex:1">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px">${esc(labels[p.segmento]||p.segmento)}</div>
-        <div class="plan-name">${esc(p.nome)}</div>
-        <div class="plan-meta">${esc(p.operadora)} · ${esc(p.acomodacao)}</div>
-        <div class="plan-tags">
-          ${p.coparticipacao ? '<span class="tag tag-orange">Coparticipação</span>' : '<span class="tag tag-green">Sem coparticipação</span>'}
-          ${p.obstetrica     ? '<span class="tag tag-blue">Obstetrícia</span>'      : ''}
-        </div>
-        <div style="font-size:12px;color:var(--muted);margin-top:7px">Rede: ${esc((p.rede||[]).join(', '))}</div>
-        ${(p.alertas||[]).map(a => `<div style="font-size:12px;color:var(--warn);margin-top:2px">⚠️ ${esc(a)}</div>`).join('')}
-      </div>
-    </div>`).join('');
-}
 
 // ── Pull Request ──────────────────────────────────────────────────────────────
 async function carregarPR() {
