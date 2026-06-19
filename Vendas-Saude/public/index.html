@@ -483,6 +483,9 @@
   <button class="nav-btn" id="nav-lead" onclick="ir('lead')">
     <span class="icon" aria-hidden="true">👤</span> Analisar Lead
   </button>
+  <button class="nav-btn" id="nav-empresas" onclick="ir('empresas')">
+    <span class="icon" aria-hidden="true">🏢</span> Empresas Elegíveis
+  </button>
 
   <div class="spacer"></div>
   <footer>
@@ -603,6 +606,28 @@
     <div id="res-lead" aria-live="polite" aria-atomic="false"></div>
   </section>
 
+  <!-- ─────────────────── EMPRESAS ELEGÍVEIS ─────────────────── -->
+  <section id="page-empresas" class="page" aria-labelledby="title-empresas">
+    <h1 id="title-empresas">🏢 Empresas Elegíveis</h1>
+    <p class="page-sub">Lista de trabaho: MEIs abertos nos últimos 6 meses em Teresópolis. Clique em <strong>Enriquecer</strong> para buscar telefone, e-mail e redes sociais via Receita Federal + Google.</p>
+
+    <div class="panel" style="margin-bottom:14px">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="carregarEmpresas()" id="btn-empresas">
+          <span aria-hidden="true">🔍</span> Carregar Lista
+        </button>
+        <span style="font-size:13px;color:var(--muted)">Dados: Receita Federal via Brasil.IO · somente MEIs ativos</span>
+      </div>
+    </div>
+
+    <div class="loading-box" id="load-empresas" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <span>Consultando Brasil.IO / Receita Federal...</span>
+    </div>
+
+    <div id="res-empresas" aria-live="polite" aria-atomic="false"></div>
+  </section>
+
   <!-- ─────────────────── PULL REQUEST ─────────────────── -->
   <section id="page-pr" class="page" aria-labelledby="title-pr">
     <h1 id="title-pr">🔀 Pull Request</h1>
@@ -630,7 +655,7 @@
 'use strict';
 
 // ── Navegação ─────────────────────────────────────────────────────────────────
-const PAGES = ['scan','lead','pr'];
+const PAGES = ['scan','lead','empresas','pr'];
 function ir(p) {
   PAGES.forEach(id => {
     document.getElementById(`page-${id}`).classList.toggle('active', id === p);
@@ -1328,6 +1353,161 @@ async function checkHealth() {
   } catch {
     document.getElementById('api-status').textContent = '❌ API offline';
   }
+}
+
+// ── Empresas Elegíveis ────────────────────────────────────────────────────────
+let _empresasList = [];
+
+async function carregarEmpresas() {
+  setLoad('load-empresas', true);
+  document.getElementById('res-empresas').innerHTML = '';
+  document.getElementById('btn-empresas').disabled = true;
+  try {
+    const resp = await fetch('/api/empresas?janela=30');
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.erro || 'Erro na API');
+    _empresasList = data.cnpjs || [];
+    renderEmpresas(data);
+  } catch(e) {
+    document.getElementById('res-empresas').innerHTML = `<div class="alert alert-err">❌ ${esc(e.message)}</div>`;
+  } finally {
+    setLoad('load-empresas', false);
+    document.getElementById('btn-empresas').disabled = false;
+  }
+}
+
+function renderEmpresas(data) {
+  const lista = data.cnpjs || [];
+  const isMock = data.estimativa;
+
+  let h = `<div class="panel" style="border-left:4px solid var(--primary);margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center">
+      <div>
+        <span style="font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--primary)">${lista.length}</span>
+        <span style="color:var(--muted);font-size:14px"> empresas elegíveis encontradas</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="tag ${isMock?'tag-orange':'tag-green'}">${isMock ? '📊 Estimativa' : '✅ Dados Reais'}</span>
+        <span class="tag tag-gray">Fonte: ${esc(data.fonte||'')}</span>
+        <span class="tag tag-blue">Janela: ${esc(data.janela||'')}</span>
+      </div>
+    </div>
+    ${data.nota ? `<div style="font-size:13px;color:var(--muted);margin-top:8px">⚠️ ${esc(data.nota)}</div>` : ''}
+  </div>`;
+
+  if (!lista.length) {
+    h += `<div class="alert alert-info">Nenhuma empresa encontrada para o período. Tente ampliar a janela de busca.</div>`;
+    document.getElementById('res-empresas').innerHTML = h;
+    return;
+  }
+
+  // Tabela de empresas
+  h += `<div class="panel" style="padding:0;overflow:hidden">
+    <table style="width:100%;border-collapse:collapse;font-size:14px">
+      <thead>
+        <tr style="background:var(--surface2);border-bottom:2px solid var(--border)">
+          <th style="padding:12px 16px;text-align:left;font-family:var(--font-head);font-size:12px;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)">Empresa</th>
+          <th style="padding:12px 16px;text-align:left;font-family:var(--font-head);font-size:12px;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)">CNPJ</th>
+          <th style="padding:12px 16px;text-align:left;font-family:var(--font-head);font-size:12px;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)">Abertura</th>
+          <th style="padding:12px 16px;text-align:left;font-family:var(--font-head);font-size:12px;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)">Contato</th>
+          <th style="padding:12px 16px;text-align:center;font-family:var(--font-head);font-size:12px;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)">Ação</th>
+        </tr>
+      </thead>
+      <tbody id="empresas-tbody">
+        ${lista.map((e,i) => `<tr id="row_${i}" style="border-bottom:1px solid var(--border)">
+          <td style="padding:12px 16px">
+            <div style="font-weight:700">${esc(e.razao||'—')}</div>
+            <div style="font-size:12px;color:var(--muted)">${esc(e.municipio||'Teresópolis')}/${esc(e.uf||'RJ')} · ${esc(e.situacao||'ATIVA')}</div>
+          </td>
+          <td style="padding:12px 16px;font-family:monospace;font-size:13px;color:var(--muted)">${esc(e.cnpj||'')}</td>
+          <td style="padding:12px 16px;font-size:13px">${esc(e.abertura||'')}</td>
+          <td style="padding:12px 16px" id="contato_${i}">
+            <span style="color:var(--muted);font-size:12px">— não enriquecido</span>
+          </td>
+          <td style="padding:12px 16px;text-align:center">
+            <button class="btn btn-ghost btn-sm" onclick="enriquecerEmpresa(${i}, '${esc(e.cnpj||'').replace(/\D/g,'')}')">
+              🔍 Enriquecer
+            </button>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--muted);margin-top:10px">
+    🔒 Dados via Receita Federal (público por lei) e busca orgânica (dados publicados pelas próprias empresas) — em conformidade com LGPD Art. 7, VI (legítimo interesse B2B).
+  </div>`;
+
+  document.getElementById('res-empresas').innerHTML = h;
+}
+
+async function enriquecerEmpresa(idx, cnpj) {
+  if (!cnpj || cnpj.length !== 14) { toast('CNPJ inválido', 'warn'); return; }
+  const btn = document.querySelector(`#row_${idx} button`);
+  const contato = document.getElementById(`contato_${idx}`);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Buscando...'; }
+
+  try {
+    const resp = await fetch(`/api/enrich/${cnpj}?digital=true`);
+    const d = await resp.json();
+    if (!resp.ok) throw new Error(d.erro || 'Erro');
+
+    let c = '';
+    if (d.erro) {
+      c = `<span style="color:var(--danger);font-size:12px">❌ ${esc(d.erro)}</span>`;
+    } else {
+      // Telefone
+      if (d.telefoneContato) c += `<div style="font-weight:700">📞 ${esc(d.telefoneContato)}</div>`;
+      if (d.emailContato)    c += `<div style="font-size:12px">✉️ ${esc(d.emailContato)}</div>`;
+      if (!d.telefoneContato && !d.emailContato) c += `<span style="color:var(--muted);font-size:12px">Sem contato na RF</span>`;
+      // Redes sociais
+      const social = d.presencaDigital || {};
+      const links = [];
+      if (social.instagram) links.push(`<a href="${esc(social.instagram)}" target="_blank" rel="noopener" style="color:var(--primary);font-size:12px">📸 Instagram</a>`);
+      if (social.facebook)  links.push(`<a href="${esc(social.facebook)}"  target="_blank" rel="noopener" style="color:var(--primary);font-size:12px">📘 Facebook</a>`);
+      if (social.linkedin)  links.push(`<a href="${esc(social.linkedin)}"  target="_blank" rel="noopener" style="color:var(--primary);font-size:12px">💼 LinkedIn</a>`);
+      if (social.googleMaps)links.push(`<a href="${esc(social.googleMaps)}" target="_blank" rel="noopener" style="color:var(--primary);font-size:12px">📍 Maps</a>`);
+      if (links.length) c += `<div style="margin-top:4px;display:flex;gap:8px;flex-wrap:wrap">${links.join('')}</div>`;
+    }
+    if (contato) contato.innerHTML = c || '<span style="color:var(--muted);font-size:12px">Sem dados</span>';
+
+    // Adicionar botão "Analisar Lead" se tiver dados
+    if (btn && d.razaoSocial && !d.erro) {
+      btn.textContent = '👤 Analisar';
+      btn.disabled = false;
+      btn.onclick = () => prefillLead(d);
+    } else if (btn) {
+      btn.remove();
+    }
+  } catch(e) {
+    if (contato) contato.innerHTML = `<span style="color:var(--danger);font-size:12px">❌ ${esc(e.message)}</span>`;
+    if (btn) { btn.disabled = false; btn.textContent = '🔍 Enriquecer'; }
+    toast(e.message, 'err');
+  }
+}
+
+// Preenche o form de Lead com dados da empresa enriquecida
+function prefillLead(d) {
+  ir('lead');
+  setTimeout(() => {
+    const razao = d.nomeFantasia || d.razaoSocial || '';
+    document.getElementById('f-nome').value = razao;
+    document.getElementById('f-cidade').value = d.municipio || 'Teresópolis';
+    document.getElementById('f-profissao').value = d.atividadePrincipal ? d.atividadePrincipal.slice(0, 60) : '';
+    document.getElementById('f-mei').checked = true;
+    toggleMEI();
+    const meses = d.dataAbertura ? calcMeses(d.dataAbertura) : '';
+    if (meses) document.getElementById('f-meses').value = meses;
+    const tel = d.telefoneContato || '';
+    document.getElementById('f-mensagem').value = `Empresa: ${razao}\nCNPJ: ${d.cnpj||''}\nTelefone: ${tel}\nEmail: ${d.emailContato||''}\nAtividade: ${d.atividadePrincipal||''}\nAbertura: ${d.dataAbertura||''} (${meses} meses)`;
+    toast('Dados preenchidos — revise e analise ✓', 'ok');
+  }, 200);
+}
+
+function calcMeses(dataStr) {
+  if (!dataStr) return 0;
+  const abertura = new Date(dataStr);
+  const hoje = new Date();
+  return Math.max(0, Math.round((hoje - abertura) / (1000 * 60 * 60 * 24 * 30)));
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────

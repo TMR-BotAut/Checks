@@ -7,10 +7,12 @@ const cors    = require('cors');
 const path    = require('path');
 const https   = require('https');
 
-const { orquestrar }         = require('./agents/agent-skill-5-main');
-const { executar: gerente }  = require('./agents/agent-skill-6-manager');
-const { PLANOS }             = require('./data/teresopolis-planos');
-const { PROVIDER }           = require('./llm-adapter');
+const { orquestrar }             = require('./agents/agent-skill-5-main');
+const { executar: gerente }      = require('./agents/agent-skill-6-manager');
+const { PLANOS }                 = require('./data/teresopolis-planos');
+const { PROVIDER }               = require('./llm-adapter');
+const { buscarMEIsTeresopolis }  = require('./data/cnpj-scanner');
+const { enriquecerCNPJ }         = require('./data/enrichment');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -100,6 +102,28 @@ app.get('/api/planos', (req, res) => {
     acomodacao: p.acomodacao, coparticipacao: p.coparticipacao, obstetrica: p.obstetrica,
     alertas: p.alertas, rede: p.rede, precos: p.precos
   })));
+});
+
+// ── Empresas Elegíveis ────────────────────────────────────────────────────────
+
+// Lista de MEIs elegíveis (Brasil.IO ou mock)
+app.get('/api/empresas', async (req, res) => {
+  try {
+    const janela = parseInt(req.query.janela) || 30;
+    const resultado = await timeoutPromise(buscarMEIsTeresopolis(janela), 15000);
+    res.json(resultado);
+  } catch (err) { handleError(res, err); }
+});
+
+// Enriquecimento de um CNPJ específico (RF + busca web)
+app.get('/api/enrich/:cnpj', async (req, res) => {
+  try {
+    const cnpj = req.params.cnpj.replace(/\D/g, '');
+    if (cnpj.length !== 14) return res.status(400).json({ erro: 'CNPJ inválido (deve ter 14 dígitos)' });
+    const buscarDigital = req.query.digital !== 'false';
+    const resultado = await timeoutPromise(enriquecerCNPJ(cnpj, { buscarDigital }), 20000);
+    res.json(resultado);
+  } catch (err) { handleError(res, err); }
 });
 
 // ── GitHub PR ──────────────────────────────────────────────────────────────────
