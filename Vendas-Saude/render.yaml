@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: queiroz-seguros-bot
+    runtime: node
+    rootDir: Vendas-Saude
+    buildCommand: npm install
+    startCommand: node server.js
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LLM_PROVIDER
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: SEARCH_PROVIDER
+        value: mock
+      - key: BRASILIO_API_TOKEN
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GH_OWNER
+        value: TMR-BotAut
+      - key: GH_REPO
+        value: Checks
+      - key: GH_PR
+        value: "1"

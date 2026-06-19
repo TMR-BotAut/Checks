@@ -10,6 +10,9 @@
     "gerente": "node index.js gerente",
     "demo": "node demo.js"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
     "cors": "^2.8.5",
