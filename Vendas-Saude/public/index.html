@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Queiroz Seguros — Bot Comercial</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #222636;
+      --border: #2e3347;
+      --text: #e8eaf0;
+      --muted: #8b91a8;
+      --accent: #4f7ef0;
+      --accent-h: #3b6bdd;
+      --success: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --info: #38bdf8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      width: 220px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 14px 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-sub { font-size: 11px; color: var(--muted); margin-bottom: 28px; }
+
+    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      background: none;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s, color 0.12s;
+      margin-bottom: 4px;
+    }
+
+    .nav-btn:hover { background: var(--surface2); color: var(--text); }
+    .nav-btn.active { background: rgba(79,126,240,0.15); color: var(--accent); }
+    .nav-btn .icon { font-size: 16px; flex-shrink: 0; }
+
+    #sidebar .spacer { flex: 1; }
+
+    #sidebar footer { font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 14px; }
+
+    /* ── Main ── */
+    #main {
+      flex: 1;
+      padding: 28px 32px;
+      overflow-y: auto;
+      max-width: 860px;
+    }
+
+    h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+    /* ── Panel ── */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    /* ── Form ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .field-group { display: flex; flex-direction: column; gap: 5px; }
+
+    .field-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus { border-color: var(--accent); }
+
+    .field-group textarea { resize: vertical; min-height: 70px; }
+
+    /* ── Toggle MEI ── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .toggle-row label { font-size: 14px; color: var(--text); cursor: pointer; }
+
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .toggle input:checked + .toggle-track::after { transform: translateX(16px); }
+
+    /* ── Mode selector ── */
+    .mode-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 4px;
+    }
+
+    .mode-tab {
+      flex: 1;
+      padding: 8px 12px;
+      background: none;
+      border: none;
+      border-radius: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .mode-tab.active { background: var(--accent); color: #fff; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-primary:hover { background: var(--accent-h); }
+    .btn-primary:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+
+    .btn-copy {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      color: var(--muted);
+      font-size: 12px;
+      cursor: pointer;
+      transition: border-color 0.12s, color 0.12s;
+    }
+
+    .btn-copy:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Result cards ── */
+    .result-section { margin-bottom: 20px; }
+
+    .result-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tag-blue   { background: rgba(79,126,240,0.18); color: #7baeff; }
+    .tag-green  { background: rgba(34,197,94,0.18);  color: #4ade80; }
+    .tag-orange { background: rgba(245,158,11,0.18); color: #fbbf24; }
+    .tag-red    { background: rgba(239,68,68,0.18);  color: #f87171; }
+    .tag-gray   { background: rgba(139,145,168,0.18); color: #8b91a8; }
+
+    /* ── Alert box ── */
+    .alert-box {
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #fde68a;
+    }
+
+    /* ── Plan cards ── */
+    .plan-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .plan-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--success);
+      flex-shrink: 0;
+      min-width: 90px;
+    }
+
+    .plan-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+    .plan-meta { font-size: 12px; color: var(--muted); }
+    .plan-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
+
+    /* ── Funnel timeline ── */
+    .funnel-step {
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .funnel-step:last-child { border-bottom: none; }
+
+    .funnel-num {
+      width: 28px;
+      height: 28px;
+      background: rgba(79,126,240,0.2);
+      color: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .funnel-timing { font-size: 12px; color: var(--accent); font-weight: 600; }
+    .funnel-canal { font-size: 12px; color: var(--muted); }
+    .funnel-obj { font-size: 14px; font-weight: 600; margin: 2px 0; }
+    .funnel-msg {
+      font-size: 13px;
+      color: var(--muted);
+      background: var(--surface);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-top: 6px;
+      white-space: pre-wrap;
+    }
+
+    /* ── Scan cards ── */
+    .scan-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .scan-score {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .scan-score.high  { color: var(--success); }
+    .scan-score.med   { color: var(--warn); }
+    .scan-score.low   { color: var(--muted); }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+
+    .progress-fill { height: 100%; border-radius: 999px; transition: width 0.5s; }
+
+    /* ── Loading ── */
+    #loading {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--success);
+      color: #000;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Empty ── */
+    .empty { text-align: center; padding: 48px 20px; color: var(--muted); }
+    .empty .icon { font-size: 48px; margin-bottom: 12px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 680px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: relative; }
+      #main { padding: 16px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: 1; }
+    }
+
+    /* ── Hidden ── */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="brand">🏥 Queiroz Seguros</div>
+  <div class="brand-sub">Bot Comercial · Teresópolis/RJ</div>
+
+  <div class="nav-label">Menu</div>
+  <button class="nav-btn active" onclick="showPage('lead')" id="nav-lead">
+    <span class="icon">👤</span> Analisar Lead
+  </button>
+  <button class="nav-btn" onclick="showPage('scan')" id="nav-scan">
+    <span class="icon">📊</span> Varredura de Mercado
+  </button>
+  <button class="nav-btn" onclick="showPage('planos')" id="nav-planos">
+    <span class="icon">📋</span> Base de Planos
+  </button>
+
+  <div class="spacer"></div>
+  <footer>
+    <div id="api-status" style="margin-bottom:8px">⚙️ Verificando...</div>
+    Queiroz Seguros · Teresópolis/RJ
+  </footer>
+</aside>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- ── PAGE: LEAD ── -->
+  <div id="page-lead">
+    <h1>Analisar Lead</h1>
+    <p class="page-sub">Preencha os dados do lead para classificação, funil e planos recomendados.</p>
+
+    <div class="panel">
+      <div class="panel-title">Modo de Análise</div>
+      <div class="mode-tabs">
+        <button class="mode-tab active" onclick="setMode('novo_lead', this)">Análise Completa</button>
+        <button class="mode-tab" onclick="setMode('funil', this)">Só Funil</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field-group">
+          <label>Nome *</label>
+          <input type="text" id="f-nome" placeholder="Nome do lead" />
+        </div>
+        <div class="field-group">
+          <label>Cidade</label>
+          <input type="text" id="f-cidade" value="Teresópolis" />
+        </div>
+        <div class="field-group">
+          <label>Idade</label>
+          <input type="number" id="f-idade" placeholder="Ex: 35" min="0" max="110" />
+        </div>
+        <div class="field-group">
+          <label>Profissão</label>
+          <input type="text" id="f-profissao" placeholder="Ex: Enfermeira" />
+        </div>
+        <div class="field-group">
+          <label>Dependentes</label>
+          <input type="number" id="f-dependentes" placeholder="0" min="0" max="10" value="0" />
+        </div>
+        <div class="field-group">
+          <label>Orçamento (R$/mês)</label>
+          <input type="number" id="f-orcamento" placeholder="Ex: 500" min="0" />
+        </div>
+        <div class="field-group">
+          <label>Canal de Origem</label>
+          <select id="f-origem">
+            <option value="">Selecione...</option>
+            <option>WhatsApp</option>
+            <option>Instagram</option>
+            <option>Indicação</option>
+            <option>Site</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Possui MEI ou Empresa?</label>
+          <div class="toggle-row">
+            <label class="toggle">
+              <input type="checkbox" id="f-mei" onchange="toggleMEI()" />
+              <span class="toggle-track"></span>
+            </label>
+            <label for="f-mei">Sim, possui MEI/empresa</label>
+          </div>
+        </div>
+        <div class="field-group hidden" id="campo-meses">
+          <label>Tempo de Empresa (meses)</label>
+          <input type="number" id="f-meses" placeholder="Ex: 8" min="0" />
+        </div>
+        <div class="field-group full">
+          <label>Mensagem Original do Lead</label>
+          <textarea id="f-mensagem" placeholder="Cole aqui a mensagem que o lead enviou..."></textarea>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;display:flex;align-items:center;gap:12px">
+        <button class="btn-primary" onclick="analisarLead()">Analisar Lead</button>
+        <button class="btn-copy" onclick="limparForm()">Limpar</button>
+      </div>
+    </div>
+
+    <div id="loading" style="display:none;align-items:center;gap:12px;padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:20px">
+      <div class="spinner"></div>
+      <span>Analisando lead com IA...</span>
+    </div>
+
+    <div id="resultado-lead"></div>
+  </div>
+
+  <!-- ── PAGE: SCAN ── -->
+  <div id="page-scan" class="hidden">
+    <h1>Varredura de Mercado</h1>
+    <p class="page-sub">Identifica qual segmento tem maior oportunidade esta semana em Teresópolis.</p>
+
+    <div style="display:flex;gap:12px;margin-bottom:24px;align-items:center">
+      <button class="btn-primary" onclick="executarScan()">Executar Varredura</button>
+      <span id="scan-status" style="font-size:13px;color:var(--muted)"></span>
+    </div>
+
+    <div id="loading-scan" style="display:none;align-items:center;gap:12px;padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:20px">
+      <div class="spinner"></div>
+      <span>Varrendo dados de mercado...</span>
+    </div>
+
+    <div id="resultado-scan"></div>
+  </div>
+
+  <!-- ── PAGE: PLANOS ── -->
+  <div id="page-planos" class="hidden">
+    <h1>Base de Planos</h1>
+    <p class="page-sub">Carteira de planos vigente para Teresópolis/RJ. Válida até 25/06/2026.</p>
+
+    <div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="mode-tab active" onclick="filtrarPlanos('', this)">Todos</button>
+      <button class="mode-tab" onclick="filtrarPlanos('pme', this)">MEI/PME</button>
+      <button class="mode-tab" onclick="filtrarPlanos('pessoa_fisica', this)">PF</button>
+      <button class="mode-tab" onclick="filtrarPlanos('adesao', this)">Adesão</button>
+    </div>
+
+    <div class="alert-box">⚠️ Nenhum plano tem hospital em Teresópolis — internação em Petrópolis ou RJ.</div>
+
+    <div id="lista-planos" style="margin-top:16px"></div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+const API = '';  // mesmo origin
+
+let modoAnalise = 'novo_lead';
+
+// ── Navigation ──────────────────────────────────────────────────────────────
+function showPage(p) {
+  ['lead','scan','planos'].forEach(id => {
+    document.getElementById(`page-${id}`).classList.toggle('hidden', id !== p);
+    document.getElementById(`nav-${id}`).classList.toggle('active', id === p);
+  });
+  if (p === 'planos') carregarPlanos();
+}
+
+function setMode(modo, btn) {
+  modoAnalise = modo;
+  document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── MEI toggle ──────────────────────────────────────────────────────────────
+function toggleMEI() {
+  const checked = document.getElementById('f-mei').checked;
+  document.getElementById('campo-meses').classList.toggle('hidden', !checked);
+}
+
+function limparForm() {
+  ['f-nome','f-cidade','f-idade','f-profissao','f-dependentes','f-orcamento','f-mensagem'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = id === 'f-cidade' ? 'Teresópolis' : id === 'f-dependentes' ? '0' : '';
+  });
+  document.getElementById('f-mei').checked = false;
+  document.getElementById('f-origem').value = '';
+  document.getElementById('campo-meses').classList.add('hidden');
+  document.getElementById('resultado-lead').innerHTML = '';
+}
+
+// ── Analisar Lead ────────────────────────────────────────────────────────────
+async function analisarLead() {
+  const nome = document.getElementById('f-nome').value.trim();
+  if (!nome) { toast('Preencha o nome do lead', 'warn'); return; }
+
+  const leadData = {
+    nome,
+    cidade:      document.getElementById('f-cidade').value.trim() || 'Teresópolis',
+    idade:       parseInt(document.getElementById('f-idade').value) || null,
+    profissao:   document.getElementById('f-profissao').value.trim() || null,
+    dependentes: parseInt(document.getElementById('f-dependentes').value) || 0,
+    orcamento:   parseFloat(document.getElementById('f-orcamento').value) || null,
+    origem:      document.getElementById('f-origem').value || null,
+    temMEI:      document.getElementById('f-mei').checked,
+    mesesEmpresa: parseInt(document.getElementById('f-meses').value) || 0,
+    mensagem:    document.getElementById('f-mensagem').value.trim() || null
+  };
+
+  const endpoint = modoAnalise === 'funil' ? '/api/funil' : '/api/lead';
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('resultado-lead').innerHTML = '';
+
+  try {
+    const resp = await fetch(API + endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ leadData })
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.erro || 'Erro na API');
+    renderResultadoLead(data);
+  } catch (err) {
+    document.getElementById('resultado-lead').innerHTML = `<div class="alert-box" style="border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08);color:#fca5a5">❌ ${err.message}</div>`;
+  } finally {
+    document.getElementById('loading').style.display = 'none';
+  }
+}
+
+function renderResultadoLead(data) {
+  const { perfil, funil, campanha, mercado, resumoFinal, erros } = data;
+  let html = '';
+
+  if (erros?.length) {
+    html += erros.map(e => `<div class="alert-box" style="border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08);color:#fca5a5">⚠️ ${esc(e)}</div>`).join('');
+  }
+
+  // ── Perfil ──
+  if (perfil) {
+    const segLabel = { pessoa_fisica: 'Pessoa Física', pme: 'MEI/PME', adesao: 'Adesão ANASPL' }[perfil.segmento] || perfil.segmento;
+    const priColor = { alta: 'tag-green', media: 'tag-orange', baixa: 'tag-gray' }[perfil.prioridade] || 'tag-gray';
+    const elegivel = perfil.elegibilidade?.elegivel;
+
+    html += `<div class="result-section">
+      <div class="result-section-title">Perfil Classificado
+        <div style="display:flex;gap:6px">
+          <span class="tag tag-blue">${esc(segLabel)}</span>
+          <span class="tag ${priColor}">Prioridade ${esc(perfil.prioridade?.toUpperCase() || '')}</span>
+        </div>
+      </div>
+      <div class="panel">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:18px">${elegivel ? '✅' : '⚠️'}</span>
+          <span>${esc(perfil.elegibilidade?.motivo || '')}</span>
+        </div>
+        ${perfil.observacoes ? `<p style="color:var(--muted);font-size:13px">${esc(perfil.observacoes)}</p>` : ''}
+      </div>
+    </div>`;
+
+    // ── Alertas ──
+    if (perfil.alertas?.length) {
+      html += `<div class="result-section">
+        <div class="result-section-title">Alertas Importantes</div>
+        ${perfil.alertas.map(a => `<div class="alert-box">⚠️ ${esc(a)}</div>`).join('')}
+      </div>`;
+    }
+
+    // ── Planos ──
+    if (perfil.faixaPrecoReal?.todosPlanos?.length) {
+      const planos = perfil.faixaPrecoReal.todosPlanos;
+      const dentro = perfil.faixaPrecoReal.opcoesDentroDoOrcamento;
+      html += `<div class="result-section">
+        <div class="result-section-title">Planos Adequados ao Perfil
+          <button class="btn-copy" onclick="copiar('${esc(planos.map(p=>`${p.plano}: R$${p.valor.toFixed(2)}`).join('\\n'))}')">Copiar lista</button>
+        </div>
+        ${perfil.faixaPrecoReal.alertaOrcamento ? `<div class="alert-box">⚠️ ${esc(perfil.faixaPrecoReal.alertaOrcamento)}</div>` : ''}
+        ${planos.map(p => {
+          const dentroOrc = !perfil.faixaPrecoReal.alertaOrcamento || dentro.some(d => d.includes(p.plano));
+          return `<div class="plan-card" style="${dentroOrc ? '' : 'opacity:0.5'}">
+            <div class="plan-price">R$${p.valor.toFixed(2)}</div>
+            <div>
+              <div class="plan-name">${esc(p.plano)}</div>
+              <div class="plan-meta">${esc(p.operadora)} · ${esc(p.acomodacao)}</div>
+              <div class="plan-tags">
+                ${p.coparticipacao ? '<span class="tag tag-orange">Coparticipação</span>' : '<span class="tag tag-green">Sem coparticipação</span>'}
+                ${p.obstetrica ? '<span class="tag tag-blue">Com obstetrícia</span>' : '<span class="tag tag-gray">Sem obstetrícia</span>'}
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }
+  }
+
+  // ── Funil ──
+  if (funil?.etapas?.length) {
+    html += `<div class="result-section">
+      <div class="result-section-title">Funil de Contato — ${esc(funil.resumo || '')}</div>
+      <div class="panel">
+        ${funil.etapas.map(e => `
+          <div class="funnel-step">
+            <div class="funnel-num">${e.etapa}</div>
+            <div style="flex:1">
+              <div><span class="funnel-timing">${esc(e.timing)}</span> · <span class="funnel-canal">${esc(e.canal)}</span></div>
+              <div class="funnel-obj">${esc(e.objetivo)}</div>
+              ${e.mensagem ? `<div class="funnel-msg">${esc(e.mensagem)}</div>
+              <button class="btn-copy" style="margin-top:6px" onclick="copiar('${e.mensagem.replace(/'/g,"\\'")}')">Copiar mensagem</button>` : ''}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  // ── Campanha ──
+  if (campanha?.campanhaCompativel) {
+    html += `<div class="result-section">
+      <div class="result-section-title">Campanha Recomendada</div>
+      <div class="panel">
+        <div style="font-weight:700;margin-bottom:6px">📣 ${esc(campanha.campanhaCompativel)}</div>
+        <div style="margin-bottom:8px">${esc(campanha.acaoRecomendada || '')}</div>
+        ${campanha.mensagemCorretor ? `<div style="font-size:13px;color:var(--muted)">${esc(campanha.mensagemCorretor)}</div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  // ── Mercado ──
+  if (mercado?.planosRecomendados?.length) {
+    html += `<div class="result-section">
+      <div class="result-section-title">Análise de Mercado</div>
+      ${mercado.planosRecomendados.map(p => `<div class="plan-card">
+        <div class="plan-price" style="font-size:16px">R$${typeof p.valor === 'number' ? p.valor.toFixed(2) : p.valor}</div>
+        <div>
+          <div class="plan-name">${esc(p.nome)}</div>
+          <div class="plan-meta">${esc(p.operadora || '')} · ${esc(p.acomodacao || '')}</div>
+          ${p.motivo ? `<div style="font-size:12px;color:var(--muted);margin-top:4px">${esc(p.motivo)}</div>` : ''}
+        </div>
+      </div>`).join('')}
+      ${mercado.resumo ? `<div style="font-size:13px;color:var(--muted);margin-top:8px">${esc(mercado.resumo)}</div>` : ''}
+    </div>`;
+  }
+
+  // ── Botão copiar resumo ──
+  if (resumoFinal) {
+    html += `<div style="margin-top:8px">
+      <button class="btn-copy" onclick="copiarRelatorio()">📋 Copiar Resumo Completo</button>
+    </div>`;
+  }
+
+  document.getElementById('resultado-lead').innerHTML = html;
+  window._ultimoResultado = data;
+}
+
+function copiarRelatorio() {
+  const d = window._ultimoResultado;
+  if (!d) return;
+  const linhas = [];
+  linhas.push(`=== ANÁLISE QUEIROZ SEGUROS ===`);
+  if (d.perfil) {
+    linhas.push(`Lead: ${d.perfil.segmento?.toUpperCase()} | Prioridade: ${d.perfil.prioridade?.toUpperCase()}`);
+    linhas.push(`Elegibilidade: ${d.perfil.elegibilidade?.motivo}`);
+    if (d.perfil.alertas?.length) linhas.push(`Alertas: ${d.perfil.alertas.join('; ')}`);
+    if (d.perfil.faixaPrecoReal?.menorPreco) linhas.push(`Menor preço: ${d.perfil.faixaPrecoReal.menorPreco.plano} R$${d.perfil.faixaPrecoReal.menorPreco.valor.toFixed(2)}`);
+  }
+  if (d.funil?.etapas) {
+    linhas.push(`\nFUNIL:`);
+    d.funil.etapas.forEach(e => linhas.push(`  [${e.timing}] ${e.canal}: ${e.mensagem || e.objetivo}`));
+  }
+  if (d.campanha?.campanhaCompativel) linhas.push(`\nCAMPANHA: ${d.campanha.campanhaCompativel} — ${d.campanha.acaoRecomendada}`);
+  copiar(linhas.join('\n'));
+}
+
+// ── Scan ─────────────────────────────────────────────────────────────────────
+async function executarScan() {
+  document.getElementById('loading-scan').style.display = 'flex';
+  document.getElementById('resultado-scan').innerHTML = '';
+  document.getElementById('scan-status').textContent = '';
+
+  try {
+    const resp = await fetch(API + '/api/scan');
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.erro || 'Erro na API');
+    renderScan(data);
+    document.getElementById('scan-status').textContent = `Última varredura: ${data.dataVarredura}`;
+  } catch (err) {
+    document.getElementById('resultado-scan').innerHTML = `<div class="alert-box" style="border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08);color:#fca5a5">❌ ${esc(err.message)}</div>`;
+  } finally {
+    document.getElementById('loading-scan').style.display = 'none';
+  }
+}
+
+function renderScan(data) {
+  const { oportunidades, resumoExecutivo, oqueNaoFazer, proximaVarredura, confianca, fonte, scores } = data;
+  let html = '';
+
+  // Cabeçalho
+  html += `<div class="panel" style="border-left:4px solid var(--accent)">
+    <div style="font-weight:700;font-size:16px;margin-bottom:6px">📊 ${esc(resumoExecutivo || '')}</div>
+    <div style="font-size:12px;color:var(--muted)">Fonte: ${esc(Array.isArray(fonte) ? fonte.join(', ') : fonte || '')} · Confiança: ${esc(confianca || '')} · Próxima varredura: ${esc(proximaVarredura || '')}</div>
+  </div>`;
+
+  // Oportunidades
+  if (oportunidades?.length) {
+    html += `<div class="result-section">
+      <div class="result-section-title">Ranking de Oportunidade</div>`;
+
+    oportunidades.forEach((o, i) => {
+      const score = o.score || 0;
+      const scoreClass = score >= 60 ? 'high' : score >= 40 ? 'med' : 'low';
+      const fillColor = score >= 60 ? 'var(--success)' : score >= 40 ? 'var(--warn)' : 'var(--muted)';
+      const urgLabel = { alta: '🔴 Urgência Alta', media: '🟡 Urgência Média', baixa: '🟢 Urgência Baixa' }[o.urgencia] || o.urgencia;
+
+      html += `<div class="scan-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="scan-score ${scoreClass}">${score}</div>
+            <div style="font-weight:700;font-size:15px">${esc(o.titulo)}</div>
+            <div style="font-size:12px;color:var(--muted)">${esc(o.volume)} · ${esc(o.janela)} · ${esc(urgLabel)}</div>
+          </div>
+          ${i === 0 ? '<span class="tag tag-green">⭐ Prioridade</span>' : ''}
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${score}%;background:${fillColor}"></div>
+        </div>
+        <div style="margin-top:10px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">${esc(o.acaoRecomendada || '')}</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Planos: ${esc((o.planosIndicados || []).join(', '))}</div>
+          ${o.mensagemPronta ? `<div class="funnel-msg">${esc(o.mensagemPronta)}</div>
+          <button class="btn-copy" style="margin-top:6px" onclick="copiar('${o.mensagemPronta.replace(/'/g,"\\'")}')">Copiar mensagem</button>` : ''}
+          <div style="font-size:12px;color:var(--muted);margin-top:6px">Meta estimada: ${esc(o.metaEstimada || '')} · Confiança: ${esc(o.confianca || '')}</div>
+        </div>
+      </div>`;
+    });
+
+    html += `</div>`;
+  }
+
+  // O que não fazer
+  if (oqueNaoFazer?.length) {
+    html += `<div class="result-section">
+      <div class="result-section-title">O Que NÃO Fazer</div>
+      <div class="panel">
+        ${oqueNaoFazer.map(o => `<div style="padding:6px 0;border-bottom:1px solid var(--border)">❌ ${esc(o)}</div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  // Botão copiar relatório
+  html += `<div style="margin-top:8px">
+    <button class="btn-copy" onclick="copiarScan(${JSON.stringify(JSON.stringify(data)).replace(/"/g,'&quot;')})">📋 Copiar Relatório</button>
+  </div>`;
+
+  document.getElementById('resultado-scan').innerHTML = html;
+  window._ultimoScan = data;
+}
+
+function copiarScan() {
+  const d = window._ultimoScan;
+  if (!d) return;
+  const linhas = [`=== VARREDURA QUEIROZ SEGUROS — ${d.dataVarredura} ===`, d.resumoExecutivo, ''];
+  (d.oportunidades || []).forEach(o => {
+    linhas.push(`[${o.score}] ${o.titulo}`);
+    linhas.push(`  Volume: ${o.volume} | Urgência: ${o.urgencia}`);
+    linhas.push(`  Ação: ${o.acaoRecomendada}`);
+    if (o.mensagemPronta) linhas.push(`  Mensagem: ${o.mensagemPronta}`);
+    linhas.push('');
+  });
+  if (d.oqueNaoFazer) linhas.push('NÃO FAZER:', ...(d.oqueNaoFazer.map(o => `  ❌ ${o}`)));
+  linhas.push(`\nPróxima varredura: ${d.proximaVarredura}`);
+  copiar(linhas.join('\n'));
+}
+
+// ── Planos ───────────────────────────────────────────────────────────────────
+let _planosCache = null;
+let _filtroPlanos = '';
+
+async function carregarPlanos() {
+  if (_planosCache) { renderPlanos(_planosCache); return; }
+  try {
+    const resp = await fetch(API + '/api/planos');
+    _planosCache = await resp.json();
+    renderPlanos(_planosCache);
+  } catch (err) {
+    document.getElementById('lista-planos').innerHTML = `<div class="alert-box" style="color:#fca5a5">❌ ${esc(err.message)}</div>`;
+  }
+}
+
+function filtrarPlanos(seg, btn) {
+  _filtroPlanos = seg;
+  document.querySelectorAll('#page-planos .mode-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (_planosCache) renderPlanos(_planosCache);
+}
+
+function renderPlanos(planos) {
+  const lista = _filtroPlanos ? planos.filter(p => p.segmento === _filtroPlanos || (_filtroPlanos === 'pme' && p.segmento === 'pme')) : planos;
+  const segLabel = { pessoa_fisica: 'PF', pme: 'MEI/PME', adesao: 'Adesão' };
+
+  document.getElementById('lista-planos').innerHTML = lista.map(p => `
+    <div class="plan-card">
+      <div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:2px">${esc(segLabel[p.segmento] || p.segmento)}</div>
+        <div class="plan-name">${esc(p.nome)}</div>
+        <div class="plan-meta">${esc(p.operadora)} · ${esc(p.acomodacao)}</div>
+        <div class="plan-tags">
+          ${p.coparticipacao ? '<span class="tag tag-orange">Coparticipação</span>' : '<span class="tag tag-green">Sem coparticipação</span>'}
+          ${p.obstetrica ? '<span class="tag tag-blue">Obstetrícia</span>' : ''}
+        </div>
+        <div style="margin-top:8px;font-size:12px;color:var(--muted)">Rede: ${esc((p.rede || []).join(', '))}</div>
+        ${(p.alertas || []).map(a => `<div style="font-size:11px;color:#fbbf24;margin-top:2px">⚠️ ${esc(a)}</div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ── Utilities ────────────────────────────────────────────────────────────────
+function esc(str) {
+  return String(str || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function copiar(texto) {
+  navigator.clipboard.writeText(texto).then(() => toast('Copiado!', 'ok')).catch(() => {
+    const el = document.createElement('textarea');
+    el.value = texto; el.style.position='fixed'; el.style.opacity='0';
+    document.body.appendChild(el); el.select(); document.execCommand('copy');
+    document.body.removeChild(el); toast('Copiado!', 'ok');
+  });
+}
+
+let _toastTimer;
+function toast(msg, type = 'ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = type === 'warn' ? 'var(--warn)' : 'var(--success)';
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ── Health check ──────────────────────────────────────────────────────────────
+async function checkHealth() {
+  try {
+    const resp = await fetch(API + '/health');
+    const data = await resp.json();
+    const el = document.getElementById('api-status');
+    el.textContent = `✅ API ok · ${data.provider || '?'}`;
+  } catch {
+    document.getElementById('api-status').textContent = '❌ API offline';
+  }
+}
+
+checkHealth();
+</script>
+</body>
+</html>
