@@ -23,7 +23,8 @@ const GH_REPO  = process.env.GH_REPO  || 'Checks';
 const GH_PR    = process.env.GH_PR    || '1';
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
+app.use(express.text({ type: ['text/plain', 'text/csv'], limit: '2mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -104,6 +105,9 @@ app.get('/api/planos', (req, res) => {
   })));
 });
 
+// ── Store em memória para importação do agente ────────────────────────────────
+const _importStore = { empresas: [], atualizadoEm: null };
+
 // ── Empresas Elegíveis ────────────────────────────────────────────────────────
 
 // Lista de MEIs elegíveis (Brasil.IO ou mock)
@@ -113,6 +117,60 @@ app.get('/api/empresas', async (req, res) => {
     const resultado = await timeoutPromise(buscarMEIsTeresopolis(janela), 15000);
     res.json(resultado);
   } catch (err) { handleError(res, err); }
+});
+
+// Recebe lista de empresas enviada pelo agente local
+// Aceita JSON: array [...] ou objeto { empresas: [...] }
+// Aceita texto plano: uma empresa por linha (nome, telefone)
+app.post('/api/empresas/import', (req, res) => {
+  try {
+    let lista = [];
+    const ct = req.headers['content-type'] || '';
+
+    if (ct.includes('application/json')) {
+      const body = req.body;
+      lista = Array.isArray(body) ? body : (body.empresas || body.data || body.results || []);
+    } else if (ct.includes('text/plain') || ct.includes('text/csv')) {
+      // text/plain: uma entrada por linha "Nome, Telefone" ou CSV
+      const lines = (typeof req.body === 'string' ? req.body : '').split('\n').map(l => l.trim()).filter(Boolean);
+      const isHeader = l => /nome|empresa|cnpj|telefone/i.test(l);
+      lista = lines.filter(l => !isHeader(l)).map(l => {
+        const parts = l.split(/[,;\t]/).map(p => p.trim());
+        return { razao: parts[0] || '', telefone: parts[1] || '', cnpj: parts[2] || '' };
+      });
+    }
+
+    if (!Array.isArray(lista)) {
+      return res.status(400).json({ erro: 'Corpo deve ser um array JSON ou { "empresas": [...] }' });
+    }
+
+    // Normaliza campos aceitos: cnpj, nome/razao/razaoSocial, telefone/fone/phone
+    const normalizadas = lista.map(e => ({
+      cnpj:           e.cnpj           || e.CNPJ           || null,
+      razao:          e.razao          || e.nome            || e.razaoSocial || e.name || e.empresa || '',
+      telefoneManual: e.telefone       || e.fone            || e.phone       || e.tel  || null,
+      abertura:       e.abertura       || e.dataAbertura    || e.data_abertura || '6–12 meses',
+      municipio:      e.municipio      || e.cidade          || 'TERESOPOLIS',
+      uf:             e.uf             || e.estado          || 'RJ',
+      situacao:       e.situacao       || 'ATIVA',
+      _manual:        true
+    })).filter(e => e.razao || e.cnpj);
+
+    _importStore.empresas = normalizadas;
+    _importStore.atualizadoEm = new Date().toISOString();
+
+    console.log(`[IMPORT] ${normalizadas.length} empresas recebidas via agente`);
+    res.json({ ok: true, importadas: normalizadas.length, atualizadoEm: _importStore.atualizadoEm });
+  } catch (err) { handleError(res, err); }
+});
+
+// Retorna empresas importadas pelo agente (para polling do front-end)
+app.get('/api/empresas/importadas', (req, res) => {
+  res.json({
+    empresas: _importStore.empresas,
+    total: _importStore.empresas.length,
+    atualizadoEm: _importStore.atualizadoEm
+  });
 });
 
 // Enriquecimento de um CNPJ específico (RF + busca web)

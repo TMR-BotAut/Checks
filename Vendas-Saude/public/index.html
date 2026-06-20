@@ -629,6 +629,24 @@
       </div>
     </div>
 
+    <!-- Agente local -->
+    <div class="panel" style="margin-bottom:14px;border-left:4px solid var(--success)">
+      <div class="panel-title">🤖 Receber do Agente</div>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:12px">
+        Configure seu agente para enviar um POST para:<br>
+        <code id="url-import" style="background:var(--surface2);padding:4px 10px;border-radius:6px;font-size:13px;display:inline-block;margin:6px 0;word-break:break-all"></code>
+        <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="copiar(document.getElementById('url-import').textContent)">Copiar URL</button>
+      </p>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">
+        <strong>Content-Type:</strong> <code>application/json</code><br>
+        <strong>Body:</strong> <code>[{"razao":"Nome MEI","telefone":"(21) 9xxxx-xxxx","cnpj":"opcional"}]</code>
+      </p>
+      <button class="btn btn-success" onclick="buscarDoAgente()" id="btn-agente">
+        <span aria-hidden="true">🔄</span> Atualizar Lista do Agente
+      </button>
+      <span id="agente-status" style="font-size:13px;color:var(--muted);margin-left:12px"></span>
+    </div>
+
     <!-- Carregamento automático -->
     <div class="panel" style="margin-bottom:14px">
       <div class="panel-title">🔄 Carregar via Brasil.IO (requer token)</div>
@@ -1431,6 +1449,35 @@ function limparManual() {
   document.getElementById('input-manual').value = '';
 }
 
+async function buscarDoAgente() {
+  const btn = document.getElementById('btn-agente');
+  const status = document.getElementById('agente-status');
+  btn.disabled = true;
+  if (status) status.textContent = 'Verificando...';
+  try {
+    const resp = await fetch('/api/empresas/importadas');
+    const data = await resp.json();
+    if (!data.empresas?.length) {
+      if (status) status.textContent = 'Nenhum dado recebido ainda.';
+      toast('Agente ainda não enviou dados', 'warn');
+      return;
+    }
+    // Mescla com lista atual (evita duplicatas por razao+cnpj)
+    const existentes = new Set(_empresasList.map(e => e.cnpj || e.razao));
+    const novas = data.empresas.filter(e => !existentes.has(e.cnpj || e.razao));
+    _empresasList = [..._empresasList, ...novas];
+    renderEmpresasLista(_empresasList, { fonte: 'agente', estimativa: false });
+    const atualizado = data.atualizadoEm ? new Date(data.atualizadoEm).toLocaleString('pt-BR') : '';
+    if (status) status.textContent = `${data.total} empresa${data.total !== 1 ? 's' : ''} · atualizado ${atualizado}`;
+    toast(`${novas.length} empresa${novas.length !== 1 ? 's' : ''} carregada${novas.length !== 1 ? 's' : ''} ✓`, 'ok');
+  } catch(e) {
+    toast(e.message, 'err');
+    if (status) status.textContent = 'Erro ao buscar.';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
 async function carregarEmpresas() {
   setLoad('load-empresas', true);
   document.getElementById('res-empresas').innerHTML = '';
@@ -1591,6 +1638,10 @@ function calcMeses(dataStr) {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
+// Preenche URL do endpoint de importação
+const urlEl = document.getElementById('url-import');
+if (urlEl) urlEl.textContent = `${location.origin}/api/empresas/import`;
+
 checkHealth();
 </script>
 </body>
