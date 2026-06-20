@@ -12,19 +12,19 @@ Além disso, a experiência foi pensada para facilitar a concentração e reduzi
 
 ### Dashboard Principal
 
-![Dashboard Principal](./screenshots/dashboard.png)
+![Tela inicial com o template Handover aberto: nome do projeto preenchido, barra de progresso em 46 por cento (18 de 39 itens concluídos), botão Exportar PDF e a seção Documentação de Negócio com todos os itens marcados.](./screenshots/dashboard.png)
 
 *Acompanhamento visual do progresso, fases do processo e itens concluídos.*
 
 ### Exemplo de Handover
 
-![Handover](./screenshots/handover.png)
+![Seção Documentação Técnica do Handover com oito itens concluídos, seguida do início da Fase 2 — Entrega, mostrando como as etapas ficam organizadas em sequência.](./screenshots/handover.png)
 
 *Checklist estruturada para transferência de conhecimento e responsabilidades.*
 
 ### Exportação de Relatórios
 
-![PDF](./screenshots/pdf.png)
+![Janela Exportar PDF com a opção de gerar o relatório completo ou apenas uma fase específica: Pré-Projeto, Entrega ou Pós-Entrega.](./screenshots/pdf.png)
 
 *Geração de relatórios organizados para registro e acompanhamento.*
 
