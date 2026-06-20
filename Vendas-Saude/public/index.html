@@ -609,20 +609,40 @@
   <!-- ─────────────────── EMPRESAS ELEGÍVEIS ─────────────────── -->
   <section id="page-empresas" class="page" aria-labelledby="title-empresas">
     <h1 id="title-empresas">🏢 Empresas Elegíveis</h1>
-    <p class="page-sub">Lista de trabaho: MEIs abertos nos últimos 6 meses em Teresópolis. Clique em <strong>Enriquecer</strong> para buscar telefone, e-mail e redes sociais via Receita Federal + Google.</p>
+    <p class="page-sub">Lista de trabalho: MEIs abertos entre 6–12 meses em Teresópolis. Adicione manualmente ou carregue via Brasil.IO.</p>
 
+    <!-- Entrada manual -->
     <div class="panel" style="margin-bottom:14px">
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="carregarEmpresas()" id="btn-empresas">
-          <span aria-hidden="true">🔍</span> Carregar Lista
+      <div class="panel-title">✏️ Adicionar Empresas Manualmente</div>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:12px">
+        Cole uma empresa por linha. Formatos aceitos:<br>
+        <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:13px">Nome da Empresa, (21) 99999-9999</code> &nbsp;ou&nbsp;
+        <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:13px">Nome da Empresa</code> &nbsp;ou&nbsp;
+        <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:13px">12.345.678/0001-90, Nome, Telefone</code>
+      </p>
+      <textarea id="input-manual" rows="6" style="width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:8px;padding:12px;font-family:var(--font-body);font-size:14px;color:var(--text);resize:vertical;outline:none;line-height:1.6" placeholder="Ex:&#10;João Pereira Elétrica, (21) 98765-4321&#10;Maria Silva Confeitaria, (21) 91234-5678&#10;Carlos Souza Manutenção&#10;11.222.333/0001-44, Ana Paula Beauty, (21) 99887-7665"></textarea>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="adicionarManual()">
+          <span aria-hidden="true">➕</span> Adicionar à Lista
         </button>
-        <span style="font-size:13px;color:var(--muted)">Dados: Receita Federal via Brasil.IO · somente MEIs ativos</span>
+        <button class="btn btn-ghost btn-sm" onclick="limparManual()">Limpar campo</button>
+      </div>
+    </div>
+
+    <!-- Carregamento automático -->
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-title">🔄 Carregar via Brasil.IO (requer token)</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="carregarEmpresas()" id="btn-empresas">
+          <span aria-hidden="true">🔍</span> Carregar Automático
+        </button>
+        <span style="font-size:13px;color:var(--muted)">Requer BRASILIO_API_TOKEN no Railway</span>
       </div>
     </div>
 
     <div class="loading-box" id="load-empresas" role="status" aria-live="polite">
       <div class="spinner" aria-hidden="true"></div>
-      <span>Consultando Brasil.IO / Receita Federal...</span>
+      <span>Consultando Receita Federal...</span>
     </div>
 
     <div id="res-empresas" aria-live="polite" aria-atomic="false"></div>
@@ -1358,6 +1378,59 @@ async function checkHealth() {
 // ── Empresas Elegíveis ────────────────────────────────────────────────────────
 let _empresasList = [];
 
+// Parseia uma linha de texto em objeto empresa
+function parseLinha(linha) {
+  linha = linha.trim();
+  if (!linha) return null;
+
+  // Detecta CNPJ no início: 00.000.000/0000-00 ou 00000000000000
+  const cnpjMatch = linha.match(/^(\d{2}[.\d\/\-]{0,17}\d)/);
+  let cnpj = null, resto = linha;
+  if (cnpjMatch) {
+    const raw = cnpjMatch[1].replace(/\D/g, '');
+    if (raw.length === 14) { cnpj = raw; resto = linha.slice(cnpjMatch[1].length).replace(/^[,\s]+/, ''); }
+  }
+
+  // Detecta telefone: (XX) XXXXX-XXXX ou variações
+  const telMatch = resto.match(/(\(?\d{2}\)?\s?[\d\s\-]{8,12})/);
+  let telefone = null, nome = resto;
+  if (telMatch) {
+    telefone = telMatch[1].trim();
+    nome = resto.replace(telMatch[0], '').replace(/^[,\s]+|[,\s]+$/g, '');
+  }
+
+  nome = nome.replace(/^[,\s]+|[,\s]+$/g, '').trim();
+  if (!nome && !cnpj) return null;
+
+  return {
+    cnpj: cnpj || null,
+    razao: nome || cnpj,
+    telefoneManual: telefone || null,
+    abertura: '6–12 meses',
+    municipio: 'TERESOPOLIS',
+    uf: 'RJ',
+    situacao: 'ATIVA',
+    _manual: true
+  };
+}
+
+function adicionarManual() {
+  const texto = document.getElementById('input-manual').value;
+  const linhas = texto.split('\n').map(l => l.trim()).filter(Boolean);
+  if (!linhas.length) { toast('Cole ao menos uma empresa', 'warn'); return; }
+
+  const novas = linhas.map(parseLinha).filter(Boolean);
+  if (!novas.length) { toast('Não consegui interpretar as linhas', 'warn'); return; }
+
+  _empresasList = [..._empresasList, ...novas];
+  renderEmpresasLista(_empresasList, { fonte: 'manual', estimativa: false });
+  toast(`${novas.length} empresa${novas.length > 1 ? 's' : ''} adicionada${novas.length > 1 ? 's' : ''} ✓`, 'ok');
+}
+
+function limparManual() {
+  document.getElementById('input-manual').value = '';
+}
+
 async function carregarEmpresas() {
   setLoad('load-empresas', true);
   document.getElementById('res-empresas').innerHTML = '';
@@ -1376,9 +1449,14 @@ async function carregarEmpresas() {
   }
 }
 
+// Carregamento automático atualiza a lista global e chama renderEmpresasLista
 function renderEmpresas(data) {
-  const lista = data.cnpjs || [];
-  const isMock = data.estimativa;
+  _empresasList = [..._empresasList, ...(data.cnpjs || [])];
+  renderEmpresasLista(_empresasList, data);
+}
+
+function renderEmpresasLista(lista, meta = {}) {
+  const isMock = meta.estimativa;
 
   let h = `<div class="panel" style="border-left:4px solid var(--primary);margin-bottom:14px">
     <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center">
@@ -1422,7 +1500,9 @@ function renderEmpresas(data) {
           <td style="padding:12px 16px;font-family:monospace;font-size:13px;color:var(--muted)">${esc(e.cnpj||'')}</td>
           <td style="padding:12px 16px;font-size:13px">${esc(e.abertura||'')}</td>
           <td style="padding:12px 16px" id="contato_${i}">
-            <span style="color:var(--muted);font-size:12px">— não enriquecido</span>
+            ${e.telefoneManual
+              ? `<div style="font-weight:700">📞 ${esc(e.telefoneManual)}</div><div style="font-size:11px;color:var(--muted)">Enriqueça para e-mail/redes</div>`
+              : `<span style="color:var(--muted);font-size:12px">— clique Enriquecer</span>`}
           </td>
           <td style="padding:12px 16px;text-align:center">
             <button class="btn btn-ghost btn-sm" onclick="enriquecerEmpresa(${i}, '${esc(e.cnpj||'').replace(/\D/g,'')}')">
@@ -1497,7 +1577,7 @@ function prefillLead(d) {
     toggleMEI();
     const meses = d.dataAbertura ? calcMeses(d.dataAbertura) : '';
     if (meses) document.getElementById('f-meses').value = meses;
-    const tel = d.telefoneContato || '';
+    const tel = d.telefoneContato || d.telefoneManual || '';
     document.getElementById('f-mensagem').value = `Empresa: ${razao}\nCNPJ: ${d.cnpj||''}\nTelefone: ${tel}\nEmail: ${d.emailContato||''}\nAtividade: ${d.atividadePrincipal||''}\nAbertura: ${d.dataAbertura||''} (${meses} meses)`;
     toast('Dados preenchidos — revise e analise ✓', 'ok');
   }, 200);
