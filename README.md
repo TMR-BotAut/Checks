@@ -1,131 +1,107 @@
-# ✅ Checklist Interativa — Handover, Onboarding & Closure
+# Checklist Interativa — Handover, Onboarding & Closure
 
-Aplicação web de **página única** (single-file) para conduzir e documentar os
-três momentos críticos do ciclo de vida de um projeto ou de um membro de
-equipe: a **entrega** (Handover), a **integração** (Onboarding) e o
-**encerramento** (Closure).
+Uma ferramenta criada para organizar e acompanhar três momentos que costumam gerar retrabalho, perda de informação e dúvidas dentro de equipes: a transição de atividades, a entrada de novos integrantes e o encerramento de projetos.
 
-Toda a interface foi desenhada com **foco em acessibilidade**, especialmente
-para pessoas com TDAH: passos curtos e objetivos, progresso sempre visível,
-tema escuro de baixo contraste de fadiga e fonte legível (OpenDyslexic).
+A aplicação reúne checklists estruturadas que ajudam a garantir que informações importantes não sejam esquecidas durante esses processos, mantendo tudo registrado de forma simples, visual e organizada.
 
-🔗 **Acesso:** https://tmr-botaut.github.io/Checks/
+Além disso, a experiência foi pensada para facilitar a concentração e reduzir a sobrecarga de informações, especialmente para pessoas que preferem trabalhar com etapas curtas, objetivos claros e acompanhamento visual do progresso.
 
----
+🔗 Acesse a ferramenta: https://tmr-botaut.github.io/Checks/
 
-## 🎯 Para que serve
+## Por que criei esta ferramenta?
 
-Cada template é uma checklist estruturada em **3 fases** e **6 seções**,
-cobrindo desde a documentação de negócio até o fechamento formal:
+Em muitas equipes, a troca de responsáveis por um projeto, a chegada de novos colaboradores ou até mesmo o encerramento de uma iniciativa acontecem sem um processo estruturado.
 
-| Template | Ícone | Quando usar | Foco |
-|----------|:-----:|-------------|------|
-| **Handover** | 🔄 | Entrega de um projeto a outra pessoa/time | Documentação, infraestrutura e transferência de conhecimento |
-| **Onboarding** | 🚀 | Integração de um novo membro | Ambiente, contexto, treinamento e primeiras atribuições |
-| **Closure** | 🏁 | Saída de uma pessoa do projeto | Documentação final, passagem de responsabilidades e segurança |
+O resultado costuma ser o mesmo: informações dispersas, documentos esquecidos, dúvidas recorrentes e perda de conhecimento.
 
-Cada template organiza o trabalho em três fases sequenciais — por exemplo, no
-Handover: **Pré-Projeto → Entrega → Pós-Entrega**.
+Esta ferramenta surgiu para transformar esses momentos em processos mais organizados, previsíveis e fáceis de acompanhar.
 
----
+## Quando utilizar
 
-## ✨ Funcionalidades
+### Handover
 
-- **3 templates prontos** com mais de 100 itens de verificação no total.
-- **Marcação de progresso** com barra geral e contador por seção, atualizados
-  em tempo real.
-- **Edição livre**: editar (✏️), remover (🗑) e **adicionar** novos itens em
-  qualquer seção, sem limites.
-- **Persistência local**: tudo é salvo automaticamente no `localStorage` do
-  navegador — fecha e reabre que o progresso continua lá (por template).
-- **Exportação para PDF** profissional (jsPDF), com a opção de gerar o
-  documento **completo** ou apenas **uma fase** específica.
-- **Identificação do projeto**: nome e data ficam registrados no cabeçalho e
-  no PDF gerado.
-- **100% offline depois de carregada** e responsiva (desktop e mobile).
+Ideal para a transferência de um projeto, sistema ou atividade para outra pessoa ou equipe.
 
----
+Ajuda a garantir que informações importantes sejam documentadas e compartilhadas antes da mudança de responsabilidade.
 
-## ♿ Acessibilidade (foco em TDAH)
+### Onboarding
 
-A página foi construída a partir de princípios de design acessível:
+Voltado para a integração de novos membros.
 
-- **Fonte OpenDyslexic** para reduzir a troca/confusão de letras.
-- **Tema escuro** com contraste calibrado para reduzir cansaço visual.
-- **Carga cognitiva baixa**: uma ação por vez, itens curtos, divisão em fases.
-- **Feedback imediato**: barra de progresso, contadores e *toasts* de
-  confirmação a cada ação.
-- **Cores por fase** (azul / verde / roxo) para orientação visual rápida.
-- **Alvos de toque generosos** (checkboxes de 24px) e navegação por teclado
-  (Enter para adicionar/editar itens, Esc para cancelar a edição).
+Permite acompanhar desde os acessos iniciais até o entendimento do contexto do projeto e das primeiras entregas.
 
----
+### Closure
 
-## 🚀 Como usar
+Utilizado no encerramento de projetos ou na saída de profissionais de uma equipe.
 
-1. Acesse a página e escolha um **template** no menu lateral (Handover,
-   Onboarding ou Closure).
-2. Preencha o **Nome do Projeto / Sistema** no cabeçalho.
-3. Vá **marcando os itens** conforme conclui cada etapa. A barra de progresso
-   acompanha você.
-4. **Personalize** à vontade: edite textos, remova o que não se aplica e
-   adicione itens próprios.
-5. Ao finalizar (ou a qualquer momento), clique em **⬇ Exportar PDF** e escolha
-   se quer o relatório completo ou de uma fase específica.
+Auxilia na formalização das pendências, documentação final e repasse de responsabilidades.
 
-> 💾 O progresso é salvo automaticamente no seu navegador. Para começar do zero,
-> limpe os dados do site no navegador.
+Cada modelo possui etapas organizadas em sequência, facilitando o acompanhamento do que já foi concluído e do que ainda precisa ser tratado.
 
----
+## Principais recursos
 
-## 🛠️ Detalhes técnicos
+- Modelos prontos para Handover, Onboarding e Closure
+- Mais de 100 itens de acompanhamento distribuídos entre diferentes etapas
+- Barra de progresso atualizada automaticamente
+- Contadores por seção para acompanhamento rápido
+- Inclusão, edição e remoção de itens conforme a necessidade de cada projeto
+- Salvamento automático das informações no navegador
+- Exportação de relatórios em PDF
+- Registro do nome do projeto e da data de execução
+- Funciona em computador, tablet e celular
+- Pode ser utilizada mesmo sem conexão após o carregamento inicial
 
-- **Stack:** HTML + CSS + JavaScript puro (*vanilla*), em **um único arquivo**
-  (`index.html`) — sem build, sem dependências de servidor.
-- **Bibliotecas externas (via CDN):**
-  - [jsPDF](https://github.com/parallax/jsPDF) — geração do PDF.
-  - [OpenDyslexic](https://opendyslexic.org/) — fonte acessível.
-- **Armazenamento:** `localStorage` (chave `checklist_v2`), separado por
-  template, incluindo itens personalizados e estado de cada checkbox.
-- **Hospedagem:** GitHub Pages, servindo a partir do branch `main` (raiz).
-- **Favicon:** SVG inline gerado por script (sem arquivo externo).
+## Experiência focada em acessibilidade
 
-### Estrutura do projeto
+A interface foi construída com foco em clareza e simplicidade.
+
+Entre os recursos adotados estão:
+
+- Fonte de fácil leitura;
+- Tema escuro com baixo desgaste visual;
+- Divisão das atividades em etapas menores;
+- Feedback visual imediato sobre o progresso;
+- Organização por cores para facilitar a identificação das fases;
+- Navegação simples e objetiva.
+
+## Como utilizar
+
+1. Escolha o modelo desejado: Handover, Onboarding ou Closure.
+2. Informe o nome do projeto, sistema ou atividade.
+3. Acompanhe as etapas marcando os itens concluídos.
+4. Personalize os tópicos conforme a realidade da sua equipe.
+5. Gere um relatório em PDF sempre que precisar registrar o andamento ou o encerramento das atividades.
+
+## Relatórios em PDF
+
+Os relatórios gerados pela ferramenta foram pensados para facilitar consultas futuras, auditorias internas, registro histórico e compartilhamento entre equipes.
+
+O documento apresenta:
+
+- Identificação do projeto;
+- Data de emissão;
+- Resumo do progresso;
+- Itens concluídos e pendentes;
+- Organização por etapas;
+- Paginação automática.
+
+## Estrutura do projeto
 
 ```
 Checks/
-├── index.html   # a aplicação completa (UI + lógica + estilos)
-└── README.md    # esta documentação
+├── index.html
+└── README.md
 ```
 
-### Rodar localmente
+## Sugestões de uso
 
-Por ser um arquivo único e estático, basta abrir o `index.html` no navegador —
-ou servir a pasta com qualquer servidor estático:
-
-```bash
-# opção 1: abrir direto
-xdg-open index.html        # Linux  (use 'open' no macOS)
-
-# opção 2: servidor local
-python3 -m http.server 8000
-# depois acesse http://localhost:8000
-```
+- Transição entre analistas ou gestores;
+- Mudança de fornecedor ou equipe responsável;
+- Integração de novos colaboradores;
+- Encerramento de projetos;
+- Registro de conhecimento operacional;
+- Controle de entregas e responsabilidades.
 
 ---
 
-## 📄 Sobre o PDF gerado
-
-O relatório exportado é otimizado para impressão/arquivo:
-
-- Tema claro, cabeçalho com nome do projeto, template e data em todas as
-  páginas, e numeração de páginas no rodapé.
-- Resumo de progresso (percentual e itens concluídos).
-- Quebra de página inteligente: evita "órfãos" — banners de fase e títulos de
-  seção não ficam sozinhos no fim da página; seções longas continuam na página
-  seguinte com aviso de *continuação*.
-- Nome do arquivo automático: `NomeProjeto_Template[_FaseN]_DDMM.pdf`.
-
----
-
-<p align="center"><sub>Desenvolvido com foco em acessibilidade.</sub></p>
+Projeto desenvolvido como iniciativa prática para apoiar processos de transição, documentação e gestão do conhecimento de forma simples, acessível e objetiva.
