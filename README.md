@@ -8,6 +8,26 @@ Além disso, a experiência foi pensada para facilitar a concentração e reduzi
 
 🔗 Acesse a ferramenta: https://tmr-botaut.github.io/Checks/
 
+## Visão Geral
+
+### Dashboard Principal
+
+![Dashboard Principal](./screenshots/dashboard.png)
+
+*Acompanhamento visual do progresso, fases do processo e itens concluídos.*
+
+### Exemplo de Handover
+
+![Handover](./screenshots/handover.png)
+
+*Checklist estruturada para transferência de conhecimento e responsabilidades.*
+
+### Exportação de Relatórios
+
+![PDF](./screenshots/pdf.png)
+
+*Geração de relatórios organizados para registro e acompanhamento.*
+
 ## Por que criei esta ferramenta?
 
 Em muitas equipes, a troca de responsáveis por um projeto, a chegada de novos colaboradores ou até mesmo o encerramento de uma iniciativa acontecem sem um processo estruturado.
@@ -90,7 +110,8 @@ O documento apresenta:
 ```
 Checks/
 ├── index.html
-└── README.md
+├── README.md
+└── screenshots/
 ```
 
 ## Sugestões de uso
